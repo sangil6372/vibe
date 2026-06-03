@@ -96,55 +96,10 @@
         .fb-ai-section li { margin-bottom: 4px; line-height: 1.6; }
         .fb-ai-section strong { color: #333; }
 
-        /* ── 네브바 ── */
+        /* ── 네브바: navbar.css / navbar.js 에서 주입 ── */
         .add-con { padding: 0 !important; margin: 0 !important; }
         .name-tag { padding: 0 !important; margin: 0 !important; border: none !important; background: none !important; }
-        .con-in {
-            display: flex !important; align-items: center !important;
-            justify-content: space-between !important;
-            height: 50px !important; padding: 0 20px !important;
-            background: #fff !important;
-            border-bottom: 1px solid #dee2e6 !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,.06) !important;
-        }
-        .con-in .name { display: none !important; }
-        .nav-left { display: flex; align-items: center; }
-        .setting-area { display: flex !important; align-items: center !important; gap: 2px !important; }
-        .btn-nav {
-            display: inline-flex !important; align-items: center !important;
-            height: 34px !important; padding: 0 14px !important;
-            cursor: pointer !important; font-size: .82em !important; font-weight: 500 !important;
-            white-space: nowrap !important; color: #444 !important;
-            background: transparent !important; border: none !important;
-            box-shadow: none !important; text-decoration: none !important;
-            font-family: inherit !important; line-height: 1 !important;
-            width: auto !important; overflow: visible !important;
-        }
-        .btn-nav:hover { color: #f63 !important; }
-        .btn-nav.active-mode { color: #f63 !important; font-weight: 700 !important; }
-        .btn-hamburger {
-            display: inline-flex !important; align-items: center !important;
-            justify-content: center !important;
-            width: 32px !important; height: 32px !important;
-            cursor: pointer !important; background: transparent !important;
-            border: none !important; padding: 0 !important;
-            box-shadow: none !important; flex-shrink: 0 !important;
-        }
-        .btn-hamburger span span { background: #666 !important; }
-        .btn-hamburger:hover span span { background: #f63 !important; }
-
-        /* ── 햄버거 드로어 ── */
-        .nav-drawer {
-            position: fixed; top: 0; right: -260px; width: 240px; height: 100vh;
-            background: #fff; z-index: 3000; transition: right .22s ease;
-            box-shadow: -2px 0 6px rgba(0,0,0,.12); border-left: 1px solid #dee2e6;
-        }
-        .nav-drawer.open { right: 0; }
-        .nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 2999; display: none; }
-        .nav-overlay.open { display: block; }
-        .nav-drawer-header { font-size: .7em; font-weight: 700; color: #999; letter-spacing: .8px; text-transform: uppercase; padding: 18px 20px 12px; border-bottom: 1px solid #dee2e6; }
-        .nav-item { display: flex; align-items: center; padding: 13px 20px; color: #444; text-decoration: none; font-size: .88em; border-bottom: 1px solid #f2f2f2; }
-        .nav-item:hover { color: #f63; background: #fff8f5; }
+        .con-in { display: none !important; }
 
         /* ── 피드백 저장/TTS 버튼 ── */
         .fb-save-bar { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
@@ -206,24 +161,6 @@
                     <div class="name-tag">
                         <div class="con-in">
                             <p class="name" style="font-size:2.6em;"></p>
-
-                            <!-- 좌측: 홈 · Survey -->
-                            <div class="nav-left">
-                                <a href="../public/index.html" class="btn-nav">Home</a>
-                                <a href="../pages/survey-clone.html" class="btn-nav" onclick="localStorage.clear()">Survey</a>
-                            </div>
-
-                            <!-- 우측: 연습 모드 · 관리자 · 햄버거 -->
-                            <div class="setting-area">
-                                <button type="button" class="btn-nav" id="toggleTimer">Practice</button>
-                                <button type="button" class="btn-hamburger" id="btnHamburger" title="메뉴">
-                                    <span style="display:flex;flex-direction:column;gap:4px;width:16px">
-                                        <span style="height:1.5px;background:rgba(255,255,255,.65);border-radius:1px;display:block"></span>
-                                        <span style="height:1.5px;background:rgba(255,255,255,.65);border-radius:1px;display:block"></span>
-                                        <span style="height:1.5px;background:rgba(255,255,255,.65);border-radius:1px;display:block"></span>
-                                    </span>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -327,17 +264,6 @@
         </div>
     </div>
 
-    <!-- 햄버거 드로어 -->
-    <div id="navDrawer" class="nav-drawer">
-        <div class="nav-drawer-header">MENU</div>
-        <nav>
-            <a href="../public/index.html" class="nav-item">홈</a>
-            <a href="../public/my-records.html" class="nav-item">내 기록</a>
-            <a href="../public/admin.html" class="nav-item">관리자</a>
-        </nav>
-    </div>
-    <div id="navOverlay" class="nav-overlay"></div>
-
     <!-- 피드백 패널 -->
     <div id="feedbackPanel">
         <div class="fb-box">
@@ -422,6 +348,7 @@
     <script src="../assets/js/LTIMediaRecorder.js"></script>
     <script src="../assets/js/opic-media-patch.js"></script>
     <script src="../assets/js/opic-volume-fix.js"></script>
+    <script src="../assets/js/navbar.js"></script>
     <script src="../src/session-builder.js"></script>
 
     <script type="text/javascript">

@@ -1006,12 +1006,6 @@ $(function() {
         });
     }
 
-    // ── 햄버거 메뉴 ──────────────────────────────────────────
-    $('#btnHamburger').on('click', function() {
-        $('#navDrawer, #navOverlay').addClass('open');
-    });
-    $('#navOverlay').on('click', function() {
-        $('#navDrawer, #navOverlay').removeClass('open');
-    });
+    // 햄버거는 navbar.js가 처리
 
 });

@@ -1,0 +1,111 @@
+/* ── 공통 네브바 ── */
+#topNav { position: relative; z-index: 100; }
+
+.top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    padding: 0 20px;
+    background: #fff;
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+
+.nav-left  { display: flex; align-items: center; }
+.nav-right { display: flex; align-items: center; gap: 2px; }
+
+/* 공통 링크/버튼 */
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 14px;
+    font-size: .82em;
+    font-weight: 500;
+    color: #444;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: inherit;
+    white-space: nowrap;
+    box-shadow: none;
+    line-height: 1;
+}
+.nav-link:hover        { color: #f63; }
+.nav-link.active       { color: #f63; font-weight: 700; }
+.nav-link:visited      { color: #444; }
+.nav-link:hover:visited { color: #f63; }
+
+/* 햄버거 버튼 */
+.nav-hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: none;
+    flex-shrink: 0;
+    margin-left: 6px;
+}
+.nav-hbr {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 16px;
+}
+.nav-hbr span {
+    display: block;
+    height: 1.5px;
+    background: #666;
+    border-radius: 1px;
+}
+.nav-hamburger:hover .nav-hbr span { background: #f63; }
+
+/* 드로어 */
+.nav-drawer {
+    position: fixed;
+    top: 0; right: -260px;
+    width: 240px; height: 100vh;
+    background: #fff;
+    z-index: 3000;
+    transition: right .22s ease;
+    box-shadow: -2px 0 6px rgba(0,0,0,.12);
+    border-left: 1px solid #dee2e6;
+}
+.nav-drawer.open { right: 0; }
+
+.nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.3);
+    z-index: 2999;
+    display: none;
+}
+.nav-overlay.open { display: block; }
+
+.nav-drawer-header {
+    font-size: .7em;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    padding: 18px 20px 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 13px 20px;
+    color: #444;
+    text-decoration: none;
+    font-size: .88em;
+    border-bottom: 1px solid #f2f2f2;
+}
+.nav-item:hover { color: #f63; background: #fff8f5; }

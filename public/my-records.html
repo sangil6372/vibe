@@ -10,20 +10,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans KR',sans-serif;background:#f2f2f2;min-height:100vh}
 
-/* Header */
-.header{
-  background:#fff;border-bottom:1px solid #dee2e6;
-  padding:0 28px;height:52px;
-  display:flex;align-items:center;justify-content:space-between;
-  box-shadow:0 1px 3px rgba(0,0,0,.06);
-}
-.header h1{font-size:.95em;font-weight:700;color:#444}
-.btn-back{
-  padding:6px 16px;background:#eee;color:#444;
-  border:0;box-shadow:0 2px 1px 0 rgba(0,0,0,.2);
-  text-decoration:none;font-size:.8em;font-weight:600;
-}
-.btn-back:hover{background:#ddd;color:#444}
+/* 헤더: navbar.js에서 주입 */
 
 /* Layout */
 .container{max-width:900px;margin:0 auto;padding:24px 16px 60px}
@@ -111,10 +98,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:#f2f2f2;min-height:100vh}
 </head>
 <body>
 <div id="app">
-  <header class="header">
-    <h1>내 기록</h1>
-    <a href="index.html" class="btn-back">← 홈</a>
-  </header>
 
   <div class="container">
 
@@ -344,5 +327,6 @@ createApp({
   }
 }).mount('#app');
 </script>
+<script src="/assets/js/navbar.js"></script>
 </body>
 </html>
