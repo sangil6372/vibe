@@ -304,6 +304,22 @@ async def feedback(req):
         from openai import OpenAI
         client = OpenAI(api_key=api_key)
 
+        # ── 1단계: STT 오인식 정제 ──────────────────────────────
+        refine_resp = client.chat.completions.create(
+            model='gpt-4o',
+            max_tokens=600,
+            messages=[
+                {'role': 'system', 'content':
+                    '아래는 수험자가 영어로 말한 내용을 음성인식(STT)한 텍스트입니다. '
+                    '음성인식 오류(오인식 단어, 누락된 구두점, 붙어쓰기 등)만 문맥에 맞게 교정하세요. '
+                    '내용·의미는 절대 바꾸지 말고, 수험자가 실제로 말한 수준 그대로 유지하세요. '
+                    '교정된 텍스트만 반환하세요.'},
+                {'role': 'user', 'content': transcript}
+            ]
+        )
+        transcript = refine_resp.choices[0].message.content.strip()
+
+        # ── 2단계: 피드백 생성 ──────────────────────────────────
         system_prompt = """당신은 OPIc 공인 평가관입니다. 수험자의 영어 말하기 답변을 정확히 분석하고, 실질적인 피드백과 완성된 모범 답변을 한국어로 제공합니다.
 
 ## OPIc 등급 핵심 기준
@@ -343,9 +359,17 @@ async def feedback(req):
 ## ⬆️ 다음 등급을 위한 핵심 포인트 (3가지)
 매우 구체적으로, 즉시 적용 가능한 실천 방법으로.
 
-## 💎 AL 수준 모범 답변
-수험자의 핵심 내용을 살리되 AL 수준의 어휘·문법·구성으로 완성한 답변.
-실제 시험에서 자연스럽게 말할 수 있는 영어로 작성. (답변 길이는 실제 2분 스피치에 적합하게)"""
+## 💎 AL 수준 모범 답변 (완전 재작성)
+단순 다듬기가 아닌 완전한 재작성. 반드시 아래 규칙을 지킬 것:
+- 주제(topic)만 유지하고 수험자의 문장 구조·표현은 버릴 것
+- 150단어 이상 (실제 2분 스피치 분량)
+- 구조: 도입 1문장 → 구체적 경험/묘사 3~4문장 → 감정·교훈·마무리 1~2문장
+- 필수 AL 요소:
+  · 관계절 1개 이상 (which / that / who)
+  · 부사절 또는 분사구문 1개 이상 (Having done~ / While I was~ / Given that~)
+  · 고급 어휘 5개 이상 — 수험자가 쓴 평범한 단어를 반드시 업그레이드
+  · 생생한 감각 묘사 (시각·청각·감정 중 최소 1가지)
+- 읽는 글이 아닌 실제로 말하는 듯한 자연스러운 구어체로 작성"""
 
         resp = client.chat.completions.create(
             model='gpt-4o',
@@ -355,7 +379,11 @@ async def feedback(req):
                 {'role': 'user',   'content': user_prompt}
             ]
         )
-        return web.json_response({'ok': True, 'feedback': resp.choices[0].message.content})
+        return web.json_response({
+            'ok': True,
+            'feedback': resp.choices[0].message.content,
+            'refinedTranscript': transcript
+        })
     except ImportError:
         return web.json_response({'ok': False, 'error': 'openai 패키지 미설치\n터미널: pip install openai'})
     except Exception as e:
@@ -481,6 +509,92 @@ async def save_recordings(req):
     except Exception as e:
         return web.json_response({'ok': False, 'error': str(e)}, status=500)
 
+FEEDBACK_DIR = os.path.join(ROOT_DIR, 'recordings')
+
+# POST /save-feedback-item  → 피드백 팝업에서 저장
+async def save_feedback_item(req):
+    from datetime import datetime as dt
+    fb_id = 'fb_' + dt.now().strftime('%Y%m%d_%H%M%S')
+    save_dir = os.path.join(FEEDBACK_DIR, fb_id)
+    os.makedirs(save_dir, exist_ok=True)
+    try:
+        reader = await req.multipart()
+        info_raw = '{}'
+        async for field in reader:
+            if field.name == 'info':
+                info_raw = await field.text()
+            elif field.name == 'recording':
+                data = await field.read()
+                with open(os.path.join(save_dir, 'recording.webm'), 'wb') as f:
+                    f.write(data)
+        info = json.loads(info_raw)
+        info['id'] = fb_id
+        with open(os.path.join(save_dir, 'info.json'), 'w', encoding='utf-8') as f:
+            json.dump(info, f, ensure_ascii=False, indent=2)
+        return web.json_response({'ok': True, 'id': fb_id})
+    except Exception as e:
+        return web.json_response({'ok': False, 'error': str(e)}, status=500)
+
+# POST /model-tts  { id, text, voice?, rate? } → 모범 답변 TTS 생성
+async def model_tts(req):
+    d = await req.json()
+    fb_id = d.get('id', '')
+    text  = d.get('text', '').strip()
+    if not fb_id or not text:
+        return web.json_response({'ok': False, 'error': 'id 또는 text 없음'})
+    save_dir = os.path.join(FEEDBACK_DIR, fb_id)
+    if not os.path.isdir(save_dir):
+        return web.json_response({'ok': False, 'error': '저장 폴더 없음'})
+    try:
+        voice = d.get('voice') or DEFAULT_VOICE
+        rate  = d.get('rate')  or '-5%'
+        out_path = os.path.join(save_dir, 'model.mp3')
+        comm = edge_tts.Communicate(text, voice, rate=rate)
+        await comm.save(out_path)
+        # info.json 업데이트
+        info_path = os.path.join(save_dir, 'info.json')
+        if os.path.exists(info_path):
+            with open(info_path, encoding='utf-8') as f:
+                info = json.load(f)
+            info['hasModel'] = True
+            with open(info_path, 'w', encoding='utf-8') as f:
+                json.dump(info, f, ensure_ascii=False, indent=2)
+        return web.json_response({'ok': True})
+    except Exception as e:
+        return web.json_response({'ok': False, 'error': str(e)}, status=500)
+
+# GET /feedback-items  → 저장된 피드백 목록 반환
+async def feedback_items(req):
+    items = []
+    if os.path.exists(FEEDBACK_DIR):
+        for name in sorted(os.listdir(FEEDBACK_DIR), reverse=True):
+            if not name.startswith('fb_'):
+                continue
+            info_path = os.path.join(FEEDBACK_DIR, name, 'info.json')
+            if not os.path.exists(info_path):
+                continue
+            try:
+                with open(info_path, encoding='utf-8') as f:
+                    info = json.load(f)
+                items.append(info)
+            except Exception:
+                pass
+    return web.json_response({'items': items})
+
+# GET /feedback-audio?id=fb_xxx&file=recording.webm
+async def feedback_audio(req):
+    fb_id    = req.rel_url.query.get('id', '')
+    filename = req.rel_url.query.get('file', '')
+    if not fb_id or not filename:
+        return web.Response(status=400)
+    safe = os.path.normpath(os.path.join(FEEDBACK_DIR, fb_id, filename))
+    if not safe.startswith(FEEDBACK_DIR):
+        return web.Response(status=403)
+    if not os.path.exists(safe):
+        return web.Response(status=404)
+    mime = 'audio/webm' if filename.endswith('.webm') else 'audio/mpeg'
+    return web.FileResponse(safe, headers={'Content-Type': mime})
+
 # GET /  →  admin.html 리다이렉트
 async def index(req):
     raise web.HTTPFound('/admin.html')
@@ -513,7 +627,11 @@ app.router.add_get('/topic-originals', topic_originals)
 app.router.add_get('/original',      original_audio)
 app.router.add_post('/feedback',         feedback)
 app.router.add_post('/overall-feedback', overall_feedback)
-app.router.add_post('/save-recordings', save_recordings)
+app.router.add_post('/save-recordings',    save_recordings)
+app.router.add_post('/save-feedback-item', save_feedback_item)
+app.router.add_post('/model-tts',          model_tts)
+app.router.add_get('/feedback-items',      feedback_items)
+app.router.add_get('/feedback-audio',      feedback_audio)
 app.router.add_get('/apikey-status',   apikey_status)
 app.router.add_post('/apikey-save',    apikey_save)
 app.router.add_post('/delete',       delete)
