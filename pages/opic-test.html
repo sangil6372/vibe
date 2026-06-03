@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../assets/css/learnosity-main.css">
     
     <style>
+        /* ── OPIc 기본 유지 ── */
         .video-js { width: 300px; height: 150px; }
         .vjs-fluid:not(.vjs-audio-only-mode) { padding-top: 56.25% }
         .opic-video-dimensions { width: 296px; height: 300px; }
@@ -24,105 +25,76 @@
 
         /* ── 피드백 패널 ── */
         #feedbackPanel {
-            position: fixed; inset: 0; background: rgba(0,0,0,.55);
+            position: fixed; inset: 0; background: rgba(0,0,0,.5);
             z-index: 2000; display: none; overflow-y: auto; padding: 20px 16px;
         }
         .fb-box {
-            background: white; border-radius: 16px;
-            width: 94vw; max-width: 1280px;
+            background: #fff; width: 94vw; max-width: 1280px;
             margin: auto; padding: 28px 28px 24px; position: relative;
+            box-shadow: 0 2px 2px 0 rgba(0,0,0,.4);
         }
-        /* 2컬럼 본문 */
-        .fb-columns {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;
-        }
+        .fb-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
         .fb-col-right { position: sticky; top: 20px; }
         .fb-model-wrap {
-            background: linear-gradient(135deg, #faf5ff, #ede9fe);
-            border-left: 4px solid #7c3aed; border-radius: 12px;
+            background: #fff8f5; border-left: 4px solid #f63;
             padding: 18px 20px; min-height: 200px;
         }
-        .fb-model-hdr {
-            font-size: .95em; font-weight: 800; color: #6d28d9;
-            margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
-        }
-        .fb-model-body { font-size: .9em; color: #222; line-height: 1.85; }
+        .fb-model-hdr { font-size: .9em; font-weight: 700; color: #f63; margin-bottom: 14px; }
+        .fb-model-body { font-size: .88em; color: #444; line-height: 1.85; }
         @media (max-width: 860px) {
             .fb-columns { grid-template-columns: 1fr; }
             .fb-col-right { position: static; }
         }
         .fb-close {
             position: absolute; top: 14px; right: 16px;
-            background: none; border: none; font-size: 1.3em; cursor: pointer; color: #666;
+            background: none; border: none; cursor: pointer;
+            color: #999; font-size: 1.1em; box-shadow: none !important;
         }
-        .fb-header { font-size: .78em; color: #888; margin-bottom: 4px; }
-        .fb-topic { font-weight: 700; font-size: 1em; color: #1a1a2e; margin-bottom: 16px; }
+        .fb-header { font-size: .72em; color: #999; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .4px; }
+        .fb-topic { font-weight: 700; font-size: .95em; color: #444; margin-bottom: 16px; }
         .fb-section { margin-bottom: 16px; }
-        .fb-section h4 { font-size: .82em; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
-        .fb-qtext { font-size: .9em; color: #333; font-style: italic; line-height: 1.6; background: #f8f9ff; padding: 10px 14px; border-radius: 8px; border-left: 3px solid #667eea; }
-        .fb-transcript { font-size: .88em; color: #444; line-height: 1.6; background: #f0fdf4; padding: 10px 14px; border-radius: 8px; border-left: 3px solid #22c55e; }
-        .fb-result { font-size: .9em; color: #222; line-height: 1.75; white-space: pre-wrap; }
-        .fb-error { font-size: .88em; color: #dc2626; }
-        .fb-loading { color: #888; font-size: .9em; }
+        .fb-section h4 { font-size: .78em; font-weight: 700; color: #999; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+        .fb-qtext { font-size: .88em; color: #444; line-height: 1.6; background: #f2f2f2; padding: 10px 14px; border-left: 3px solid #36f; }
+        .fb-transcript { font-size: .88em; color: #444; line-height: 1.6; background: #f2f2f2; padding: 10px 14px; border-left: 3px solid #51bb39; }
+        .fb-error { font-size: .88em; color: #e74c3c; }
+        .fb-loading { color: #999; font-size: .88em; }
         .fb-actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .btn-fb-replay {
-            padding: 8px 18px; background: #dcfce7; color: #16a34a;
-            border: none; border-radius: 8px; cursor: pointer; font-size: .85em; font-weight: 600;
-        }
-        .btn-fb-replay:hover { background: #bbf7d0; }
 
-        /* ── 피드백 오디오 플레이어 ── */
+        /* ── 오디오 플레이어 ── */
         .fb-audio-player {
             display: flex; align-items: center; gap: 10px;
-            background: #f1f5f9; border-radius: 10px;
-            padding: 10px 14px; margin-bottom: 16px;
+            background: #f2f2f2; border: 1px solid #ccc;
+            padding: 8px 12px; margin-bottom: 16px;
         }
         .fb-ap-btn {
-            background: #667eea; color: white; border: none; border-radius: 6px;
-            width: 34px; height: 34px; cursor: pointer; font-size: .9em;
+            background: #f63; color: #fff; border: none;
+            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+            width: 32px; height: 32px; cursor: pointer; font-size: .85em;
             flex-shrink: 0; display: flex; align-items: center; justify-content: center;
         }
-        .fb-ap-btn:hover { background: #5a6fd6; }
+        .fb-ap-btn:hover { background: #e55; }
         .fb-ap-bar { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
-        .fb-ap-track {
-            flex: 1; height: 6px; background: #cbd5e1; border-radius: 3px;
-            cursor: pointer; position: relative;
-        }
-        .fb-ap-track:hover { height: 8px; }
-        .fb-ap-fill {
-            height: 100%; background: #667eea; border-radius: 3px;
-            width: 0%; pointer-events: none;
-        }
+        .fb-ap-track { flex: 1; height: 5px; background: #ccc; cursor: pointer; position: relative; }
+        .fb-ap-fill { height: 100%; background: #36f; width: 0%; pointer-events: none; }
         .fb-ap-thumb {
             position: absolute; top: 50%; left: 0%;
             transform: translate(-50%, -50%);
-            width: 14px; height: 14px; border-radius: 50%;
-            background: #667eea; border: 2px solid white;
-            box-shadow: 0 1px 4px rgba(102,126,234,.5);
-            pointer-events: none;
+            width: 13px; height: 13px; border-radius: 50%;
+            background: #36f; border: 2px solid #fff;
+            box-shadow: 0 1px 2px rgba(0,0,0,.3); pointer-events: none;
         }
-        .fb-ap-time { font-size: .78em; color: #64748b; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+        .fb-ap-time { font-size: .76em; color: #666; white-space: nowrap; flex-shrink: 0; }
 
-        /* ── AI 피드백 섹션 카드 ── */
-        .fb-ai-section { border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
-        .fb-ai-section.diagnosis { background: #fffbeb; border-left: 4px solid #f59e0b; }
-        .fb-ai-section.analysis  { background: #eff6ff; border-left: 4px solid #3b82f6; }
-        .fb-ai-section.tips      { background: #f0fdf4; border-left: 4px solid #22c55e; }
-        .fb-ai-section.model {
-            background: linear-gradient(135deg, #faf5ff, #ede9fe);
-            border-left: 4px solid #7c3aed; font-size: .92em; line-height: 1.85;
-        }
-        .fb-ai-section.generic   { background: #f8f9fa; border-left: 4px solid #adb5bd; }
-        .fb-ai-section-title {
-            font-size: .82em; font-weight: 700; color: #444;
-            margin-bottom: 8px; letter-spacing: .2px;
-        }
-        .fb-ai-section.model .fb-ai-section-title {
-            font-size: .95em; font-weight: 800; color: #6d28d9; margin-bottom: 10px;
-        }
+        /* ── AI 피드백 섹션 ── */
+        .fb-ai-section { padding: 12px 14px; margin-bottom: 8px; font-size: .88em; color: #444; line-height: 1.65; }
+        .fb-ai-section.diagnosis { background: #fff8f5; border-left: 3px solid #f63; }
+        .fb-ai-section.analysis  { background: #f0f4ff; border-left: 3px solid #36f; }
+        .fb-ai-section.tips      { background: #f5fdf2; border-left: 3px solid #51bb39; }
+        .fb-ai-section.generic   { background: #f2f2f2; border-left: 3px solid #ccc; }
+        .fb-ai-section-title { font-size: .78em; font-weight: 700; color: #444; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .3px; }
         .fb-ai-section ul { margin: 4px 0 4px 16px; padding: 0; }
-        .fb-ai-section li { margin-bottom: 4px; font-size: .88em; line-height: 1.6; }
-        .fb-ai-section strong { color: #1e293b; }
+        .fb-ai-section li { margin-bottom: 4px; line-height: 1.6; }
+        .fb-ai-section strong { color: #333; }
 
         /* ── 네브바 ── */
         .add-con { padding: 0 !important; margin: 0 !important; }
@@ -130,143 +102,100 @@
         .con-in {
             display: flex !important; align-items: center !important;
             justify-content: space-between !important;
-            height: 52px !important; padding: 0 24px !important;
-            background: #1e1e2e !important;
-            box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 2px 12px rgba(0,0,0,.25) !important;
+            height: 50px !important; padding: 0 20px !important;
+            background: #fff !important;
+            border-bottom: 1px solid #dee2e6 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06) !important;
         }
         .con-in .name { display: none !important; }
-        .nav-left  { display: flex; align-items: center; gap: 4px; }
-        .setting-area { display: flex !important; align-items: center !important; gap: 4px !important; }
-
-        /* 공통 링크형 버튼 */
+        .nav-left { display: flex; align-items: center; }
+        .setting-area { display: flex !important; align-items: center !important; gap: 2px !important; }
         .btn-nav {
             display: inline-flex !important; align-items: center !important;
-            height: 32px !important; padding: 0 14px !important;
-            border-radius: 6px !important; cursor: pointer !important;
-            font-size: .78em !important; font-weight: 500 !important;
-            letter-spacing: .3px !important; white-space: nowrap !important;
-            color: rgba(255,255,255,.65) !important;
+            height: 34px !important; padding: 0 14px !important;
+            cursor: pointer !important; font-size: .82em !important; font-weight: 500 !important;
+            white-space: nowrap !important; color: #444 !important;
             background: transparent !important; border: none !important;
+            box-shadow: none !important; text-decoration: none !important;
+            font-family: inherit !important; line-height: 1 !important;
             width: auto !important; overflow: visible !important;
-            box-sizing: border-box !important; font-family: inherit !important;
-            line-height: 1 !important; text-decoration: none !important;
-            transition: background .12s, color .12s !important;
         }
-        .btn-nav:hover  { background: rgba(255,255,255,.08) !important; color: white !important; }
-        .btn-nav.active-mode { background: rgba(102,126,234,.35) !important; color: #a5b4fc !important; }
-
-        /* 브랜드 구분선 */
-        .nav-divider {
-            width: 1px; height: 20px;
-            background: rgba(255,255,255,.12); margin: 0 8px; flex-shrink: 0;
-        }
-
-        /* 강조 버튼 (관리자) */
-        .btn-nav-accent {
-            display: inline-flex !important; align-items: center !important;
-            height: 30px !important; padding: 0 13px !important;
-            border-radius: 6px !important; cursor: pointer !important;
-            font-size: .76em !important; font-weight: 600 !important;
-            white-space: nowrap !important; color: #a5b4fc !important;
-            background: rgba(102,126,234,.18) !important;
-            border: 1px solid rgba(102,126,234,.4) !important;
-            text-decoration: none !important; font-family: inherit !important;
-            line-height: 1 !important; box-sizing: border-box !important;
-            transition: background .12s !important;
-        }
-        .btn-nav-accent:hover { background: rgba(102,126,234,.32) !important; color: white !important; }
-
-        /* 햄버거 */
+        .btn-nav:hover { color: #f63 !important; }
+        .btn-nav.active-mode { color: #f63 !important; font-weight: 700 !important; }
         .btn-hamburger {
             display: inline-flex !important; align-items: center !important;
             justify-content: center !important;
             width: 32px !important; height: 32px !important;
-            border-radius: 6px !important; cursor: pointer !important;
-            background: transparent !important; border: none !important;
-            padding: 0 !important; flex-shrink: 0 !important;
-            margin-left: 4px !important;
+            cursor: pointer !important; background: transparent !important;
+            border: none !important; padding: 0 !important;
+            box-shadow: none !important; flex-shrink: 0 !important;
         }
-        .btn-hamburger:hover { background: rgba(255,255,255,.08) !important; }
-        .btn-hamburger span span { background: rgba(255,255,255,.65) !important; }
+        .btn-hamburger span span { background: #666 !important; }
+        .btn-hamburger:hover span span { background: #f63 !important; }
+
+        /* ── 햄버거 드로어 ── */
         .nav-drawer {
-            position: fixed; top: 0; right: -280px; width: 260px; height: 100vh;
-            background: white; z-index: 3000; transition: right .25s ease;
-            box-shadow: -4px 0 24px rgba(0,0,0,.18); padding: 0;
+            position: fixed; top: 0; right: -260px; width: 240px; height: 100vh;
+            background: #fff; z-index: 3000; transition: right .22s ease;
+            box-shadow: -2px 0 6px rgba(0,0,0,.12); border-left: 1px solid #dee2e6;
         }
         .nav-drawer.open { right: 0; }
-        .nav-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,.45);
-            z-index: 2999; display: none;
-        }
+        .nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 2999; display: none; }
         .nav-overlay.open { display: block; }
-        .nav-drawer-header {
-            font-size: .78em; font-weight: 700; color: #888; letter-spacing: .5px;
-            padding: 20px 20px 14px; border-bottom: 1px solid #eee;
-        }
-        .nav-item {
-            display: flex; align-items: center; gap: 12px;
-            padding: 15px 20px; color: #1a1a2e; text-decoration: none;
-            font-size: .92em; font-weight: 600; transition: background .12s;
-        }
-        .nav-item:hover { background: #f8f9ff; color: #667eea; }
+        .nav-drawer-header { font-size: .7em; font-weight: 700; color: #999; letter-spacing: .8px; text-transform: uppercase; padding: 18px 20px 12px; border-bottom: 1px solid #dee2e6; }
+        .nav-item { display: flex; align-items: center; padding: 13px 20px; color: #444; text-decoration: none; font-size: .88em; border-bottom: 1px solid #f2f2f2; }
+        .nav-item:hover { color: #f63; background: #fff8f5; }
 
-        /* ── 피드백 저장 버튼 ── */
+        /* ── 피드백 저장/TTS 버튼 ── */
         .fb-save-bar { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
         .fb-save-btn {
-            padding: 8px 18px; background: #667eea; color: white;
-            border: none; border-radius: 8px; cursor: pointer;
-            font-size: .84em; font-weight: 700;
+            padding: 7px 18px; background: #36f; color: #fff;
+            border: 0; cursor: pointer; font-size: .82em; font-weight: 700;
+            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
         }
-        .fb-save-btn:hover:not(:disabled) { background: #5a6fd6; }
-        .fb-save-btn:disabled { background: #c4c4c4; cursor: default; }
-        .fb-save-status { font-size: .82em; color: #16a34a; font-weight: 600; }
-
-        /* ── 모범 답변 TTS ── */
+        .fb-save-btn:hover:not(:disabled) { background: #2244ee; }
+        .fb-save-btn:disabled { background: #ccc; cursor: default; box-shadow: none; }
+        .fb-save-status { font-size: .82em; color: #51bb39; font-weight: 600; }
         .fb-model-actions { margin-top: 14px; }
         .fb-model-tts-btn {
-            padding: 7px 16px; background: #ede9fe; color: #7c3aed;
-            border: none; border-radius: 8px; cursor: pointer;
-            font-size: .83em; font-weight: 700; margin-bottom: 10px;
+            padding: 7px 16px; background: #eee; color: #444;
+            border: 1px solid #ccc; cursor: pointer;
+            font-size: .82em; font-weight: 600; margin-bottom: 10px;
+            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
         }
-        .fb-model-tts-btn:hover:not(:disabled) { background: #ddd6fe; }
-        .fb-model-tts-btn:disabled { background: #f0f0f0; color: #bbb; cursor: default; }
+        .fb-model-tts-btn:hover:not(:disabled) { background: #ddd; }
+        .fb-model-tts-btn:disabled { background: #f2f2f2; color: #bbb; cursor: default; box-shadow: none; }
 
-        /* ── 하단 버튼 영역 ── */
+        /* ── 하단 버튼 ── */
         #btnFeedback {
-            padding: 9px 18px; background: #ede9fe; color: #7c3aed;
-            border: none; border-radius: 8px; cursor: pointer; font-size: .85em; font-weight: 600;
-            margin-right: 8px;
+            padding: 8px 18px; background: #eee; color: #444;
+            border: 0; cursor: pointer; font-size: .85em; font-weight: 700;
+            margin-right: 8px; box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
         }
-        #btnFeedback:hover:not(:disabled) { background: #ddd6fe; }
-        #btnFeedback:disabled { background: #f0f0f0; color: #bbb; cursor: default; }
+        #btnFeedback:hover:not(:disabled) { background: #ddd; }
+        #btnFeedback:disabled { background: #f2f2f2; color: #bbb; cursor: default; box-shadow: none; }
         #btnFinalSubmit {
-            display: none; padding: 9px 22px; background: #667eea; color: white;
-            border: none; border-radius: 8px; cursor: pointer; font-size: .85em; font-weight: 700;
+            display: none; padding: 8px 22px; background: #f63; color: #fff;
+            border: 0; cursor: pointer; font-size: .85em; font-weight: 700;
+            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
         }
-        #btnFinalSubmit:hover:not(:disabled) { background: #5a6fd6; }
-        #btnFinalSubmit:disabled { background: #c4c4c4; cursor: default; }
+        #btnFinalSubmit:hover:not(:disabled) { background: #e55; }
+        #btnFinalSubmit:disabled { background: #ccc; cursor: default; box-shadow: none; }
 
-        /* 연습 모드 패널 */
+        /* ── 연습 모드 패널 ── */
         #practicePanel {
-            display: none;
-            margin-top: 12px;
-            padding: 12px 14px;
-            background: #f1f3f5;
-            border-radius: 8px;
-            border-left: 4px solid #6c757d;
+            display: none; margin-top: 12px; padding: 12px 14px;
+            background: #f2f2f2; border-left: 4px solid #36f;
         }
         .pr-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
-        .pr-badge {
-            display: inline-block; padding: 2px 10px; border-radius: 20px;
-            font-size: .75em; font-weight: 700; letter-spacing: .3px;
-        }
-        .pr-badge-elapsed { background: #212529; color: #fff; font-size: .85em; padding: 3px 12px; }
-        .pr-badge-combo   { background: #6c757d; color: #fff; }
-        .pr-badge-type    { background: #0d6efd; color: #fff; }
-        .pr-badge-kind    { background: #198754; color: #fff; }
-        #qTopicName  { font-weight: 700; font-size: .95em; color: #212529; margin-bottom: 2px; }
-        #qTypeDesc   { font-size: .82em; color: #6c757d; margin-bottom: 6px; }
-        #qTextDisplay { font-size: .92em; color: #343a40; font-style: italic; white-space: pre-wrap; line-height: 1.6; }
+        .pr-badge { display: inline-block; padding: 2px 10px; font-size: .75em; font-weight: 700; letter-spacing: .3px; }
+        .pr-badge-elapsed { background: #444; color: #fff; font-size: .85em; padding: 3px 12px; }
+        .pr-badge-combo   { background: #888; color: #fff; }
+        .pr-badge-type    { background: #36f; color: #fff; }
+        .pr-badge-kind    { background: #51bb39; color: #fff; }
+        #qTopicName  { font-weight: 700; font-size: .95em; color: #444; margin-bottom: 2px; }
+        #qTypeDesc   { font-size: .82em; color: #888; margin-bottom: 6px; }
+        #qTextDisplay { font-size: .9em; color: #444; font-style: italic; white-space: pre-wrap; line-height: 1.6; }
     </style>
 </head>
 <body>

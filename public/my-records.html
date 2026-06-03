@@ -8,122 +8,103 @@
 <script src="../assets/js/vue.global.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR',sans-serif;background:#f0f2f5;min-height:100vh}
+body{font-family:'Noto Sans KR',sans-serif;background:#f2f2f2;min-height:100vh}
 
 /* Header */
 .header{
-  background:linear-gradient(135deg,#667eea,#764ba2);
-  color:white;padding:0 28px;height:58px;
+  background:#fff;border-bottom:1px solid #dee2e6;
+  padding:0 28px;height:52px;
   display:flex;align-items:center;justify-content:space-between;
-  box-shadow:0 2px 8px rgba(0,0,0,.2);
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
 }
-.header h1{font-size:1.05em;font-weight:700;display:flex;align-items:center;gap:8px}
+.header h1{font-size:.95em;font-weight:700;color:#444}
 .btn-back{
-  padding:7px 16px;background:rgba(255,255,255,.18);color:white;
-  border:1.5px solid rgba(255,255,255,.35);border-radius:8px;
-  text-decoration:none;font-size:.82em;font-weight:600;
+  padding:6px 16px;background:#eee;color:#444;
+  border:0;box-shadow:0 2px 1px 0 rgba(0,0,0,.2);
+  text-decoration:none;font-size:.8em;font-weight:600;
 }
-.btn-back:hover{background:rgba(255,255,255,.28)}
+.btn-back:hover{background:#ddd;color:#444}
 
 /* Layout */
-.container{max-width:860px;margin:0 auto;padding:28px 16px 60px}
+.container{max-width:900px;margin:0 auto;padding:24px 16px 60px}
 
 /* Empty / Error */
 .empty{text-align:center;padding:80px 20px;color:#bbb}
-.empty .icon{font-size:3em;margin-bottom:12px}
 .server-warn{
-  background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;
-  padding:14px 18px;font-size:.88em;color:#92400e;margin-bottom:20px;
+  background:#fff8f5;border-left:4px solid #f63;
+  padding:12px 16px;font-size:.88em;color:#444;margin-bottom:20px;
 }
 
 /* Card */
 .card{
-  background:white;border-radius:16px;margin-bottom:20px;
-  box-shadow:0 2px 12px rgba(0,0,0,.07);overflow:hidden;
+  background:#fff;margin-bottom:16px;
+  box-shadow:0 2px 2px 0 rgba(0,0,0,.12);
 }
 .card-head{
   display:flex;align-items:center;gap:10px;
-  padding:14px 20px;background:#f8f9ff;border-bottom:1px solid #eee;
+  padding:12px 18px;background:#f2f2f2;border-bottom:1px solid #dee2e6;
   flex-wrap:wrap;
 }
-.card-date{font-size:.76em;color:#888}
+.card-date{font-size:.75em;color:#888}
 .card-topic{
-  font-size:.82em;font-weight:700;padding:2px 12px;
-  background:#667eea;color:white;border-radius:20px;
+  font-size:.78em;font-weight:700;padding:2px 10px;
+  background:#f63;color:#fff;
 }
-.card-combo{font-size:.78em;color:#888}
-.card-body{padding:18px 20px}
+.card-combo{font-size:.75em;color:#888}
+.card-body{padding:16px 18px}
 
 /* Sections */
-.sec{margin-bottom:16px}
-.sec-label{
-  font-size:.75em;font-weight:700;color:#888;
-  text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;
-}
-.sec-qtext{
-  font-size:.88em;color:#333;font-style:italic;line-height:1.6;
-  background:#f8f9ff;padding:10px 14px;border-radius:8px;
-  border-left:3px solid #667eea;
-}
-.sec-transcript{
-  font-size:.88em;color:#333;line-height:1.6;
-  background:#f0fdf4;padding:10px 14px;border-radius:8px;
-  border-left:3px solid #22c55e;
-}
-.sec-model{
-  font-size:.88em;color:#333;line-height:1.75;
-  background:linear-gradient(135deg,#faf5ff,#ede9fe);
-  padding:12px 14px;border-radius:8px;border-left:3px solid #7c3aed;
-}
+.sec{margin-bottom:14px}
+.sec-label{font-size:.72em;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.sec-qtext{font-size:.87em;color:#444;font-style:italic;line-height:1.6;background:#f2f2f2;padding:10px 12px;border-left:3px solid #36f}
+.sec-transcript{font-size:.87em;color:#444;line-height:1.6;background:#f2f2f2;padding:10px 12px;border-left:3px solid #51bb39}
+.sec-model{font-size:.87em;color:#444;line-height:1.75;background:#fff8f5;padding:12px 14px;border-left:3px solid #f63}
 .no-content{font-size:.82em;color:#bbb;font-style:italic}
 
 /* 미니 오디오 플레이어 */
 .mini-player{
   display:flex;align-items:center;gap:8px;
-  background:#f1f5f9;border-radius:8px;padding:8px 12px;
-  margin-top:8px;
+  background:#f2f2f2;border:1px solid #ccc;
+  padding:7px 10px;margin-top:8px;
 }
 .mp-btn{
-  background:#667eea;color:white;border:none;border-radius:5px;
-  width:30px;height:30px;cursor:pointer;font-size:.8em;flex-shrink:0;
+  background:#f63;color:#fff;border:none;
+  box-shadow:0 2px 1px 0 rgba(0,0,0,.2);
+  width:28px;height:28px;cursor:pointer;font-size:.78em;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
 }
-.mp-btn:hover{background:#5a6fd6}
+.mp-btn:hover{background:#e55}
 .mp-bar{flex:1;display:flex;align-items:center;gap:6px}
-.mp-track{
-  flex:1;height:5px;background:#cbd5e1;border-radius:3px;
-  cursor:pointer;position:relative;
-}
-.mp-fill{height:100%;background:#667eea;border-radius:3px;width:0%}
+.mp-track{flex:1;height:5px;background:#ccc;cursor:pointer;position:relative}
+.mp-fill{height:100%;background:#36f;width:0%}
 .mp-thumb{
-  position:absolute;top:50%;left:0%;
-  transform:translate(-50%,-50%);
+  position:absolute;top:50%;left:0%;transform:translate(-50%,-50%);
   width:12px;height:12px;border-radius:50%;
-  background:#667eea;border:2px solid white;
-  box-shadow:0 1px 3px rgba(102,126,234,.4);pointer-events:none;
+  background:#36f;border:2px solid #fff;
+  box-shadow:0 1px 2px rgba(0,0,0,.3);pointer-events:none;
 }
-.mp-time{font-size:.72em;color:#64748b;white-space:nowrap;flex-shrink:0}
+.mp-time{font-size:.72em;color:#666;white-space:nowrap;flex-shrink:0}
 
 /* 피드백 아코디언 */
 .fb-toggle{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 14px;background:#f8f9fa;border-radius:8px;
-  cursor:pointer;font-size:.84em;font-weight:600;color:#555;
+  display:flex;align-items:center;
+  padding:9px 12px;background:#f2f2f2;border:1px solid #dee2e6;
+  cursor:pointer;font-size:.82em;font-weight:600;color:#444;
   user-select:none;margin-top:4px;
 }
-.fb-toggle:hover{background:#f0f2f5}
-.fb-chevron{font-size:.72em;transition:transform .2s;margin-left:auto}
+.fb-toggle:hover{background:#e8e8e8}
+.fb-chevron{font-size:.7em;transition:transform .2s;margin-left:auto}
 .fb-chevron.open{transform:rotate(180deg)}
 .fb-content{display:none;margin-top:8px}
 .fb-content.open{display:block}
 
-/* AI 섹션 카드 */
-.fb-ai-section{border-radius:8px;padding:12px 14px;margin-bottom:8px;font-size:.86em}
-.fb-ai-section.diagnosis{background:#fffbeb;border-left:3px solid #f59e0b}
-.fb-ai-section.analysis {background:#eff6ff;border-left:3px solid #3b82f6}
-.fb-ai-section.tips     {background:#f0fdf4;border-left:3px solid #22c55e}
-.fb-ai-section.generic  {background:#f8f9fa;border-left:3px solid #adb5bd}
-.fb-ai-section-title{font-size:.78em;font-weight:700;color:#444;margin-bottom:6px}
+/* AI 섹션 */
+.fb-ai-section{padding:11px 13px;margin-bottom:7px;font-size:.86em;color:#444;line-height:1.65}
+.fb-ai-section.diagnosis{background:#fff8f5;border-left:3px solid #f63}
+.fb-ai-section.analysis {background:#f0f4ff;border-left:3px solid #36f}
+.fb-ai-section.tips     {background:#f5fdf2;border-left:3px solid #51bb39}
+.fb-ai-section.generic  {background:#f2f2f2;border-left:3px solid #ccc}
+.fb-ai-section-title{font-size:.76em;font-weight:700;color:#444;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
 .fb-ai-section ul{margin:4px 0 4px 14px;padding:0}
 .fb-ai-section li{margin-bottom:3px;line-height:1.6}
 </style>
@@ -131,7 +112,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#f0f2f5;min-height:100vh}
 <body>
 <div id="app">
   <header class="header">
-    <h1>📚 내 기록</h1>
+    <h1>내 기록</h1>
     <a href="index.html" class="btn-back">← 홈</a>
   </header>
 
