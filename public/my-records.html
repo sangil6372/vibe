@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 기록 — OPIc</title>
+<link rel="stylesheet" href="../assets/css/noto-sans-kr.css">
+<script src="../assets/js/vue.global.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:#f0f2f5;min-height:100vh}
+
+/* Header */
+.header{
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:white;padding:0 28px;height:58px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+.header h1{font-size:1.05em;font-weight:700;display:flex;align-items:center;gap:8px}
+.btn-back{
+  padding:7px 16px;background:rgba(255,255,255,.18);color:white;
+  border:1.5px solid rgba(255,255,255,.35);border-radius:8px;
+  text-decoration:none;font-size:.82em;font-weight:600;
+}
+.btn-back:hover{background:rgba(255,255,255,.28)}
+
+/* Layout */
+.container{max-width:860px;margin:0 auto;padding:28px 16px 60px}
+
+/* Empty / Error */
+.empty{text-align:center;padding:80px 20px;color:#bbb}
+.empty .icon{font-size:3em;margin-bottom:12px}
+.server-warn{
+  background:#fef3c7;border:1px solid #f59e0b;border-radius:12px;
+  padding:14px 18px;font-size:.88em;color:#92400e;margin-bottom:20px;
+}
+
+/* Card */
+.card{
+  background:white;border-radius:16px;margin-bottom:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);overflow:hidden;
+}
+.card-head{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 20px;background:#f8f9ff;border-bottom:1px solid #eee;
+  flex-wrap:wrap;
+}
+.card-date{font-size:.76em;color:#888}
+.card-topic{
+  font-size:.82em;font-weight:700;padding:2px 12px;
+  background:#667eea;color:white;border-radius:20px;
+}
+.card-combo{font-size:.78em;color:#888}
+.card-body{padding:18px 20px}
+
+/* Sections */
+.sec{margin-bottom:16px}
+.sec-label{
+  font-size:.75em;font-weight:700;color:#888;
+  text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;
+}
+.sec-qtext{
+  font-size:.88em;color:#333;font-style:italic;line-height:1.6;
+  background:#f8f9ff;padding:10px 14px;border-radius:8px;
+  border-left:3px solid #667eea;
+}
+.sec-transcript{
+  font-size:.88em;color:#333;line-height:1.6;
+  background:#f0fdf4;padding:10px 14px;border-radius:8px;
+  border-left:3px solid #22c55e;
+}
+.sec-model{
+  font-size:.88em;color:#333;line-height:1.75;
+  background:linear-gradient(135deg,#faf5ff,#ede9fe);
+  padding:12px 14px;border-radius:8px;border-left:3px solid #7c3aed;
+}
+.no-content{font-size:.82em;color:#bbb;font-style:italic}
+
+/* 미니 오디오 플레이어 */
+.mini-player{
+  display:flex;align-items:center;gap:8px;
+  background:#f1f5f9;border-radius:8px;padding:8px 12px;
+  margin-top:8px;
+}
+.mp-btn{
+  background:#667eea;color:white;border:none;border-radius:5px;
+  width:30px;height:30px;cursor:pointer;font-size:.8em;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.mp-btn:hover{background:#5a6fd6}
+.mp-bar{flex:1;display:flex;align-items:center;gap:6px}
+.mp-track{
+  flex:1;height:5px;background:#cbd5e1;border-radius:3px;
+  cursor:pointer;position:relative;
+}
+.mp-fill{height:100%;background:#667eea;border-radius:3px;width:0%}
+.mp-thumb{
+  position:absolute;top:50%;left:0%;
+  transform:translate(-50%,-50%);
+  width:12px;height:12px;border-radius:50%;
+  background:#667eea;border:2px solid white;
+  box-shadow:0 1px 3px rgba(102,126,234,.4);pointer-events:none;
+}
+.mp-time{font-size:.72em;color:#64748b;white-space:nowrap;flex-shrink:0}
+
+/* 피드백 아코디언 */
+.fb-toggle{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 14px;background:#f8f9fa;border-radius:8px;
+  cursor:pointer;font-size:.84em;font-weight:600;color:#555;
+  user-select:none;margin-top:4px;
+}
+.fb-toggle:hover{background:#f0f2f5}
+.fb-chevron{font-size:.72em;transition:transform .2s;margin-left:auto}
+.fb-chevron.open{transform:rotate(180deg)}
+.fb-content{display:none;margin-top:8px}
+.fb-content.open{display:block}
+
+/* AI 섹션 카드 */
+.fb-ai-section{border-radius:8px;padding:12px 14px;margin-bottom:8px;font-size:.86em}
+.fb-ai-section.diagnosis{background:#fffbeb;border-left:3px solid #f59e0b}
+.fb-ai-section.analysis {background:#eff6ff;border-left:3px solid #3b82f6}
+.fb-ai-section.tips     {background:#f0fdf4;border-left:3px solid #22c55e}
+.fb-ai-section.generic  {background:#f8f9fa;border-left:3px solid #adb5bd}
+.fb-ai-section-title{font-size:.78em;font-weight:700;color:#444;margin-bottom:6px}
+.fb-ai-section ul{margin:4px 0 4px 14px;padding:0}
+.fb-ai-section li{margin-bottom:3px;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="header">
+    <h1>📚 내 기록</h1>
+    <a href="index.html" class="btn-back">← 홈</a>
+  </header>
+
+  <div class="container">
+
+    <div class="server-warn" v-if="!serverOk">
+      ⚠️ TTS 서버(port 8765)에 연결할 수 없습니다. <code>python tts_server.py</code>를 실행하세요.
+    </div>
+
+    <div class="empty" v-if="serverOk && items.length === 0">
+      <div class="icon">📭</div>
+      <p>저장된 피드백이 없습니다.</p>
+      <p style="font-size:.85em;margin-top:8px;color:#ccc">피드백 팝업에서 "💾 이 피드백 저장"을 눌러 기록을 남겨보세요.</p>
+    </div>
+
+    <div class="card" v-for="item in items" :key="item.id">
+      <!-- 카드 헤더 -->
+      <div class="card-head">
+        <span class="card-date">{{ formatDate(item.date) }}</span>
+        <span class="card-topic" v-if="item.topic">{{ item.topic }}</span>
+        <span class="card-combo" v-if="item.combo">Combo {{ item.combo }}</span>
+      </div>
+
+      <div class="card-body">
+
+        <!-- 질문 -->
+        <div class="sec">
+          <div class="sec-label">📌 질문</div>
+          <div class="sec-qtext">{{ item.questionText || '(없음)' }}</div>
+        </div>
+
+        <!-- 내 답변 + 오디오 -->
+        <div class="sec">
+          <div class="sec-label">🗣 내 답변</div>
+          <div class="sec-transcript" v-if="item.transcript">{{ item.transcript }}</div>
+          <div class="no-content" v-else>음성 인식 결과 없음</div>
+          <div class="mini-player" v-if="item.hasRecording" :id="'player-rec-'+item.id">
+            <button class="mp-btn" @click="togglePlay(item, 'rec')">{{ item._recPlaying ? '⏸' : '▶' }}</button>
+            <div class="mp-bar">
+              <div class="mp-track" @mousedown="startSeek($event, item, 'rec')">
+                <div class="mp-fill" :style="{width: (item._recPct||0)+'%'}"></div>
+                <div class="mp-thumb" :style="{left: (item._recPct||0)+'%'}"></div>
+              </div>
+              <span class="mp-time">{{ item._recCur||'0:00' }} / {{ item._recDur||'0:00' }}</span>
+            </div>
+            <button class="mp-btn" @click="replayAudio(item, 'rec')" title="처음부터">↩</button>
+          </div>
+        </div>
+
+        <!-- 모범 답변 + 오디오 -->
+        <div class="sec">
+          <div class="sec-label">💎 AL 수준 모범 답변</div>
+          <div class="sec-model" v-if="item.modelText">{{ item.modelText }}</div>
+          <div class="no-content" v-else>모범 답변 없음</div>
+          <div class="mini-player" v-if="item.hasModel">
+            <button class="mp-btn" @click="togglePlay(item, 'model')">{{ item._modelPlaying ? '⏸' : '▶' }}</button>
+            <div class="mp-bar">
+              <div class="mp-track" @mousedown="startSeek($event, item, 'model')">
+                <div class="mp-fill" :style="{width: (item._modelPct||0)+'%'}"></div>
+                <div class="mp-thumb" :style="{left: (item._modelPct||0)+'%'}"></div>
+              </div>
+              <span class="mp-time">{{ item._modelCur||'0:00' }} / {{ item._modelDur||'0:00' }}</span>
+            </div>
+            <button class="mp-btn" @click="replayAudio(item, 'model')" title="처음부터">↩</button>
+          </div>
+        </div>
+
+        <!-- AI 피드백 아코디언 -->
+        <div class="sec" v-if="item.feedback">
+          <div class="fb-toggle" @click="toggleFb(item)">
+            🤖 AI 피드백 보기
+            <span class="fb-chevron" :class="{open: item._fbOpen}">▼</span>
+          </div>
+          <div class="fb-content" :class="{open: item._fbOpen}">
+            <div v-html="renderFeedback(item.feedback)"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const { createApp, ref, onMounted } = Vue;
+const SERVER = 'http://127.0.0.1:8765';
+
+createApp({
+  setup() {
+    const serverOk = ref(false);
+    const items    = ref([]);
+    const _audios  = {};   // id+type → Audio 객체
+
+    function fmt(s) {
+      s = (!s || isNaN(s) || !isFinite(s)) ? 0 : s;
+      return Math.floor(s/60) + ':' + ('0'+Math.floor(s%60)).slice(-2);
+    }
+
+    function formatDate(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' +
+             String(d.getDate()).padStart(2,'0') + '  ' +
+             String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    }
+
+    function renderFeedback(raw) {
+      const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const parts = esc.split(/(?=^## )/m);
+      let html = '';
+      parts.forEach(part => {
+        part = part.replace(/^## /,'');
+        if (!part.trim()) return;
+        const nl = part.indexOf('\n');
+        const title = nl > -1 ? part.slice(0,nl).trim() : part.trim();
+        const body  = nl > -1 ? part.slice(nl+1) : '';
+        if (title.indexOf('💎') > -1) return; // 모범 답변은 별도 표시
+        let cls = 'generic';
+        if (title.indexOf('📊') > -1) cls = 'diagnosis';
+        else if (title.indexOf('🔍') > -1) cls = 'analysis';
+        else if (title.indexOf('⬆') > -1)  cls = 'tips';
+        const lines = body.split('\n');
+        let content = '', inList = false;
+        lines.forEach(line => {
+          const isList = /^[-•]\s/.test(line);
+          if (isList && !inList) { content += '<ul>'; inList = true; }
+          if (!isList && inList) { content += '</ul>'; inList = false; }
+          if (isList) content += '<li>' + line.replace(/^[-•]\s/,'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>') + '</li>';
+          else if (!line.trim()) content += '<br>';
+          else content += line.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>') + '<br>';
+        });
+        if (inList) content += '</ul>';
+        html += `<div class="fb-ai-section ${cls}"><div class="fb-ai-section-title">${title}</div><div>${content}</div></div>`;
+      });
+      return html;
+    }
+
+    function getAudioUrl(item, type) {
+      const file = type === 'rec' ? 'recording.webm' : 'model.mp3';
+      return `${SERVER}/feedback-audio?id=${item.id}&file=${file}`;
+    }
+
+    function getOrCreateAudio(item, type) {
+      const key = item.id + '_' + type;
+      if (!_audios[key]) {
+        const audio = new Audio(getAudioUrl(item, type));
+        audio.addEventListener('loadedmetadata', () => {
+          if (type === 'rec') item._recDur = fmt(audio.duration);
+          else item._modelDur = fmt(audio.duration);
+        });
+        audio.addEventListener('timeupdate', () => {
+          const pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
+          if (type === 'rec') { item._recPct = pct; item._recCur = fmt(audio.currentTime); }
+          else { item._modelPct = pct; item._modelCur = fmt(audio.currentTime); }
+        });
+        audio.addEventListener('ended', () => {
+          if (type === 'rec') item._recPlaying = false;
+          else item._modelPlaying = false;
+        });
+        _audios[key] = audio;
+      }
+      return _audios[key];
+    }
+
+    function togglePlay(item, type) {
+      const audio = getOrCreateAudio(item, type);
+      if (audio.paused) {
+        audio.play();
+        if (type === 'rec') item._recPlaying = true;
+        else item._modelPlaying = true;
+      } else {
+        audio.pause();
+        if (type === 'rec') item._recPlaying = false;
+        else item._modelPlaying = false;
+      }
+    }
+
+    function replayAudio(item, type) {
+      const audio = getOrCreateAudio(item, type);
+      audio.currentTime = 0;
+      audio.play();
+      if (type === 'rec') item._recPlaying = true;
+      else item._modelPlaying = true;
+    }
+
+    let _seeking = null;
+    function startSeek(e, item, type) {
+      _seeking = { item, type };
+      doSeek(e, item, type);
+      e.preventDefault();
+    }
+
+    function doSeek(e, item, type) {
+      const track = e.currentTarget || e.target;
+      const rect = track.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const audio = getOrCreateAudio(item, type);
+      if (audio.duration) audio.currentTime = ratio * audio.duration;
+    }
+
+    document.addEventListener('mousemove', e => {
+      if (_seeking) doSeek(e, _seeking.item, _seeking.type);
+    });
+    document.addEventListener('mouseup', () => { _seeking = null; });
+
+    function toggleFb(item) {
+      item._fbOpen = !item._fbOpen;
+    }
+
+    onMounted(async () => {
+      try {
+        await fetch(SERVER + '/ping', { signal: AbortSignal.timeout(3000) });
+        serverOk.value = true;
+        const r = await fetch(SERVER + '/feedback-items');
+        const d = await r.json();
+        items.value = (d.items || []).map(item => ({
+          ...item,
+          _recPlaying: false, _recPct: 0, _recCur: '0:00', _recDur: '0:00',
+          _modelPlaying: false, _modelPct: 0, _modelCur: '0:00', _modelDur: '0:00',
+          _fbOpen: false
+        }));
+      } catch(e) {
+        serverOk.value = false;
+      }
+    });
+
+    return { serverOk, items, formatDate, renderFeedback, togglePlay, replayAudio, startSeek, toggleFb };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>
