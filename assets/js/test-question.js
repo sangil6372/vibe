@@ -422,7 +422,8 @@ $(function() {
     $('#toggleTimer').on('click', function() {
         practiceMode = !practiceMode;
         timerVisible  = practiceMode;
-        $(this).text(practiceMode ? '📖 연습 OFF' : '📖 연습 ON');
+        $(this).text(practiceMode ? 'Practice ON' : 'Practice')
+               .toggleClass('active-mode', practiceMode);
         if (practiceMode) {
             updatePracticeInfo();
             elapsedSec = 0;
@@ -632,29 +633,283 @@ $(function() {
         if (window._fbAudio) { window._fbAudio.pause(); window._fbAudio = null; }
     });
 
-    $('#btnReplayAnswer').on('click', function() {
-        var idx = ltiOpicAppSettings.currentQuestionIndex - 1;
-        var rec = _recs[idx];
-        if (!rec || !rec.url) return;
-        if (window._fbAudio) window._fbAudio.pause();
-        window._fbAudio = new Audio(rec.url);
-        window._fbAudio.play().catch(function() {});
+    // ── 피드백 오디오 플레이어 ────────────────────────────────
+    function _initFbPlayer(url) {
+        if (window._fbAudio) { window._fbAudio.pause(); window._fbAudio = null; }
+
+        if (!url) {
+            $('#fbAudioPlayer').hide();
+            $('#fbNoAudio').show();
+            return;
+        }
+        $('#fbAudioPlayer').show();
+        $('#fbNoAudio').hide();
+        $('#fbPlayPause').text('▶');
+        $('#fbSeekFill').css('width', '0%');
+        $('#fbSeekThumb').css('left', '0%');
+        $('#fbCurTime').text('0:00');
+        $('#fbTotalTime').text('0:00');
+
+        var audio = new Audio(url);
+        window._fbAudio = audio;
+
+        function fmt(s) {
+            s = (!s || isNaN(s) || !isFinite(s)) ? 0 : s;
+            return Math.floor(s / 60) + ':' + ('0' + Math.floor(s % 60)).slice(-2);
+        }
+
+        audio.addEventListener('loadedmetadata', function() {
+            $('#fbTotalTime').text(fmt(audio.duration));
+        });
+        audio.addEventListener('timeupdate', function() {
+            var pct = (audio.duration && !isNaN(audio.duration))
+                ? (audio.currentTime / audio.duration * 100) : 0;
+            $('#fbSeekFill').css('width', pct + '%');
+            $('#fbSeekThumb').css('left', pct + '%');
+            $('#fbCurTime').text(fmt(audio.currentTime));
+        });
+        audio.addEventListener('ended', function() {
+            $('#fbPlayPause').text('▶');
+        });
+
+        $('#fbPlayPause').off('click').on('click', function() {
+            if (audio.paused) { audio.play(); $(this).text('⏸'); }
+            else              { audio.pause(); $(this).text('▶'); }
+        });
+
+        // 시크바 클릭 & 드래그
+        var _seeking = false;
+        function _seekTo(clientX) {
+            var track = document.getElementById('fbSeekTrack');
+            var rect  = track.getBoundingClientRect();
+            var ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+            if (audio.duration && !isNaN(audio.duration))
+                audio.currentTime = ratio * audio.duration;
+        }
+        $('#fbSeekTrack').off('mousedown.fbp touchstart.fbp')
+            .on('mousedown.fbp', function(e) { _seeking = true; _seekTo(e.clientX); e.preventDefault(); })
+            .on('touchstart.fbp', function(e) { _seeking = true; _seekTo(e.originalEvent.touches[0].clientX); e.preventDefault(); });
+        $(document).off('mousemove.fbp touchmove.fbp mouseup.fbp touchend.fbp')
+            .on('mousemove.fbp', function(e) { if (_seeking) _seekTo(e.clientX); })
+            .on('touchmove.fbp', function(e) { if (_seeking) _seekTo(e.originalEvent.touches[0].clientX); })
+            .on('mouseup.fbp touchend.fbp', function() { _seeking = false; });
+
+        $('#fbReplayBtn').off('click').on('click', function() {
+            audio.currentTime = 0;
+            audio.play();
+            $('#fbPlayPause').text('⏸');
+        });
+
+        audio.play().then(function() {
+            $('#fbPlayPause').text('⏸');
+        }).catch(function() {
+            $('#fbPlayPause').text('▶');
+        });
+    }
+
+    // ── AI 피드백 2컬럼 렌더러 ──────────────────────────────
+    function _bodyHtml(body) {
+        var lines = body.split('\n');
+        var out = '', inList = false;
+        lines.forEach(function(line) {
+            var isList = /^[-•]\s/.test(line);
+            if (isList && !inList) { out += '<ul>'; inList = true; }
+            if (!isList && inList) { out += '</ul>'; inList = false; }
+            if (isList) {
+                out += '<li>' + line.replace(/^[-•]\s/, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') + '</li>';
+            } else if (line.trim() === '') {
+                out += '<br>';
+            } else {
+                out += line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') + '<br>';
+            }
+        });
+        if (inList) out += '</ul>';
+        return out;
+    }
+
+    function _renderFeedback(raw) {
+        var esc = raw
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+        var parts = esc.split(/(?=^## )/m);
+        var mainHtml = '', modelHtml = '';
+
+        parts.forEach(function(part) {
+            part = part.replace(/^## /, '');
+            if (!part.trim()) return;
+            var nl    = part.indexOf('\n');
+            var title = nl > -1 ? part.slice(0, nl).trim() : part.trim();
+            var body  = nl > -1 ? part.slice(nl + 1) : '';
+
+            var cls = 'generic';
+            if      (title.indexOf('📊') > -1) cls = 'diagnosis';
+            else if (title.indexOf('🔍') > -1) cls = 'analysis';
+            else if (title.indexOf('⬆')  > -1) cls = 'tips';
+            else if (title.indexOf('💎') > -1) cls = 'model';
+
+            var content = _bodyHtml(body);
+
+            if (cls === 'model') {
+                modelHtml = content;
+            } else {
+                mainHtml += '<div class="fb-ai-section ' + cls + '">'
+                          + '<div class="fb-ai-section-title">' + title + '</div>'
+                          + '<div>' + content + '</div>'
+                          + '</div>';
+            }
+        });
+
+        // 섹션 파싱 실패 시 fallback
+        if (!mainHtml && !modelHtml) {
+            mainHtml = '<div class="fb-ai-section generic"><div>'
+                     + esc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')
+                     + '</div></div>';
+        }
+
+        $('#fbAiMain').html(mainHtml || '');
+        $('#fbAiModel').html(modelHtml
+            ? modelHtml
+            : '<span style="color:#aaa;font-size:.85em">모범 답변 없음</span>');
+    }
+
+    // ── 저장 기능 ────────────────────────────────────────────
+    var _savedFbId = null;
+    var _currentRec = null;
+    var _currentFeedback = null;
+
+    function _saveFeedbackItem() {
+        var rec          = _currentRec;
+        var feedbackText = _currentFeedback;
+        if (!rec || !feedbackText) return;
+
+        var $btn = $('#fbSaveBtn');
+        $btn.prop('disabled', true).text('저장 중...');
+
+        // 모범 답변 텍스트 추출
+        var modelText = '';
+        feedbackText.split(/^## /m).forEach(function(p) {
+            if (p.indexOf('💎') > -1) modelText = p.slice(p.indexOf('\n') + 1).trim();
+        });
+
+        var info = {
+            date:         new Date().toISOString(),
+            topic:        (rec.meta || {}).topic    || '',
+            combo:        (rec.meta || {}).combo    || '',
+            questionText: rec.qText                 || '',
+            transcript:   rec.text                  || '',
+            feedback:     feedbackText,
+            modelText:    modelText,
+            hasRecording: !!rec.url,
+            hasModel:     false
+        };
+
+        var form = new FormData();
+        form.append('info', JSON.stringify(info));
+
+        var prep = rec.url
+            ? fetch(rec.url).then(function(r) { return r.blob(); }).then(function(blob) {
+                form.append('recording', blob, 'recording.webm');
+              })
+            : Promise.resolve();
+
+        prep.then(function() {
+            return fetch('http://127.0.0.1:8765/save-feedback-item', { method: 'POST', body: form });
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.ok) {
+                _savedFbId = d.id;
+                $btn.text('✅ 저장됨');
+                $('#fbSaveStatus').text('');
+                $('#fbModelTtsBtn').prop('disabled', false);
+            } else {
+                $btn.prop('disabled', false).text('💾 이 피드백 저장');
+                $('#fbSaveStatus').text('❌ ' + (d.error || '저장 실패'));
+            }
+        }).catch(function() {
+            $btn.prop('disabled', false).text('💾 이 피드백 저장');
+            $('#fbSaveStatus').text('❌ 서버 연결 실패');
+        });
+    }
+
+    $('#fbSaveBtn').on('click', _saveFeedbackItem);
+
+    // 모범 답변 TTS 생성
+    $('#fbModelTtsBtn').on('click', function() {
+        if (!_savedFbId) return;
+        var $btn = $(this);
+        $btn.prop('disabled', true).text('⏳ 생성 중...');
+        var modelText = $('#fbAiModel').text().trim();
+
+        fetch('http://127.0.0.1:8765/model-tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: _savedFbId, text: modelText })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.ok) {
+                $btn.text('✅ 음성 저장됨');
+                var audioUrl = 'http://127.0.0.1:8765/feedback-audio?id=' + _savedFbId + '&file=model.mp3';
+                // 미니 플레이어 삽입
+                $('#fbModelPlayer').html(
+                    '<div class="fb-audio-player" style="margin-top:10px">' +
+                    '<button class="fb-ap-btn mp-play">▶</button>' +
+                    '<div class="fb-ap-bar"><div class="fb-ap-track mp-track"><div class="fb-ap-fill mp-fill"></div>' +
+                    '<div class="fb-ap-thumb mp-thumb"></div></div>' +
+                    '<span class="fb-ap-time"><span class="mp-cur">0:00</span> / <span class="mp-tot">0:00</span></span></div>' +
+                    '<button class="fb-ap-btn mp-replay" title="처음부터">↩</button></div>'
+                ).show();
+                var $wrap = $('#fbModelPlayer');
+                var audio = new Audio(audioUrl);
+                function fmt(s) { s=(!s||isNaN(s))?0:s; return Math.floor(s/60)+':'+(('0'+Math.floor(s%60)).slice(-2)); }
+                audio.addEventListener('loadedmetadata', function() { $wrap.find('.mp-tot').text(fmt(audio.duration)); });
+                audio.addEventListener('timeupdate', function() {
+                    var pct = audio.duration ? (audio.currentTime/audio.duration*100) : 0;
+                    $wrap.find('.mp-fill').css('width', pct+'%');
+                    $wrap.find('.mp-thumb').css('left', pct+'%');
+                    $wrap.find('.mp-cur').text(fmt(audio.currentTime));
+                });
+                audio.addEventListener('ended', function() { $wrap.find('.mp-play').text('▶'); });
+                $wrap.find('.mp-play').on('click', function() {
+                    if (audio.paused) { audio.play(); $(this).text('⏸'); }
+                    else { audio.pause(); $(this).text('▶'); }
+                });
+                $wrap.find('.mp-replay').on('click', function() { audio.currentTime=0; audio.play(); $wrap.find('.mp-play').text('⏸'); });
+                var _ms = false;
+                $wrap.find('.mp-track').on('mousedown', function(e) {
+                    _ms=true; var r=this.getBoundingClientRect();
+                    if(audio.duration) audio.currentTime=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*audio.duration;
+                });
+                $(document).on('mousemove.mmp',function(e){if(_ms){var r=document.querySelector('.mp-track').getBoundingClientRect();if(audio.duration)audio.currentTime=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*audio.duration;}});
+                $(document).on('mouseup.mmp',function(){_ms=false;});
+            } else {
+                $btn.prop('disabled', false).text('🔊 모범 답변 음성 생성');
+            }
+        }).catch(function() {
+            $btn.prop('disabled', false).text('🔊 모범 답변 음성 생성');
+        });
     });
 
     function _openFeedback(rec) {
+        _currentRec = rec;
+        _currentFeedback = null;
+        _savedFbId = null;
+        // 저장 버튼 초기화
+        $('#fbSaveBar').hide();
+        $('#fbSaveBtn').prop('disabled', false).text('💾 이 피드백 저장');
+        $('#fbSaveStatus').text('');
+        $('#fbModelActions').hide();
+        $('#fbModelTtsBtn').prop('disabled', true).text('🔊 모범 답변 음성 생성');
+        $('#fbModelPlayer').hide().html('');
+
         var meta = rec.meta || {};
         $('#fbTopicName').text((meta.topic || '') + (meta.combo ? '  ·  Combo ' + meta.combo : ''));
         $('#fbQText').text(rec.qText || '(질문 텍스트 없음)');
         $('#fbTranscript').text(rec.text || '');
         $('#fbTranscriptArea').toggle(!!rec.text);
-        $('#fbAiText').html('<div class="fb-loading">⏳ AI 피드백 생성 중...</div>');
+        $('#fbAiMain').html('<div class="fb-loading">⏳ 생성 중...</div>');
+        $('#fbAiModel').html('<div class="fb-loading">⏳ 생성 중...</div>');
         $('#feedbackPanel').fadeIn(200);
-
-        if (rec.url) {
-            window._fbAudio = new Audio(rec.url);
-            window._fbAudio.play().catch(function() {});
-        }
-
+        _initFbPlayer(rec.url || null);
         _fetchFeedback(rec.qText, rec.text);
     }
 
@@ -667,20 +922,31 @@ $(function() {
         .then(function(r) { return r.json(); })
         .then(function(d) {
             if (d.ok) {
-                var html = d.feedback
-                    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-                    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-                    .replace(/\n/g,'<br>');
-                $('#fbAiText').html('<div class="fb-result">' + html + '</div>');
+                if (d.refinedTranscript) {
+                    $('#fbTranscript').text(d.refinedTranscript);
+                    $('#fbTranscriptArea').show();
+                }
+                if (d.refinedTranscript && _currentRec) _currentRec.text = d.refinedTranscript;
+                _currentFeedback = d.feedback;
+                _renderFeedback(d.feedback);
+                $('#fbSaveBar').show();
+                $('#fbModelActions').show();
                 // 결과 페이지를 위해 피드백 저장
                 var curIdx = (ltiOpicAppSettings.currentQuestionIndex || 1) - 1;
-                if (_recs[curIdx]) _recs[curIdx].feedback = d.feedback;
+                if (_recs[curIdx]) {
+                    _recs[curIdx].feedback = d.feedback;
+                    if (d.refinedTranscript) _recs[curIdx].text = d.refinedTranscript;
+                }
             } else {
-                $('#fbAiText').html('<div class="fb-error">❌ ' + (d.error || '피드백 생성 실패') + '</div>');
+                var errHtml = '<div class="fb-error">❌ ' + (d.error || '피드백 생성 실패') + '</div>';
+                $('#fbAiMain').html(errHtml);
+                $('#fbAiModel').html('');
             }
         })
         .catch(function() {
-            $('#fbAiText').html('<div class="fb-error">❌ TTS 서버 연결 실패 — 서버가 실행 중인지 확인하세요</div>');
+            var errHtml = '<div class="fb-error">❌ TTS 서버 연결 실패 — 서버가 실행 중인지 확인하세요</div>';
+            $('#fbAiMain').html(errHtml);
+            $('#fbAiModel').html('');
         });
     }
 
@@ -739,5 +1005,13 @@ $(function() {
             return d;
         });
     }
+
+    // ── 햄버거 메뉴 ──────────────────────────────────────────
+    $('#btnHamburger').on('click', function() {
+        $('#navDrawer, #navOverlay').addClass('open');
+    });
+    $('#navOverlay').on('click', function() {
+        $('#navDrawer, #navOverlay').removeClass('open');
+    });
 
 });
