@@ -1,0 +1,229 @@
+$(function(){
+var e,t,i,n,o,p,s,r=ltiOpicAppSettings.videoReplays,c=null,l=null,a=0,d=($("#errorModal"),$("#errorModal .modal-body"),$("#moveOnModal"),$("#moveOnModal .modal-body"),$("#recordingStatus")),u=$("#uploading-alert"),g=$("#responseTimer"),m=$("#replay-instructions"),f=$("#sample-question-instructions"),S=$("#recording-instructions"),O=$("#replayButton"),h=$("#playButton"),A=$("#btnNext"),v=!1,w=!1,y=!1,I=$("#playback .track"),T=!1;
+function b(){
+ltiOpicAppSettings.playButtonClicked=!1,$("#playButton").show(),$("#playButton").removeClass("btn-disabled"),$("#playButton").prop("disabled",!1),P(1)}
+function M(){
+O.hide(),$("#playButton").show()}
+function x(){
+clearTimeout(ltiOpicAppSettings.showMicAccessTimeout),ltiOpicAppSettings.showMicAccessTimeout=null,$("#testArea").hide(),$("#micAccessMessage").hide(),A.hide(),Date.now()-ltiOpicAppSettings.lastMicAccessRequest<400?$("#accessBlockedMessage").show():$("#accessDeniedMessage").show()}
+function L(){
+clearTimeout(ltiOpicAppSettings.showMicAccessTimeout),ltiOpicAppSettings.showMicAccessTimeout=null,$("#testArea").hide(),$("#micAccessMessage").hide(),$("#noMicMessage").show(),A.hide()}
+function R(e){
+var i=0,n=t.playlist().length-1,o=0;
+t.on("loadedmetadata",function(){
+i+=t.duration(),0==o&&(ltiOpicAppSettings.firstVideoDuration=i),++o<n?t.playlist.currentItem(o):(t.off("loadedmetadata"),t.playlist.currentItem(0),ltiOpicAppSettings.totalVideoDuration=i,e())}
+)}
+function k(){
+t.on("timeupdate",C)}
+function C(){
+if(0==t.playlist.currentItem()||"iOS"==ltiOpicAppSettings.deviceInfo.os&&"Safari"==ltiOpicAppSettings.deviceInfo.browser)var e=t.currentTime();
+else e=ltiOpicAppSettings.firstVideoDuration+t.currentTime();
+if("iOS"==ltiOpicAppSettings.deviceInfo.os&&"Safari"==ltiOpicAppSettings.deviceInfo.browser)var i=e/t.duration()*100;
+else i=e/ltiOpicAppSettings.totalVideoDuration*100;
+i>100&&(i=100),I.css("width",i+"%")}
+function Q(){
+t.off("timeupdate",C),I.css("width","0%")}
+function B(){
+t.playlist.currentItem(a),k(),t.play(),P(2)}
+function D(){
+t.playlist.currentItem(o),t.play()}
+function P(e){
+$(".block-video-control span").hide(),e&&$(".prompt-status-"+e).show()}
+function q(){
+ltiOpic.confirmMicAccess({
+onSuccess:function(){
+ltiOpic.audioInputDevice.enableSensor("#"+ltiOpicAppSettings.responseId+" .lrn_audiomiclevelmask"),d.show(),$(".response-time").width("0%"),e.recording.start(),f.hide(),m.hide(),S.hide()}
+,onFailure:function(){
+console.log("Logout disabled for demo")}
+}
+)}
+function E(){
+}
+function H(){
+t.pause(),i=[],null!=ltiOpicAppSettings.introVideo&&ltiOpicAppSettings.introVideo!=LTIApiUrl+"/video"&&i.push({
+sources:[{
+type:"application/x-mpegURL",src:ltiOpicAppSettings.introVideo}
+],poster:ltiOpicAppSettings.standByPortrait}
+),i.push({
+sources:[{
+type:"application/x-mpegURL",src:ltiOpicAppSettings.questionVideo}
+],poster:ltiOpicAppSettings.standByPortrait}
+),i.push({
+sources:[{
+type:"application/x-mpegURL",src:ltiOpicAppSettings.noddingVideo}
+],poster:ltiOpicAppSettings.standByPortrait}
+),t.playlist(i),t.playlist.autoadvance(),n=i.length,o=n-1}
+function N(){
+$("#questionHeader").html(ltiOpicAppSettings.questionHeaderText.replace("(currentnumber)",ltiOpicAppSettings.currentQuestionIndex).replace("(totalnumber)",ltiOpicAppSettings.finalQuestionIndex))}
+function U(){
+e=p.question(ltiOpicAppSettings.responseId),(s=new AudioRecordTimer($("#response-time-progress-bar"),$("#response-time-remaining-time"),ltiOpicAppSettings.responseTimer,function(){
+w=!0,e.recording.stop(),1==ltiOpicAppSettings.savePrompt&&(A.prop("disabled",!0),!0),g.hide()}
+)).updateTimer(),e.on("recording:started",function(){
+s.start(),P(3),c=setTimeout(function(){
+f.hide(),m.hide(),S.hide(),M(),E()}
+,ltiOpicAppSettings.replayTimeout),l=setTimeout(function(){
+A.removeAttr("disabled")}
+,ltiOpicAppSettings.nextTimer)}
+),e.on("recording:stopped",function(){
+T=!1;
+var t=ltiOpic.audioInputDevice.error();
+if(v)v=!1;
+else{
+var i=0,n="",o=e.getResponse();
+if(null!=o)i=Math.round(o.length/1e3),n=ltiOpicAppSettings.responseUrl+o.location+".mp3";
+else G("Learnosity response came back null. ResponseId: "+ltiOpicAppSettings.responseId);
+audioQuality=e.response.audioQualityCheck();
+$("#moveOnHeader").hide(),$("#volumeLowContent").hide(),$("#volumeHighContent").hide(),ltiOpicAppSettings.sampleQuestion||(null==audioQuality.detail||(audioQuality.detail.numberOfClippingSamples>40?($("#volumeHighContent").show(),!0):audioQuality.detail.maxRmsEnergy<.05&&($("#volumeLowContent").show(),!0)),y||($("#moveOnHeader").show(),!0)),e.timeSpent=i,e.serverUrl=n,y&&!t?Y():(P(4),A.prop("disabled",!1))}
+}
+),P(1)}
+function V(e,t){
+var responses=JSON.parse(localStorage.getItem('testResponses')||'[]');
+responses.push({
+ltrId:ltiOpicAppSettings.ltrId,timeSpent:e,timesQuestionPlayed:r,serverUrl:t,nextLTRId:ltiOpicAppSettings.nextLTRId}
+);
+localStorage.setItem('testResponses',JSON.stringify(responses));
+u.hide();
+j()}
+function j(){
+if(0==ltiOpicAppSettings.savePrompt||ltiOpicAppSettings.lastPrompt)window.onbeforeunload=null,window.location.href=ltiOpicAppSettings.nextPage,$("#formNext").submit();
+else{
+var e,t=ltiOpicAppSettings.currentQuestionIndex+1;
+if(ltiOpic.demo&&"function"==typeof ltiOpic.demo&&ltiOpic.demo()){
+if(2==t)return window.onbeforeunload=null,void(window.location.href=ltiOpicAppSettings.testLevel)}
+else if(8==t)return window.onbeforeunload=null,void(window.location.href=ltiOpicAppSettings.testLevel);
+t==ltiOpicAppSettings.prompts.length&&(ltiOpicAppSettings.lastPrompt=!0),ltiOpicAppSettings.nextLTRId=null,ltiOpicAppSettings.prompts.forEach(function(i){
+i.responseNo==t&&(e=i),ltiOpicAppSettings.lastPrompt||i.responseNo!=t+1||(ltiOpicAppSettings.nextLTRId=i.LTRId)}
+),ltiOpicAppSettings.currentQuestionIndex=t,ltiOpicAppSettings.responseId=e.learnosityId,ltiOpicAppSettings.questionVideo=e.Mediafile,ltiOpicAppSettings.introVideo=e.promptIntroMediaFile,ltiOpicAppSettings.responseTimer=e.TimeForQuestion,ltiOpicAppSettings.ltrId=e.LTRId,r=0,w=!1,y=!1,P(5),H(),"1"==ltiOpicAppSettings.recordingApi?ee():U(),function(){
+N();
+var e=$("li.active"),t=e.next();
+e.removeClass("active").addClass("visited"),t.addClass("active")}
+(),"iOS"!=ltiOpicAppSettings.deviceInfo.os||"Safari"!=ltiOpicAppSettings.deviceInfo.browser?R(function(){
+b()}
+):b(),A.prop("disabled",!0)}
+}
+function F(){
+}
+$(".refreshButton").on("click",function(){
+location.reload()}
+),h.on("click",function(){
+ltiOpicAppSettings.playButtonClicked=!0,$("#playButton").addClass("btn-disabled"),$("#playButton").prop("disabled",!0),f.hide(),m.show(),S.show(),T=!0,B(),E()}
+),O.on("click",function(){
+ltiOpic.audioInputDevice.disableSensor(),d.hide(),E(),v=!0,c&&(M(),e.recording.stop(),clearTimeout(l),l=null,s.stop(),$(".response-time").width("0%"),g.hide(),m.hide(),clearTimeout(c),r++,B())}
+),A.off("click"),A.on("click",function(){
+A.prop("disabled",!0),w?(P(4),Y()):(y=!0,e.recording.stop(),s.stop(),l=null,g.hide())}
+);
+var K=function(){
+var e,t,i={
+hidden:"visibilitychange",webkitHidden:"webkitvisibilitychange",mozHidden:"mozvisibilitychange",msHidden:"msvisibilitychange"}
+;
+for(e in i)if(e in document){
+t=i[e];
+break}
+return function(i){
+return i&&document.addEventListener(t,i),!document[e]}
+}
+();
+K(function(){
+K()||F()}
+);
+var X,_=void 0===document.documentMode,z=window.chrome;
+function G(e){
+console.log('Error:',e)}
+function J(){
+$("#setupArea").hide(),$("#btnNext").hide(),$("#browserNotSupportedMessage").show()}
+function W(){
+$("#setupArea").hide(),$("#btnNext").hide(),$("#serverErrorMessage").show()}
+function Y(){
+var t,i,n;
+ltiOpicAppSettings.savePrompt?(ltiOpic.audioInputDevice.disableSensor(),d.hide(),u.show(),ltiOpic.demo&&"function"==typeof ltiOpic.demo&&ltiOpic.demo()?setTimeout(function(){
+"1"==ltiOpicAppSettings.recordingApi?Z():V()}
+,1500):"1"==ltiOpicAppSettings.recordingApi?Z(e.timeSpent,e.serverUrl):(t=e.timeSpent,i=e.serverUrl,n={
+success:function(){
+V(t,i)}
+,error:function(e){
+G("Learnosity save failed. ResponseId: "+ltiOpicAppSettings.responseId)}
+}
+,p.save(n))):j()}
+function Z(e,t){
+var responses=JSON.parse(localStorage.getItem('testResponses')||'[]');
+responses.push({
+ltrId:ltiOpicAppSettings.ltrId,timeSpent:e,timesQuestionPlayed:r,serverUrl:t,nextLTRId:ltiOpicAppSettings.nextLTRId}
+);
+localStorage.setItem('testResponses',JSON.stringify(responses));
+u.hide();
+j()}
+function ee(){
+e=p.question(ltiOpicAppSettings.responseId),(s=new AudioRecordTimer($("#response-time-progress-bar"),$("#response-time-remaining-time"),ltiOpicAppSettings.responseTimer,function(){
+"inactive"!=e.recording.state&&(e.recording.stop(),P(4),g.hide(),w=!0)}
+)).updateTimer(),$(e).on("recording:started",function(){
+s.start(),P(3),c=setTimeout(function(){
+f.hide(),m.hide(),S.hide(),M(),E()}
+,ltiOpicAppSettings.replayTimeout),l=setTimeout(function(){
+A.removeAttr("disabled")}
+,ltiOpicAppSettings.nextTimer)}
+),$(e).on("recording:stopped",function(){
+T=!1;
+var t=ltiOpic.audioInputDevice.error();
+if(v)v=!1;
+else{
+var i;
+i=Math.round(e.recordDuration),audioQuality=e.response.audioQualityCheck();
+$("#moveOnHeader").hide(),$("#volumeLowContent").hide(),$("#volumeHighContent").hide(),ltiOpicAppSettings.sampleQuestion||(null==audioQuality.detail||(audioQuality.detail.numberOfClippingSamples>40?($("#volumeHighContent").show(),!0):audioQuality.detail.maxRmsEnergy<.05&&($("#volumeLowContent").show(),!0)),y||($("#moveOnHeader").show(),!0)),e.timeSpent=i,e.serverUrl="",P(4),!1,y&&!t&&Y()}
+}
+)}
+_&&!z?$(window).on("focusout",function(){
+F()}
+):window.addEventListener?window.addEventListener("blur",function(e){
+F()}
+,!1):window.attachEvent("blur",function(e){
+F()}
+),navigator.mediaDevices.ondevicechange=function(i){
+ltiOpic.confirmAudioInputDevice({
+onError:function(){
+t.reset(),e.recording.stop(),L()}
+}
+)}
+,N(),ltiOpicAppSettings.lastMicAccessRequest=Date.now(),ltiOpicAppSettings.showMicAccessTimeout=setTimeout(function(){
+$("#testArea").hide(),$("#micAccessMessage").show()}
+,500),navigator.mediaDevices.getUserMedia({
+audio:!0,video:!1}
+).then(function(e){
+ltiOpic.setAudioInputDevice(e.getAudioTracks()[0].label),$("#testArea").show(),$("#micAccessMessage").hide(),clearTimeout(ltiOpicAppSettings.showMicAccessTimeout),ltiOpicAppSettings.showMicAccessTimeout=null}
+).catch(function(e){
+checkDeviceSupport(function(){
+hasMicrophone?isMicrophoneAlreadyCaptured||x():L()}
+)}
+),(t=videojs("opic-video",{
+controls:!1,autoplay:!1,preload:"auto",bigPlayButton:!1,loadingSpinner:!1,html5:{
+hls:{
+overrideNative:!0}
+}
+}
+)).on("ended",function(){
+var e=this.playlist.currentItem();
+e!=o&&e+1!=o?("iOS"==ltiOpicAppSettings.deviceInfo.os&&"Safari"==ltiOpicAppSettings.deviceInfo.browser&&(Q(),I.css("width","0%"),k()),this.playlist.next()):e!=o?(Q(),0==r?($("#playButton").hide(),O.show(),q(),D()):(q(),D(),f.hide(),m.hide(),S.hide())):this.playlist.currentItem()==o&&D()}
+),t.removeChild("ControlBar"),H(),"iOS"!=ltiOpicAppSettings.deviceInfo.os||"Safari"!=ltiOpicAppSettings.deviceInfo.browser?R(function(){
+b()}
+):b(),$(".vjs-poster").on("click",function(e){
+e.preventDefault()}
+),"1"==ltiOpicAppSettings.recordingApi?(X={
+readyListener:function(){
+ee()}
+,errorListener:function(e){
+var t=e.code.toString();
+"10011"==t||"10012"==t?L():"10015"==t||"10018"==t?J():"20001"==t?x():W()}
+,prevent_flash:!0}
+,p=LTIMediaRecorderApp.init(ltiOpicAppSettings.ltiSignedRequest,X)):function(){
+var e={
+readyListener:function(){
+U()}
+,errorListener:function(e){
+var t=e.code.toString();
+"10011"==t||"10012"==t?L():"10015"==t||"10018"==t?J():W()}
+,prevent_flash:!0}
+;
+p=LearnosityApp.init(ltiOpicAppSettings.learnositySignedRequest,e)}
+(),"iOS"==ltiOpicAppSettings.deviceInfo.os&&"Safari"==ltiOpicAppSettings.deviceInfo.browser&&t.on("timeupdate",function(){
+ltiOpicAppSettings.playButtonClicked||t.pause()}
+)}
+);

@@ -1,0 +1,1 @@
+!function(n){var t=n.fn.show,r=n.fn.hide;n.fn.show=function(){var n=t.apply(this,arguments);return this.removeAttr("hidden"),n},n.fn.hide=function(){var n=r.apply(this,arguments);return this.attr("hidden","true"),n}}(jQuery);

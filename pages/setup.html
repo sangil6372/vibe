@@ -1,0 +1,419 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0043)https://opickoreademo.multicampus.com/setup -->
+<html lang="en" translate="no"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style class="vjs-styles-defaults">
+      .video-js {
+        width: 300px;
+        height: 150px;
+      }
+
+      .vjs-fluid:not(.vjs-audio-only-mode) {
+        padding-top: 56.25%
+      }
+    </style><style class="vjs-styles-dimensions">
+      .setup-video-dimensions {
+        width: 296px;
+        height: 300px;
+      }
+
+      .setup-video-dimensions.vjs-fluid:not(.vjs-audio-only-mode) {
+        padding-top: 101.35135135135135%;
+      }
+    </style>
+        
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="sYX5sE1dvWoee8BQiYFDZ2Oq5LvKS0u7nGwRZ1Jt">
+
+          <!-- LTI Token -->
+      <meta name="lti-token" content="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Imx0aV91c2VyIiwicGFzc3dvcmQiOiJsdGlfcGFzc3dvcmQiLCJleHAiOjE3Nzk3MDcyOTl9.mGCkwRRNjTojlgIWEQdXtGDaxGOc38YLB6Mw9bQqc0s">
+        
+    <title>
+      
+      Pre-Test Setup | 
+      OPIcKoreaDEMO
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://opickoreademo.multicampus.com/favicon.gif">
+    
+    <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
+      
+      <link rel="stylesheet" href="../assets/css/video-js.css">
+      <link rel="stylesheet" href="../assets/css/master.css">
+      <script src="../assets/js/jquery.min.js"></script>
+      <script type="text/javascript" src="../assets/js/mic-perm.js"></script>
+      <style>
+
+        /**
+        * Session Timeout Dialog Styles
+         */
+         #session-timeout-dialog-logout { display: none; }
+
+         /**
+         * Following styles are used on the Setup page, Sample Question page, and  Test page.
+         */
+
+         /**
+         * Used display: inline-block to get the video element and the volume-indicator wrapper side by side.
+         * *** I also added the mx-md-0 class to help with the positioning.
+         */
+        #setup-video, #opic-video {display: inline-block; }
+      </style>
+
+        <style type="text/css">
+    .learnosity-block { position: static; top: auto; }
+    .learnosity-block .lrn.lrn_widget.lrn_qr.lrn_audio { width: 100%;}
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper { width: 100%; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_widget_footer.lrn_toolbar { display: flex; flex-direction: row; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper { max-width: inherit; border: none; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix > div.lrn_widget_content { padding: 0; height: 4px; width: auto; border: 1px solid #ced4da;}
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix > div.lrn_widget_content > div.lrn_content_header { display: none; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix > div.lrn_widget_content > div.lrn_audio_status { display: none; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix > div.lrn_audioblock_right { position: absolute; top: -10000px; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix { background-color: #e9ecef; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix > div.lrn_widget_content > div.lrn_waveform { height: 4px; position: inherit; top: inherit; background: inherit; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix > div.lrn_widget_content > div.lrn_waveform > canvas { display: none !important; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix > div.lrn_widget_content { background-color: #e9ecef; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_row.lrn_clearfix > div.lrn_widget_content > div.lrn_waveform > div.lrn_position { background: #36f; opacity: 1; border: none; height: 4px; }
+    .lrn_widget > div > div > div.lrn_response_input_wrapper.lrn_box_skin_wrapper > div.lrn_widget_footer.lrn_toolbar { display: none; }
+  </style>
+
+    <style type="text/css">[responsive-image] > img, [data-responsive-image] {overflow: hidden; padding: 0; } [responsive-image] > img, [data-responsive-image] > img {width: 100%;}
+@keyframes element-queries { 0% { visibility: inherit; } }</style></head>
+    <body>
+          <div id="contentDiv">
+        <div class="container-fluid">
+          <div class="actfl-test-container mx-auto">
+
+            <!-- Content begins here -->
+            
+            <div class="add-con">
+    <div class="name-tag">
+        <div class="con-in">
+            <p class="name" style="font-size:2.6em;"></p>
+            <div class="setting-area">
+                <button type="button" class="btn-guide" id="popoverGuide">안내</button>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="popoverGuideModal" tabindex="-1" role="dialog" aria-labelledby="popoverGuideModal" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="setting-layer">
+                                    <p class="copy">Guide</p>
+                                                                        <ul class="lists">
+                                                                                <li>· 사전 점검 화면입니다. </li>
+                                                                                <li>· 헤드셋을 올바르게 착용하시고, 질문 청취와 답변 녹음이 정상 진행되는지 차례대로 확인하여 주십시오.</li>
+                                                                                <li>· 실제 시험 화면과는 차이가 있으니 주의 바랍니다.</li>
+                                                                            </ul>
+                                    <button type="button" class="close" data-dismiss="modal">닫기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+            <script src="../assets/js/all.min.js" charset="utf-8"></script>
+
+<script src="../assets/js/video.min.js"></script>
+<script src="../assets/js/videojs-playlist.min.js"></script>
+<script src="../assets/js/audioRecordTimer.js"></script>
+
+<div class="row">
+  <div class="col">
+    <div class="block-steps mt-1">
+  <ul class="steps-5">
+                <li class="checked" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./survey-clone.html'">
+        <div class="step-content">
+          <h3>1</h3>
+          <p>Background Survey</p>
+        </div>
+      </li>
+                <li class="checked before-selected" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./self-assessment.html'">
+        <div class="step-content">
+          <h3>2</h3>
+          <p>Self Assessment</p>
+        </div>
+      </li>
+                <li class="selected" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./setup.html'">
+        <div class="step-content">
+          <h3>3</h3>
+          <p>Setup</p>
+        </div>
+      </li>
+                <li class="" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./sample-question.html'">
+        <div class="step-content">
+          <h3>4</h3>
+          <p>Sample Question</p>
+        </div>
+      </li>
+                <li class="" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./begin-test.html'">
+        <div class="step-content">
+          <h3>5</h3>
+          <p>Begin Test</p>
+        </div>
+      </li>
+      </ul>
+</div>
+    <div class="block-setup">
+
+      <h2 class="header-primary mt-2 mb-5">Pre-Test Setup</h2>
+
+      <div id="micAccessMessage" class="text-center mt-3 p-5" hidden="">
+  <h2>마이크 사용을 허용하십시오.</h2>
+  <p>웹브라우저의 권한 설정에서 "허용" 또는 "예" 버튼을 눌러 마이크 사용을 허용하십시오.</p>
+</div>
+
+<div id="accessDeniedMessage" class="text-center mt-3" hidden="">
+  <h2>마이크 사용 거부됨</h2>
+  <p>마이크 사용이 거부되었습니다.</p>
+  <button class="btn-primary refreshButton">다시 시도하십시오.</button>
+</div>
+
+<div id="accessBlockedMessage" class="text-center mt-3" hidden="">
+  <h2>마이크 사용 차단됨</h2>
+  <p>브라우저 설정에서 마이크 사용 허용이 해제되거나 차단된 것 같습니다.</p>
+  <p>브라우저 설정에서 마이크 사용을 허용한 후 다시 시도해보십시오.</p>
+  
+  <button class="btn-primary refreshButton mt-2">다시 시도하십시오.</button>
+</div>
+
+<div id="noMicMessage" class="text-center mt-3" hidden="">
+  <h2>마이크가 감지되지 않음</h2>
+  <p>브라우저에서 마이크 연결을 확인할 수 없습니다. 마이크가 잘 연결되어 있는지 확인 후 다시 시도 바랍니다. 문제가 지속되는 경우, 시스템 관리자에게 문의하십시오.</p>
+  <button class="btn-primary refreshButton">다시 시도하십시오.</button>
+</div>
+
+<div id="serverErrorMessage" class="text-center mt-3" hidden="">
+  <h2>서버 오류</h2>
+  <p></p>
+  <button class="btn-primary refreshButton mt-2">다시 시도하십시오.</button>
+</div>
+
+<div id="browserNotSupportedMessage" class="text-center mt-3" hidden="">
+  <h2>브라우저가 지원되지 않습니다.</h2>
+  <button class="btn-primary logoutButton mt-2">Sign Out</button>
+</div>
+
+      <div id="setupArea" class="row">
+        <div class="col-md-6 col-lg-5">
+
+          <div class="row no-gutters">
+            <div class="col-6 col-md-11 text-center">
+              <div class="block-video mb-1">
+                <div class="video-js vjs-opic-skin mx-auto mx-md-0 vjs-controls-disabled vjs-workinghover vjs-v7 vjs-user-active setup-video-dimensions vjs-playing vjs-has-started" id="setup-video" tabindex="-1" role="region" lang="en" translate="no" aria-label="Video Player"><video id="setup-video_html5_api" class="vjs-tech" tabindex="-1" role="application" preload="auto" poster="https://opickoreademo.multicampus.com/images/NewEuroAvatarCaptured.png" src="blob:https://opickoreademo.multicampus.com/176d88e5-bcda-4b0e-9567-96c96293bda0">
+                  <p>이 영상을 재생하기 위해서는 Javascript 사용을 허용해야 합니다.</p>
+                </video><div class="vjs-poster" tabindex="-1" aria-disabled="false" style="background-image: url(&quot;https://opickoreademo.multicampus.com/images/NewEuroAvatarCaptured.png&quot;);"></div><div class="vjs-text-track-display" translate="yes" aria-live="off" aria-atomic="true"><div style="position: absolute; inset: 0px; margin: 1.5%;"></div></div><div class="vjs-loading-spinner" dir="ltr"><span class="vjs-control-text">Video Player is loading.</span></div><button class="vjs-big-play-button" type="button" title="Play Video" aria-disabled="false"><span class="vjs-icon-placeholder" aria-hidden="true"></span><span class="vjs-control-text" aria-live="polite">Play Video</span></button><div class="vjs-error-display vjs-modal-dialog vjs-hidden " tabindex="-1" aria-describedby="setup-video_component_534_description" aria-hidden="true" aria-label="Modal Window" role="dialog"><p class="vjs-modal-dialog-description vjs-control-text" id="setup-video_component_534_description">This is a modal window.</p><div class="vjs-modal-dialog-content" role="document"></div></div><div class="vjs-modal-dialog vjs-hidden  vjs-text-track-settings" tabindex="-1" aria-describedby="setup-video_component_540_description" aria-hidden="true" aria-label="Caption Settings Dialog" role="dialog"><p class="vjs-modal-dialog-description vjs-control-text" id="setup-video_component_540_description">Beginning of dialog window. Escape will cancel and close the window.</p><div class="vjs-modal-dialog-content" role="document"><div class="vjs-track-settings-colors"><fieldset class="vjs-fg-color vjs-track-setting"><legend id="captions-text-legend-setup-video_component_540">Text</legend><label id="captions-foreground-color-setup-video_component_540" class="vjs-label">Color</label><select aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540"><option id="captions-foreground-color-setup-video_component_540-White" value="#FFF" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540 captions-foreground-color-setup-video_component_540-White">White</option><option id="captions-foreground-color-setup-video_component_540-Black" value="#000" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540 captions-foreground-color-setup-video_component_540-Black">Black</option><option id="captions-foreground-color-setup-video_component_540-Red" value="#F00" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540 captions-foreground-color-setup-video_component_540-Red">Red</option><option id="captions-foreground-color-setup-video_component_540-Green" value="#0F0" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540 captions-foreground-color-setup-video_component_540-Green">Green</option><option id="captions-foreground-color-setup-video_component_540-Blue" value="#00F" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540 captions-foreground-color-setup-video_component_540-Blue">Blue</option><option id="captions-foreground-color-setup-video_component_540-Yellow" value="#FF0" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540 captions-foreground-color-setup-video_component_540-Yellow">Yellow</option><option id="captions-foreground-color-setup-video_component_540-Magenta" value="#F0F" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540 captions-foreground-color-setup-video_component_540-Magenta">Magenta</option><option id="captions-foreground-color-setup-video_component_540-Cyan" value="#0FF" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-color-setup-video_component_540 captions-foreground-color-setup-video_component_540-Cyan">Cyan</option></select><span class="vjs-text-opacity vjs-opacity"><label id="captions-foreground-opacity-setup-video_component_540" class="vjs-label">Transparency</label><select aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-opacity-setup-video_component_540"><option id="captions-foreground-opacity-setup-video_component_540-Opaque" value="1" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-opacity-setup-video_component_540 captions-foreground-opacity-setup-video_component_540-Opaque">Opaque</option><option id="captions-foreground-opacity-setup-video_component_540-SemiTransparent" value="0.5" aria-labelledby="captions-text-legend-setup-video_component_540 captions-foreground-opacity-setup-video_component_540 captions-foreground-opacity-setup-video_component_540-SemiTransparent">Semi-Transparent</option></select></span></fieldset><fieldset class="vjs-bg-color vjs-track-setting"><legend id="captions-background-setup-video_component_540">Background</legend><label id="captions-background-color-setup-video_component_540" class="vjs-label">Color</label><select aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540"><option id="captions-background-color-setup-video_component_540-Black" value="#000" aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540 captions-background-color-setup-video_component_540-Black">Black</option><option id="captions-background-color-setup-video_component_540-White" value="#FFF" aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540 captions-background-color-setup-video_component_540-White">White</option><option id="captions-background-color-setup-video_component_540-Red" value="#F00" aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540 captions-background-color-setup-video_component_540-Red">Red</option><option id="captions-background-color-setup-video_component_540-Green" value="#0F0" aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540 captions-background-color-setup-video_component_540-Green">Green</option><option id="captions-background-color-setup-video_component_540-Blue" value="#00F" aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540 captions-background-color-setup-video_component_540-Blue">Blue</option><option id="captions-background-color-setup-video_component_540-Yellow" value="#FF0" aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540 captions-background-color-setup-video_component_540-Yellow">Yellow</option><option id="captions-background-color-setup-video_component_540-Magenta" value="#F0F" aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540 captions-background-color-setup-video_component_540-Magenta">Magenta</option><option id="captions-background-color-setup-video_component_540-Cyan" value="#0FF" aria-labelledby="captions-background-setup-video_component_540 captions-background-color-setup-video_component_540 captions-background-color-setup-video_component_540-Cyan">Cyan</option></select><span class="vjs-bg-opacity vjs-opacity"><label id="captions-background-opacity-setup-video_component_540" class="vjs-label">Transparency</label><select aria-labelledby="captions-background-setup-video_component_540 captions-background-opacity-setup-video_component_540"><option id="captions-background-opacity-setup-video_component_540-Opaque" value="1" aria-labelledby="captions-background-setup-video_component_540 captions-background-opacity-setup-video_component_540 captions-background-opacity-setup-video_component_540-Opaque">Opaque</option><option id="captions-background-opacity-setup-video_component_540-SemiTransparent" value="0.5" aria-labelledby="captions-background-setup-video_component_540 captions-background-opacity-setup-video_component_540 captions-background-opacity-setup-video_component_540-SemiTransparent">Semi-Transparent</option><option id="captions-background-opacity-setup-video_component_540-Transparent" value="0" aria-labelledby="captions-background-setup-video_component_540 captions-background-opacity-setup-video_component_540 captions-background-opacity-setup-video_component_540-Transparent">Transparent</option></select></span></fieldset><fieldset class="vjs-window-color vjs-track-setting"><legend id="captions-window-setup-video_component_540">Window</legend><label id="captions-window-color-setup-video_component_540" class="vjs-label">Color</label><select aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540"><option id="captions-window-color-setup-video_component_540-Black" value="#000" aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540 captions-window-color-setup-video_component_540-Black">Black</option><option id="captions-window-color-setup-video_component_540-White" value="#FFF" aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540 captions-window-color-setup-video_component_540-White">White</option><option id="captions-window-color-setup-video_component_540-Red" value="#F00" aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540 captions-window-color-setup-video_component_540-Red">Red</option><option id="captions-window-color-setup-video_component_540-Green" value="#0F0" aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540 captions-window-color-setup-video_component_540-Green">Green</option><option id="captions-window-color-setup-video_component_540-Blue" value="#00F" aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540 captions-window-color-setup-video_component_540-Blue">Blue</option><option id="captions-window-color-setup-video_component_540-Yellow" value="#FF0" aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540 captions-window-color-setup-video_component_540-Yellow">Yellow</option><option id="captions-window-color-setup-video_component_540-Magenta" value="#F0F" aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540 captions-window-color-setup-video_component_540-Magenta">Magenta</option><option id="captions-window-color-setup-video_component_540-Cyan" value="#0FF" aria-labelledby="captions-window-setup-video_component_540 captions-window-color-setup-video_component_540 captions-window-color-setup-video_component_540-Cyan">Cyan</option></select><span class="vjs-window-opacity vjs-opacity"><label id="captions-window-opacity-setup-video_component_540" class="vjs-label">Transparency</label><select aria-labelledby="captions-window-setup-video_component_540 captions-window-opacity-setup-video_component_540"><option id="captions-window-opacity-setup-video_component_540-Transparent" value="0" aria-labelledby="captions-window-setup-video_component_540 captions-window-opacity-setup-video_component_540 captions-window-opacity-setup-video_component_540-Transparent">Transparent</option><option id="captions-window-opacity-setup-video_component_540-SemiTransparent" value="0.5" aria-labelledby="captions-window-setup-video_component_540 captions-window-opacity-setup-video_component_540 captions-window-opacity-setup-video_component_540-SemiTransparent">Semi-Transparent</option><option id="captions-window-opacity-setup-video_component_540-Opaque" value="1" aria-labelledby="captions-window-setup-video_component_540 captions-window-opacity-setup-video_component_540 captions-window-opacity-setup-video_component_540-Opaque">Opaque</option></select></span></fieldset></div><div class="vjs-track-settings-font"><fieldset class="vjs-font-percent vjs-track-setting"><legend id="captions-font-size-setup-video_component_540" class="">Font Size</legend><select aria-labelledby="captions-font-size-setup-video_component_540"><option id="captions-font-size-setup-video_component_540-50" value="0.50" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-50">50%</option><option id="captions-font-size-setup-video_component_540-75" value="0.75" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-75">75%</option><option id="captions-font-size-setup-video_component_540-100" value="1.00" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-100">100%</option><option id="captions-font-size-setup-video_component_540-125" value="1.25" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-125">125%</option><option id="captions-font-size-setup-video_component_540-150" value="1.50" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-150">150%</option><option id="captions-font-size-setup-video_component_540-175" value="1.75" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-175">175%</option><option id="captions-font-size-setup-video_component_540-200" value="2.00" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-200">200%</option><option id="captions-font-size-setup-video_component_540-300" value="3.00" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-300">300%</option><option id="captions-font-size-setup-video_component_540-400" value="4.00" aria-labelledby="captions-font-size-setup-video_component_540 captions-font-size-setup-video_component_540-400">400%</option></select></fieldset><fieldset class="vjs-edge-style vjs-track-setting"><legend id="setup-video_component_540" class="">Text Edge Style</legend><select aria-labelledby="setup-video_component_540"><option id="setup-video_component_540-None" value="none" aria-labelledby="setup-video_component_540 setup-video_component_540-None">None</option><option id="setup-video_component_540-Raised" value="raised" aria-labelledby="setup-video_component_540 setup-video_component_540-Raised">Raised</option><option id="setup-video_component_540-Depressed" value="depressed" aria-labelledby="setup-video_component_540 setup-video_component_540-Depressed">Depressed</option><option id="setup-video_component_540-Uniform" value="uniform" aria-labelledby="setup-video_component_540 setup-video_component_540-Uniform">Uniform</option><option id="setup-video_component_540-Dropshadow" value="dropshadow" aria-labelledby="setup-video_component_540 setup-video_component_540-Dropshadow">Dropshadow</option></select></fieldset><fieldset class="vjs-font-family vjs-track-setting"><legend id="captions-font-family-setup-video_component_540" class="">Font Family</legend><select aria-labelledby="captions-font-family-setup-video_component_540"><option id="captions-font-family-setup-video_component_540-ProportionalSansSerif" value="proportionalSansSerif" aria-labelledby="captions-font-family-setup-video_component_540 captions-font-family-setup-video_component_540-ProportionalSansSerif">Proportional Sans-Serif</option><option id="captions-font-family-setup-video_component_540-MonospaceSansSerif" value="monospaceSansSerif" aria-labelledby="captions-font-family-setup-video_component_540 captions-font-family-setup-video_component_540-MonospaceSansSerif">Monospace Sans-Serif</option><option id="captions-font-family-setup-video_component_540-ProportionalSerif" value="proportionalSerif" aria-labelledby="captions-font-family-setup-video_component_540 captions-font-family-setup-video_component_540-ProportionalSerif">Proportional Serif</option><option id="captions-font-family-setup-video_component_540-MonospaceSerif" value="monospaceSerif" aria-labelledby="captions-font-family-setup-video_component_540 captions-font-family-setup-video_component_540-MonospaceSerif">Monospace Serif</option><option id="captions-font-family-setup-video_component_540-Casual" value="casual" aria-labelledby="captions-font-family-setup-video_component_540 captions-font-family-setup-video_component_540-Casual">Casual</option><option id="captions-font-family-setup-video_component_540-Script" value="script" aria-labelledby="captions-font-family-setup-video_component_540 captions-font-family-setup-video_component_540-Script">Script</option><option id="captions-font-family-setup-video_component_540-SmallCaps" value="small-caps" aria-labelledby="captions-font-family-setup-video_component_540 captions-font-family-setup-video_component_540-SmallCaps">Small Caps</option></select></fieldset></div><div class="vjs-track-settings-controls"><button type="button" class="vjs-default-button" title="restore all settings to the default values">Reset<span class="vjs-control-text"> restore all settings to the default values</span></button><button type="button" class="vjs-done-button">Done</button></div></div><button class="vjs-close-button vjs-control vjs-button" type="button" title="Close Modal Dialog" aria-disabled="false"><span class="vjs-icon-placeholder" aria-hidden="true"></span><span class="vjs-control-text" aria-live="polite">Close Modal Dialog</span></button><p class="vjs-control-text">End of dialog window.</p></div></div>
+              </div><!-- end block-video -->
+            </div>
+            <div class="col-6 col-md-1">
+              <div class="block-mic-gauge disable set-to-video-height">
+  <div class="mic-gauge-well">
+    <div class="mic-gauge">
+      <div class="mic-gauge-marker"></div>
+    </div>
+  </div>
+  <div class="mic-icon"></div>
+</div>
+            </div>
+            <div class="col-6 col-md-11 text-center">
+              <div class="mt-1">
+                <button id="btnReplay" class="btn btn-primary" type="button" name="button" hidden=""><i class="fa fa-undo"></i></button>
+                <button id="btnPlay" class="btn btn-primary" type="button" name="button" hidden="hidden" style="display: none;"><i class="fa fa-play"></i></button>
+              </div>
+
+              <div id="recordingStatus" class="alert-recording mx-auto set-to-video-width hide">
+                <span>Recording...</span>
+              </div><!-- end alert-recording -->
+
+              <div id="uploading-alert" class="alert-blue alert-uploading mx-auto set-to-video-width hide">
+                <span>Uploading your audio</span>
+              </div>
+
+              <div id="responseTimer" class="hide block-response-timer mb-2">
+                <h3>Uploading your audio</h3>
+                <div class="response-time-well">
+                  <div id="response-time-progress-bar" class="response-time"></div>
+                </div>
+                <div id="response-time-remaining-time" class="remaining-time">0:30</div>
+              </div><!-- end block-response-timer -->
+
+            </div>
+            <div class="col-6 col-md-1"></div>
+          </div>
+
+        </div>
+
+        <div class="col-md-6 col-lg-7">
+
+          <div class="block-setup-instructions">
+            <ol class="list-numbered">
+              <li class="mb-2"><b>Play</b> 아이콘(▶)을 눌러 질문을 듣고 재생 음량을 조정하십시오.</li>
+              <li class="mb-2">마이크 점검을 위해 <b>Start Recording</b>을 누르고 답변 후 <b>Stop Recording</b><br>을 눌러 녹음을 마칩니다.</li>
+              <li class="mb-2"><b>Play Recording</b>을 눌러 음성이 정상 녹음되었는지 확인하십시오.</li>
+            </ol>
+
+            <div class="block-setup-controls">
+              <button id="start" button="" class="btn btn-start-recording mb-1" type="button" name="button" disabled=""><span>Start Recording</span></button>
+              <button id="stop" button="" class="hide btn btn-stop-recording mb-1" type="button" name="button"><span>Stop Recording</span></button>
+              <button id="view" class="btn btn-play-recording mb-1" type="button" name="button" disabled=""><span>Play Recording</span></button>
+            </div>
+
+            <div class="learnosity-block">
+                <div id="setup-67d5b64f-add0-4998-be5f-b5647b1a4aae" class="lrn lrn_widget lrn_qr lrn_audio lrn_clearfix"><div class="lrn_response_wrapper" data-lrn-widget-component="interaction"><div class="lrn_response lrn_clearfix "><div class="lrn-accessibility-arialive" aria-live="assertive" aria-atomic="true" aria-hidden="true"></div><div class="lrn_response_input_wrapper lrn_box_skin_wrapper"><div class="lrn_row lrn_clearfix"><div class="lrn_widget_content"><div class="lrn_content_header"><div class="lrn_header_left">Audio Recorder</div><div class="lrn_header_right"></div></div><div class="lrn_audio_status">Click on record to start</div><div class="lrn_waveform"><div class="lrn_loaded lrn_wfblock"></div><img class="lrn_wfgraphic lrn_wfimage" style="display: none;"><canvas class="lrn_wfgraphic lrn_wfcanvas" style="display: none;"></canvas><div class="lrn_position lrn_wfblock"></div><div class="lrn_seeker"></div></div></div><div class="lrn_audioblock_right"><div class="lrn_audiomiclevel"><img src="./assets/../assets/images/audioblock-vol.png" class="lrn_audiomiclevel_image"><div class="lrn_audiomiclevelmask"></div></div></div></div><div class="lrn_widget_footer lrn_toolbar"><ul class="lrn_toolbar_left"><li><button type="button" class="lrn_btn lrn_start_recording" title="Start recording" aria-label="Start recording"></button></li><li><button type="button" class="lrn_btn lrn_start_playback" title="Play recording" aria-label="Play recording" disabled="disabled"></button></li></ul><div class="lrn_toolbar_center"><div class="lrn_audio_timer"><span class="lrn_currentTime">00:00</span><span class="lrn_timeSeparator"> / </span><span class="lrn_totalTime">1:00</span></div><div class="lrn_audio_progress_bar_wrapper"><div class="lrn_audio_progress_bar" title="Progress"><div class="lrn_position lrn_recording"></div><div class="lrn_seeker"></div><div class="lrn_seekspace"></div></div></div></div><div class="lrn_volume_control"><button class="lrn_btn lrn_volume_btn" aria-label="Adjust Volume" title="Adjust Volume" type="button" style="display: none;"></button><div class="lrn_volume_slider"><div class="lrn_volume_total"></div><div class="lrn_volume_current"></div><div class="lrn_volume_handle"></div></div></div></div></div></div></div></div>
+            </div>
+
+          </div><!-- end block-setup-instructions -->
+
+        </div>
+      </div>
+
+    </div><!-- end block-setup -->
+
+    <div class="row mt-4">
+      <div class="col text-right">
+        <form id="formNext" action="sample-question.html">
+          <input type="hidden" name="_token" value="sYX5sE1dvWoee8BQiYFDZ2Oq5LvKS0u7nGwRZ1Jt">
+          <div class="form-group">
+            <button id="btnNext" class="btn btn-primary" type="button" name="button" disabled=""><span>Next</span></button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+
+          </div>
+          <div class="modal-footer text-center">
+            <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- XHR Failure Modal -->
+    <div class="modal fade" id="xhrFailModal" tabindex="-1" role="dialog" aria-labelledby="xhrFailModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            오류가 발생했습니다. 감독관에게 보고하여 시험에 다시 로그인하십시오.
+          </div>
+          <div class="modal-footer text-center">
+            <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal" onclick="location.reload()">다시 시도하십시오.</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+  <!--link href="https://questions.learnosity.com/v2.163.2/stylesheets/css/main.css" rel="stylesheet"-->
+  <link rel="stylesheet" href="./assets/learnosity-main.css">
+<script src="../assets/js/LTIMediaRecorder.js"></script>
+
+<div class="row" hidden="">
+  <p>
+    Clipping Samples: <span id="test_clippingSamples"></span>
+    <br>
+    RMS Energy: <span id="test_rmsEnergy"></span>
+  </p>
+</div>
+
+            <!-- Content ends here -->
+
+          </div><!-- end actfl-test-container -->
+        </div><!-- end container-fluid -->
+      </div><!-- end  contentDiv -->
+
+      <script src="../assets/js/popper.min.js"></script>
+      <script src="../assets/js/bootstrap.min.js"></script>
+      <script src="../assets/js/jquery.html5.hide-show.js"></script>
+      
+    <script src="../assets/js/common.js" charset="utf-8"></script>
+
+        <script src="../assets/js/common-demo.js" charset="utf-8"></script>
+        
+    <script type="text/javascript">
+      const LTIApiUrl = "https://opickoreademo.multicampus.com";
+      const LTIRecordingApiUrl = "https://xxx.cloudfront.com";
+      const LTIFileTransferUrl = "https://opickoreademo.multicampus.com";
+      const LTIRecordingApiDemo = "1" ? true : false;
+    </script>
+
+          <script type="text/javascript" src="../assets/js/logoutOnRefresh.js" charset="utf-8"></script>
+    
+    
+  <script>
+    ltiOpic.config({
+      deviceInfo: {"os":"Windows","browser":"Chrome"},
+      micError: false,
+      text: {
+        recordAgain : "\ub2e4\uc2dc \ub179\uc74c\ud558\uc2ed\uc2dc\uc624.",
+        tooMuchNoise : "\uc7a1\uc74c\uc774 \uc2ec\ud569\ub2c8\ub2e4.",
+        tooLow : "\ub179\uc74c \uc74c\ub7c9\uc774 \uc791\uc2b5\ub2c8\ub2e4.",
+        playRecording : "Play Recording",
+      },
+      video : {
+        src : 'https://opickoreademo.multicampus.com/file/ENVolume',
+        poster : 'https://opickoreademo.multicampus.com/images/NewEuroAvatarCaptured.png'
+      },
+      recordingApi: "1",
+      responseTimer : 30,
+    });
+
+          ltiOpic.settings.ltiRecorder = {
+        signedRequest : {"consumer_key":null,"user_id":"2274A70E-3BD0-4933-A3EF-2EF3093445D3","timestamp":"20260525-0943","signature":"d7ae652ca83aafd048d9a13de95cab5d4b5d777f7c6cb9e536f7089b6aaad96e","session_id":"65A44864-E0A4-4FEE-8B2E-E0441667B66A","FolderId":"1396159","recordingSlides":"30000","type":"local_practice","state":"initial","id":"mic-check(setup)","name":"mic-check","course_id":"OPIc","beta_flags":{"use_webrtc":true,"reactive_views":false},"questions":[{"response_id":"setup-67d5b64f-add0-4998-be5f-b5647b1a4aae","type":"audio","description":"The student needs to speak about a typical day in their life.","overwrite_warning":false,"max_length":30,"silence_stop_duration":0}]},
+        responseId: "67d5b64f-add0-4998-be5f-b5647b1a4aae",
+      };
+    
+          ltiOpic.demo(true);
+      </script>
+
+  <script type="text/javascript">
+    detectFailedXHR(function(){
+      $("#xhrFailModal").modal('show');
+      $('#xhrFailModal').on('hidden.bs.modal', function () {
+          location.reload();
+      })
+    });
+  </script>
+  <script type="text/javascript" src="../assets/js/detect-rtc.js"></script>
+  <script type="text/javascript" src="../assets/js/setup.js"></script>
+  <script src="../assets/js/ResizeSensor.js"></script>
+  <script src="../assets/js/ElementQueries.js"></script>
+
+    <script src="../assets/js/bootstrap-session-timeout.js"></script>
+<script type="text/javascript">
+  $(function(){
+    $.sessionTimeout({
+        title: '',
+        message: '60초 이내로 로그아웃됩니다. OK를 눌러서 로그아웃되는 것을 피하세요.',
+        logoutButton: 'Logout',
+        keepAliveButton: 'OK',
+        keepAliveUrl: 'https://opickoreademo.multicampus.com/keep-alive',
+        keepAliveInterval: 600000,
+        logoutUrl: 'https://opickoreademo.multicampus.com/logout',
+        redirUrl: 'https://opickoreademo.multicampus.com/logout',
+        ajaxType: 'GET',
+        warnAfter: 1740000,
+        redirAfter: 1800000,
+        countdownBar: true,
+        onRedir: function() {
+          window.onbeforeunload = null;
+          window.location = "https://opickoreademo.multicampus.com/logout";
+        }
+    });
+  });
+</script>
+
+    
+  
+
+<div class="modal fade" id="session-timeout-dialog">               <div class="modal-dialog">                 <div class="modal-content">                   <div class="modal-header">                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>                     <h4 class="modal-title"></h4>                   </div>                   <div class="modal-body">                     <p>60초 이내로 로그아웃됩니다. OK를 눌러서 로그아웃되는 것을 피하세요.</p>                                          <div class="progress">                   <div class="progress-bar progress-bar-striped countdown-bar active" role="progressbar" style="min-width: 15px; width: 100%;">                     <span class="countdown-holder">1800s</span>                   </div>                 </div>                   </div>                   <div class="modal-footer">                     <button id="session-timeout-dialog-logout" type="button" class="btn btn-default">Logout</button>                     <button id="session-timeout-dialog-keepalive" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>                   </div>                 </div>               </div>              </div></body></html>

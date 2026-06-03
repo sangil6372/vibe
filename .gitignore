@@ -1,0 +1,31 @@
+# 환경 변수 / API 키 (절대 커밋 금지)
+.env
+.env.*
+
+# MP3 음성 파일 (용량 크고 생성 가능)
+questions/custom/**/*.mp3
+questions/original/**/*.mp3
+
+# 녹음 파일
+recordings/
+
+# Python 캐시
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code 로컬 설정
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 로그
+*.log

@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPIc Admin</title>
+<!-- http://localhost:8765 경유 시: /assets/... 경로 사용 -->
+<script src="/assets/js/vue.global.js"
+        onerror="this.onerror=null;this.src='../assets/js/vue.global.js'"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; }
+#app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+/* ── Header ── */
+.header {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  z-index: 10;
+}
+.header h1 { font-size: 1.1em; font-weight: 700; letter-spacing: .5px; }
+.header .spacer { flex: 1; }
+.server-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: .78em; background: rgba(255,255,255,.18); padding: 4px 12px; border-radius: 20px;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot.on  { background: #4ade80; box-shadow: 0 0 6px #4ade80; }
+.dot.off { background: #f87171; }
+.voice-select {
+  background: rgba(255,255,255,.18); border: none; color: white;
+  padding: 4px 10px; border-radius: 6px; font-size: .8em; cursor: pointer; outline: none;
+}
+.voice-select option { color: #333; background: white; }
+.rate-select {
+  background: rgba(255,255,255,.18); border: none; color: white;
+  padding: 4px 10px; border-radius: 6px; font-size: .8em; cursor: pointer; outline: none; width: 80px;
+}
+.rate-select option { color: #333; background: white; }
+.btn-home { color: rgba(255,255,255,.8); text-decoration: none; font-size: .82em; display:flex; align-items:center; gap:4px; }
+.btn-home:hover { color: white; }
+
+/* ── Layout ── */
+.layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 220px; flex-shrink: 0;
+  background: white;
+  border-right: 1px solid #e8eaed;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: .8em; font-weight: 600; color: #666;
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.theme-list { flex: 1; overflow-y: auto; padding: 8px; min-height: 0; }
+.theme-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: 8px;
+  cursor: pointer; transition: background .15s;
+  font-size: .9em;
+}
+.theme-item:hover { background: #f5f5f5; }
+.theme-item.active { background: #ede9fe; color: #6d28d9; font-weight: 600; }
+.theme-item .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.theme-item .status-dot.all-ok  { background: #22c55e; }
+.theme-item .status-dot.partial { background: #f59e0b; }
+.theme-item .status-dot.none    { background: #ef4444; }
+.theme-item .theme-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.theme-item .q-count { font-size: .75em; color: #999; flex-shrink: 0; }
+.theme-star {
+  background: none; border: none; cursor: pointer; padding: 0 1px;
+  font-size: .88em; flex-shrink: 0; opacity: .2; transition: opacity .15s; line-height: 1;
+}
+.theme-star.active { opacity: 1; }
+.theme-star:hover { opacity: .7; }
+.theme-item.active .theme-star { opacity: .35; }
+.theme-item.active .theme-star.active { opacity: 1; }
+/* sidebar filter */
+.sidebar-filter {
+  display: flex; gap: 4px; padding: 8px 10px 4px; flex-shrink: 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.filter-btn {
+  flex: 1; padding: 4px 2px; border: 1px solid #e5e7eb;
+  border-radius: 6px; background: white; color: #666;
+  cursor: pointer; font-size: .72em; font-weight: 600;
+  transition: background .12s, color .12s;
+}
+.filter-btn:hover { background: #f5f3ff; color: #7c3aed; border-color: #c4b5fd; }
+.filter-btn.active { background: #ede9fe; color: #6d28d9; border-color: #c4b5fd; }
+
+.sidebar-footer { padding: 12px; border-top: 1px solid #f0f0f0; }
+.btn-add-theme {
+  width: 100%; padding: 9px; border: 2px dashed #c4b5fd;
+  background: none; border-radius: 8px; color: #7c3aed;
+  cursor: pointer; font-size: .85em; font-weight: 600;
+  transition: background .15s;
+}
+.btn-add-theme:hover { background: #f5f3ff; }
+
+/* ── Content ── */
+.content { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+
+/* empty state */
+.empty-state {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; color: #bbb; gap: 12px;
+}
+.empty-state .icon { font-size: 3em; }
+.empty-state p { font-size: .95em; }
+
+/* content header */
+.content-header {
+  padding: 16px 24px;
+  background: white;
+  border-bottom: 1px solid #e8eaed;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.content-header h2 { font-size: 1.1em; font-weight: 700; color: #1a1a2e; }
+.theme-type-select {
+  padding: 3px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+  font-size: .8em; color: #555; background: white; cursor: pointer; outline: none;
+}
+.theme-type-select:focus { border-color: #c4b5fd; }
+.q-total { font-size: .8em; color: #999; flex: 1; }
+.btn-gen-all {
+  padding: 7px 16px; background: #667eea; color: white;
+  border: none; border-radius: 8px; cursor: pointer; font-size: .82em; font-weight: 600;
+  transition: background .15s;
+}
+.btn-gen-all:hover { background: #5a6fd6; }
+.btn-gen-all:disabled { background: #c4c4c4; cursor: default; }
+.btn-del-theme {
+  padding: 7px 12px; background: #fee2e2; color: #dc2626;
+  border: none; border-radius: 8px; cursor: pointer; font-size: .82em; font-weight: 600;
+}
+.btn-del-theme:hover { background: #fecaca; }
+
+/* question list */
+.question-list { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+
+.q-row {
+  background: white; border: 1.5px solid #e8eaed;
+  border-radius: 12px; padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.q-row:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.q-row.status-exists   { border-left: 3px solid #22c55e; }
+.q-row.status-missing  { border-left: 3px solid #f59e0b; }
+.q-row.status-modified { border-left: 3px solid #a855f7; }
+.q-row.status-generating { border-left: 3px solid #3b82f6; }
+.q-row.status-error    { border-left: 3px solid #ef4444; }
+
+.q-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #f0f2f5; color: #555;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .78em; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+}
+.q-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.q-text {
+  width: 100%; border: 1px solid transparent; border-radius: 6px;
+  padding: 6px 8px; font-size: .9em; line-height: 1.5;
+  font-family: inherit; resize: vertical;
+  background: transparent; outline: none; color: #333;
+  min-height: 52px;
+  transition: background .15s, border-color .15s;
+}
+.q-text:focus { background: #f8f9ff; border-color: #c4b5fd; }
+.q-filename { font-size: .72em; color: #aaa; }
+.q-status-text { font-size: .75em; }
+.q-status-text.exists    { color: #16a34a; }
+.q-status-text.missing   { color: #d97706; }
+.q-status-text.modified  { color: #7c3aed; }
+.q-status-text.generating{ color: #2563eb; }
+.q-status-text.error     { color: #dc2626; }
+
+.q-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; margin-top: 2px; }
+.btn-icon {
+  width: 32px; height: 32px; border: none; border-radius: 8px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: .85em; transition: background .15s;
+}
+.btn-play-orig { background: #f0f9ff; color: #0369a1; }
+.btn-play-orig:hover { background: #e0f2fe; }
+.btn-play-orig:disabled { background: #f0f0f0; color: #ccc; cursor: default; }
+.btn-play    { background: #dcfce7; color: #16a34a; }
+.btn-play:hover { background: #bbf7d0; }
+.btn-play:disabled { background: #f0f0f0; color: #ccc; cursor: default; }
+.btn-preview { background: #e0f2fe; color: #0369a1; }
+.btn-preview:hover { background: #bae6fd; }
+.btn-preview:disabled { background: #f0f0f0; color: #ccc; cursor: default; }
+.btn-gen     { background: #ede9fe; color: #7c3aed; }
+.btn-gen:hover  { background: #ddd6fe; }
+.btn-gen.replace { background: #fef3c7; color: #92400e; }
+.btn-gen.replace:hover { background: #fde68a; }
+.btn-gen:disabled { background: #f0f0f0; color: #ccc; cursor: default; }
+.btn-del  { background: #fee2e2; color: #dc2626; }
+.btn-del:hover  { background: #fecaca; }
+
+.spin { display: inline-block; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* add question */
+.add-q-area { padding: 0 24px 20px; }
+.btn-add-q {
+  width: 100%; padding: 11px; border: 2px dashed #c4b5fd;
+  background: none; border-radius: 10px; color: #7c3aed;
+  cursor: pointer; font-size: .85em; font-weight: 600;
+  transition: background .15s;
+}
+.btn-add-q:hover { background: #f5f3ff; }
+
+/* modal */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal-box {
+  background: white; border-radius: 16px; padding: 32px 28px;
+  width: 360px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+.modal-box h3 { font-size: 1.1em; margin-bottom: 18px; color: #1a1a2e; }
+.modal-input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #e0e0e0;
+  border-radius: 8px; font-size: .95em; outline: none;
+  transition: border-color .15s;
+}
+.modal-input:focus { border-color: #667eea; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.btn-cancel {
+  padding: 8px 18px; border: 1.5px solid #e0e0e0; background: white;
+  border-radius: 8px; cursor: pointer; font-size: .85em;
+}
+.btn-cancel:hover { background: #f5f5f5; }
+.btn-confirm {
+  padding: 8px 18px; background: #667eea; color: white;
+  border: none; border-radius: 8px; cursor: pointer; font-size: .85em; font-weight: 600;
+}
+.btn-confirm:hover { background: #5a6fd6; }
+.btn-confirm:disabled { background: #c4c4c4; cursor: default; }
+
+/* toast */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: #1a1a2e; color: white;
+  padding: 12px 20px; border-radius: 10px;
+  font-size: .85em; box-shadow: 0 4px 16px rgba(0,0,0,.3);
+  z-index: 200;
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* server offline notice */
+.offline-notice {
+  background: #fff7ed; border: 1px solid #fed7aa;
+  color: #c2410c; padding: 10px 24px;
+  font-size: .82em; display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── 섹션 구분 바 ── */
+.section-bar {
+  padding: 7px 14px; border-radius: 8px;
+  font-size: .8em; font-weight: 700;
+  display: flex; align-items: center; gap: 8px;
+  margin: 6px 0 4px;
+}
+.section-bar.regular  { background: #dbeafe; color: #1d4ed8; }
+.section-bar.roleplay { background: #ede9fe; color: #6d28d9; }
+.section-bar.surprise { background: #fef3c7; color: #92400e; }
+.section-bar.intro    { background: #dcfce7; color: #166534; }
+.section-desc { font-weight: 400; opacity: .65; font-size: .9em; }
+
+/* ── 유형 배지 ── */
+.q-type-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 52px; height: 24px; border-radius: 5px;
+  font-size: .68em; font-weight: 800; flex-shrink: 0;
+  white-space: nowrap; padding: 0 6px;
+}
+.q-type-badge.t-survey   { background: #dbeafe; color: #1d4ed8; }
+.q-type-badge.t-roleplay { background: #ede9fe; color: #6d28d9; }
+.q-type-badge.t-surprise { background: #fef3c7; color: #92400e; }
+.q-type-badge.t-intro    { background: #dcfce7; color: #166534; }
+.q-type-desc { font-size: .7em; color: #999; margin-left: 6px; }
+
+/* ── 빈 유형 추가 행 ── */
+.q-row-add {
+  background: #fafafa; border: 2px dashed #e5e7eb;
+  border-radius: 12px; padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; color: #aaa; font-size: .82em;
+  transition: border-color .15s, color .15s;
+}
+.q-row-add:hover { border-color: #c4b5fd; color: #7c3aed; }
+
+/* ── 모달 타입 선택 ── */
+.type-select {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #e0e0e0;
+  border-radius: 8px; font-size: .95em; outline: none;
+  transition: border-color .15s; margin-top: 12px;
+}
+.type-select:focus { border-color: #667eea; }
+
+/* ── 유형 그룹 (다중 문항) ── */
+.type-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.type-group-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 2px 2px;
+}
+.type-q-count { font-size: .72em; color: #aaa; margin-left: 2px; }
+
+/* ── compact q-row (오디오 우선) ── */
+.q-row-compact {
+  background: white; border: 1.5px solid #e8eaed;
+  border-radius: 10px; padding: 9px 12px;
+  display: flex; align-items: center; gap: 10px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.q-row-compact:hover { box-shadow: 0 1px 6px rgba(0,0,0,.07); }
+.q-row-compact.status-exists   { border-left: 3px solid #22c55e; }
+.q-row-compact.status-missing  { border-left: 3px solid #f59e0b; }
+.q-row-compact.status-modified { border-left: 3px solid #a855f7; }
+.q-row-compact.status-generating { border-left: 3px solid #3b82f6; }
+.q-row-compact.status-error    { border-left: 3px solid #ef4444; }
+.q-compact-main { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.q-compact-filename { font-size: .75em; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+.q-compact-status { font-size: .7em; flex-shrink: 0; }
+.q-compact-status.exists    { color: #16a34a; }
+.q-compact-status.missing   { color: #d97706; }
+.q-compact-status.modified  { color: #7c3aed; }
+.q-compact-status.generating{ color: #2563eb; }
+.q-compact-status.error     { color: #dc2626; }
+.btn-expand {
+  background: none; border: 1px solid #e0e0e0; border-radius: 6px;
+  padding: 3px 8px; font-size: .72em; color: #888; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0; transition: background .15s;
+}
+.btn-expand:hover { background: #f5f5f5; }
+.btn-expand.active { background: #ede9fe; border-color: #c4b5fd; color: #6d28d9; }
+.q-text-wrap { padding: 6px 4px 2px; }
+
+/* ── 임포트 배지 ── */
+.btn-import {
+  padding: 7px 14px; background: #f0fdf4; color: #16a34a;
+  border: 1.5px solid #86efac; border-radius: 8px; cursor: pointer;
+  font-size: .82em; font-weight: 600; transition: background .15s;
+}
+.btn-import:hover { background: #dcfce7; }
+.btn-import:disabled { background: #f0f0f0; color: #bbb; border-color: #e0e0e0; cursor: default; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <header class="header">
+    <h1>OPIc Admin</h1>
+    <div class="server-badge">
+      <span :class="['dot', serverOnline ? 'on' : 'off']"></span>
+      <span>{{ serverOnline ? '서버 연결됨' : '서버 미연결' }}</span>
+    </div>
+    <span style="font-size:.78em; background:rgba(255,255,255,.18); padding:4px 12px; border-radius:20px; opacity:.85;">🎙 JennyNeural</span>
+    <select class="rate-select" v-model="rate" @change="save">
+      <option value="-15%">-15% 느리게</option>
+      <option value="-10%">-10% OPIc★</option>
+      <option value="-5%">-5% 기본</option>
+      <option value="0%">0% 보통</option>
+      <option value="+5%">+5% 빠르게</option>
+    </select>
+    <div class="spacer"></div>
+    <div class="server-badge" style="background:rgba(255,255,255,.13); cursor:default;" :title="'T9: '+comboVStatus.t9.length+'개 / T10: '+comboVStatus.t10.length+'개'">
+      <span>Combo V</span>
+      <span style="font-weight:700; color:#fde68a;">{{ comboVStatus.t9.length }}+{{ comboVStatus.t10.length }}</span>
+    </div>
+    <div class="server-badge" style="cursor:pointer; background:rgba(255,255,255,.13);"
+         @click="openApiKeyModal" :title="apiKeyOk ? 'API 키 설정됨 — 클릭해 변경' : 'Anthropic API 키 설정 필요'">
+      <span>🔑</span>
+      <span style="font-weight:700;" :style="{color: apiKeyOk ? '#86efac' : '#fca5a5'}">
+        {{ apiKeyOk ? '키 설정됨' : '키 없음' }}
+      </span>
+    </div>
+    <a href="index.html" class="btn-home">← 홈</a>
+  </header>
+
+  <!-- API Key Modal -->
+  <div class="modal-bg" v-if="showApiKeyModal" @click.self="showApiKeyModal=false">
+    <div class="modal-box">
+      <h3>🔑 OpenAI API 키 설정</h3>
+      <p style="font-size:.82em; color:#666; margin-bottom:14px;">
+        AI 피드백(GPT-4o) 기능에 사용됩니다. 키는 프로젝트 폴더의 <code>.env</code> 파일에 저장됩니다.
+      </p>
+      <input
+        class="modal-input"
+        v-model="apiKeyInput"
+        type="password"
+        placeholder="sk-proj-..."
+        @keydown.enter="saveApiKey"
+        ref="apiKeyInputRef"
+      >
+      <p v-if="apiKeyMasked" style="font-size:.78em; color:#888; margin-top:6px;">현재: {{ apiKeyMasked }}</p>
+      <div class="modal-footer">
+        <button class="btn-cancel" @click="showApiKeyModal=false">취소</button>
+        <button class="btn-confirm" @click="saveApiKey" :disabled="!apiKeyInput.trim()">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Server offline notice -->
+  <div class="offline-notice" v-if="!serverOnline">
+    ⚠️ TTS 서버 미연결 — MP3 생성 불가. 실행: <code style="background:#fff3;padding:2px 6px;border-radius:4px;">python tts_server.py</code>
+  </div>
+
+  <!-- Layout -->
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">주제 목록 ({{ filteredThemes.length }}/{{ themes.length }})</div>
+      <div class="sidebar-filter">
+        <button :class="['filter-btn', sidebarFilter===''?'active':'']"        @click="sidebarFilter=''">전체</button>
+        <button :class="['filter-btn', sidebarFilter==='survey'?'active':'']"  @click="sidebarFilter='survey'">서베이</button>
+        <button :class="['filter-btn', sidebarFilter==='surprise'?'active':'']" @click="sidebarFilter='surprise'">돌발</button>
+      </div>
+      <div class="theme-list">
+        <div
+          v-for="t in filteredThemes" :key="t.id"
+          :class="['theme-item', selectedId === t.id ? 'active' : '']"
+          @click="selectedId = t.id"
+        >
+          <span :class="['status-dot', themeStatusClass(t)]"></span>
+          <span class="theme-name">{{ t.name }}</span>
+          <button :class="['theme-star', t.starred ? 'active' : '']" @click.stop="toggleStar(t)" :title="t.starred ? '즐겨찾기 해제' : '즐겨찾기'">⭐</button>
+          <span class="q-count">{{ t.questions.length }}문항</span>
+        </div>
+        <div v-if="filteredThemes.length === 0" style="padding:20px;text-align:center;color:#bbb;font-size:.85em;">
+          주제 없음
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <button class="btn-add-theme" @click="openAddTheme">+ 주제 추가</button>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Empty state -->
+      <div class="empty-state" v-if="!selectedTheme">
+        <div class="icon">📂</div>
+        <p>왼쪽에서 주제를 선택하세요</p>
+      </div>
+
+      <template v-if="selectedTheme">
+        <!-- Content header -->
+        <div class="content-header">
+          <h2>{{ selectedTheme.name }}</h2>
+          <select class="theme-type-select" :value="selectedTheme.themeType" @change="changeThemeType($event.target.value)">
+            <option value="survey">서베이</option>
+            <option value="surprise">돌발</option>
+            <option value="intro">자기소개</option>
+          </select>
+          <span class="q-total">{{ selectedTheme.questions.length }}문항</span>
+          <button class="btn-import" @click="syncTexts(true)" :disabled="!serverOnline" title="transcripts.json에서 실제 OPIc 원문으로 전체 덮어쓰기">
+            📝 원문 동기화
+          </button>
+          <button class="btn-gen-all" @click="generateAll" :disabled="!serverOnline || isGenerating">
+            <span v-if="isGenerating"><span class="spin">⟳</span> 생성 중...</span>
+            <span v-else>⚡ 미생성 전체 생성</span>
+          </button>
+          <button class="btn-gen-all" @click="generateAll(true)" :disabled="!serverOnline || isGenerating" style="background:#a855f7;">
+            🔄 전체 재생성
+          </button>
+          <button class="btn-del-theme" @click="deleteTheme">🗑 주제 삭제</button>
+        </div>
+
+        <!-- Question list (유형 기반, 유형당 다중 문항) -->
+        <div class="question-list">
+
+          <!-- 자기소개 -->
+          <template v-if="selectedTheme.themeType === 'intro'">
+            <div class="section-bar intro">👤 자기소개 <span class="section-desc">항상 Q1 고정 — 랜덤 선택</span></div>
+            <div class="type-group" v-for="qt in [0]" :key="qt">
+              <template v-for="(q, qi) in getQsByType(qt)" :key="q.id">
+                <div :class="['q-row-compact','status-'+q.status]">
+                  <div class="q-num">{{ qi+1 }}</div>
+                  <div class="q-compact-main">
+                    <span class="q-compact-filename">{{ q.filename }}</span>
+                    <span :class="['q-compact-status',q.status]">{{ statusLabel(q.status) }}</span>
+                  </div>
+                  <div class="q-actions">
+                    <button class="btn-icon btn-play-orig" @click="playOriginal(q)" :disabled="!topicOriginals[selectedTheme.name]?.[String(q.qtype)]?.length" title="원본 음원 재생">🔈</button>
+                    <button class="btn-icon btn-play"    @click="playAudio(q)"    :disabled="q.status!=='exists'" title="TTS 음원 재생">▶</button>
+                    <button class="btn-icon btn-preview" @click="previewText(q.text)" :disabled="!q.text.trim()" title="브라우저 TTS 미리보기">🔉</button>
+                    <button :class="['btn-icon','btn-gen', q.status==='exists'?'replace':'']"
+                            @click="generateOne(q)" :disabled="!serverOnline||q.status==='generating'"
+                            :title="q.status==='exists'?'🔄 재생성 — 기존 음원 대체':'🔊 TTS 생성'">
+                      <span v-if="q.status==='generating'" class="spin">⟳</span>
+                      <span v-else-if="q.status==='exists'">🔄</span>
+                      <span v-else>🔊</span>
+                    </button>
+                    <button :class="['btn-expand', isExpanded(q.id)?'active':'']" @click="toggleExpand(q.id)">
+                      {{ isExpanded(q.id) ? '텍스트 접기 ▲' : '텍스트 보기 ▼' }}
+                    </button>
+                    <button class="btn-icon btn-del" @click="deleteQuestion(q.id)">✕</button>
+                  </div>
+                </div>
+                <div v-if="isExpanded(q.id)" class="q-text-wrap">
+                  <textarea class="q-text" v-model="q.text" @input="onTextChange(q)" rows="3" placeholder="영어 원문 (선택 입력)"></textarea>
+                </div>
+              </template>
+              <div class="q-row-add" @click="addQuestion(qt)">
+                <span :class="['q-type-badge','t-intro']">+</span>
+                <span>{{ QTYPES[qt].label }} 문항 추가</span>
+                <span class="type-q-count" v-if="getQsByType(qt).length">(현재 {{ getQsByType(qt).length }}개)</span>
+              </div>
+            </div>
+          </template>
+
+          <!-- 서베이 주제 -->
+          <template v-else-if="selectedTheme.themeType === 'survey'">
+            <div class="section-bar regular">📋 서베이 콤보 유형 <span class="section-desc">Combo I·II — 문항 랜덤 선택</span></div>
+            <div class="type-group" v-for="qt in [1,2,3,4,5]" :key="qt">
+              <div class="type-group-header">
+                <span :class="['q-type-badge','t-survey']">{{ QTYPES[qt].label }}</span>
+                <span class="q-type-desc">{{ QTYPES[qt].desc }}</span>
+                <span class="type-q-count" v-if="getQsByType(qt).length">({{ getQsByType(qt).length }}문항)</span>
+              </div>
+              <template v-for="(q, qi) in getQsByType(qt)" :key="q.id">
+                <div :class="['q-row-compact','status-'+q.status]">
+                  <div class="q-num">{{ qi+1 }}</div>
+                  <div class="q-compact-main">
+                    <span class="q-compact-filename">{{ q.filename }}</span>
+                    <span :class="['q-compact-status',q.status]">{{ statusLabel(q.status) }}</span>
+                  </div>
+                  <div class="q-actions">
+                    <button class="btn-icon btn-play-orig" @click="playOriginal(q)" :disabled="!topicOriginals[selectedTheme.name]?.[String(q.qtype)]?.length" title="원본 음원 재생">🔈</button>
+                    <button class="btn-icon btn-play"    @click="playAudio(q)"    :disabled="q.status!=='exists'" title="TTS 음원 재생">▶</button>
+                    <button class="btn-icon btn-preview" @click="previewText(q.text)" :disabled="!q.text.trim()" title="텍스트 미리보기 (브라우저 TTS)">🔉</button>
+                    <button :class="['btn-icon','btn-gen', q.status==='exists'?'replace':'']"
+                            @click="generateOne(q)" :disabled="!serverOnline||q.status==='generating'"
+                            :title="q.status==='exists'?'🔄 재생성 — 기존 음원 대체':'🔊 TTS 생성'">
+                      <span v-if="q.status==='generating'" class="spin">⟳</span>
+                      <span v-else-if="q.status==='exists'">🔄</span>
+                      <span v-else>🔊</span>
+                    </button>
+                    <button :class="['btn-expand', isExpanded(q.id)?'active':'']" @click="toggleExpand(q.id)">
+                      {{ isExpanded(q.id) ? '접기 ▲' : '원문 ▼' }}
+                    </button>
+                    <button class="btn-icon btn-del" @click="deleteQuestion(q.id)">✕</button>
+                  </div>
+                </div>
+                <div v-if="isExpanded(q.id)" class="q-text-wrap">
+                  <textarea class="q-text" v-model="q.text" @input="onTextChange(q)" rows="3" placeholder="영어 원문 (선택 입력)"></textarea>
+                </div>
+              </template>
+              <div class="q-row-add" @click="addQuestion(qt)">
+                <span :class="['q-type-badge','t-survey']">+</span>
+                <span>{{ QTYPES[qt].label }} 문항 추가</span>
+              </div>
+            </div>
+
+            <div class="section-bar roleplay" style="margin-top:14px;">🎭 롤플레이 콤보 유형 <span class="section-desc">Combo IV — 문항 랜덤 선택</span></div>
+            <div class="type-group" v-for="qt in [6,7,8]" :key="qt">
+              <div class="type-group-header">
+                <span :class="['q-type-badge','t-roleplay']">{{ QTYPES[qt].label }}</span>
+                <span class="q-type-desc">{{ QTYPES[qt].desc }}</span>
+                <span class="type-q-count" v-if="getQsByType(qt).length">({{ getQsByType(qt).length }}문항)</span>
+              </div>
+              <template v-for="(q, qi) in getQsByType(qt)" :key="q.id">
+                <div :class="['q-row-compact','status-'+q.status]">
+                  <div class="q-num">{{ qi+1 }}</div>
+                  <div class="q-compact-main">
+                    <span class="q-compact-filename">{{ q.filename }}</span>
+                    <span :class="['q-compact-status',q.status]">{{ statusLabel(q.status) }}</span>
+                  </div>
+                  <div class="q-actions">
+                    <button class="btn-icon btn-play-orig" @click="playOriginal(q)" :disabled="!topicOriginals[selectedTheme.name]?.[String(q.qtype)]?.length" title="원본 음원 재생">🔈</button>
+                    <button class="btn-icon btn-play"    @click="playAudio(q)"    :disabled="q.status!=='exists'" title="TTS 음원 재생">▶</button>
+                    <button class="btn-icon btn-preview" @click="previewText(q.text)" :disabled="!q.text.trim()" title="텍스트 미리보기 (브라우저 TTS)">🔉</button>
+                    <button :class="['btn-icon','btn-gen', q.status==='exists'?'replace':'']"
+                            @click="generateOne(q)" :disabled="!serverOnline||q.status==='generating'"
+                            :title="q.status==='exists'?'🔄 재생성 — 기존 음원 대체':'🔊 TTS 생성'">
+                      <span v-if="q.status==='generating'" class="spin">⟳</span>
+                      <span v-else-if="q.status==='exists'">🔄</span>
+                      <span v-else>🔊</span>
+                    </button>
+                    <button :class="['btn-expand', isExpanded(q.id)?'active':'']" @click="toggleExpand(q.id)">
+                      {{ isExpanded(q.id) ? '접기 ▲' : '원문 ▼' }}
+                    </button>
+                    <button class="btn-icon btn-del" @click="deleteQuestion(q.id)">✕</button>
+                  </div>
+                </div>
+                <div v-if="isExpanded(q.id)" class="q-text-wrap">
+                  <textarea class="q-text" v-model="q.text" @input="onTextChange(q)" rows="3" placeholder="영어 원문 (선택 입력)"></textarea>
+                </div>
+              </template>
+              <div class="q-row-add" @click="addQuestion(qt)">
+                <span :class="['q-type-badge','t-roleplay']">+</span>
+                <span>{{ QTYPES[qt].label }} 문항 추가</span>
+              </div>
+            </div>
+          </template>
+
+          <!-- 돌발 — T1-T4 + T6-T8 (실제 파일 구조 반영) -->
+          <template v-else-if="selectedTheme.themeType === 'surprise'">
+            <div class="section-bar surprise">⚡ 돌발 <span class="section-desc">Combo V — 랜덤 2문항 선택</span></div>
+            <div class="type-group" v-for="qt in [1,2,3,4,5]" :key="qt">
+              <div class="type-group-header">
+                <span :class="['q-type-badge','t-survey']">{{ QTYPES[qt].label }}</span>
+                <span class="q-type-desc">{{ QTYPES[qt].desc }}</span>
+                <span class="type-q-count" v-if="getQsByType(qt).length">({{ getQsByType(qt).length }}문항)</span>
+              </div>
+              <template v-for="(q, qi) in getQsByType(qt)" :key="q.id">
+                <div :class="['q-row-compact','status-'+q.status]">
+                  <div class="q-num">{{ qi+1 }}</div>
+                  <div class="q-compact-main">
+                    <span class="q-compact-filename">{{ q.filename }}</span>
+                    <span :class="['q-compact-status',q.status]">{{ statusLabel(q.status) }}</span>
+                  </div>
+                  <div class="q-actions">
+                    <button class="btn-icon btn-play-orig" @click="playOriginal(q)" :disabled="!topicOriginals[selectedTheme.name]?.[String(q.qtype)]?.length" title="원본 음원 재생">🔈</button>
+                    <button class="btn-icon btn-play"    @click="playAudio(q)"    :disabled="q.status!=='exists'" title="TTS 음원 재생">▶</button>
+                    <button class="btn-icon btn-preview" @click="previewText(q.text)" :disabled="!q.text.trim()" title="텍스트 미리보기 (브라우저 TTS)">🔉</button>
+                    <button :class="['btn-icon','btn-gen', q.status==='exists'?'replace':'']"
+                            @click="generateOne(q)" :disabled="!serverOnline||q.status==='generating'"
+                            :title="q.status==='exists'?'🔄 재생성 — 기존 음원 대체':'🔊 TTS 생성'">
+                      <span v-if="q.status==='generating'" class="spin">⟳</span>
+                      <span v-else-if="q.status==='exists'">🔄</span>
+                      <span v-else>🔊</span>
+                    </button>
+                    <button :class="['btn-expand', isExpanded(q.id)?'active':'']" @click="toggleExpand(q.id)">
+                      {{ isExpanded(q.id) ? '접기 ▲' : '원문 ▼' }}
+                    </button>
+                    <button class="btn-icon btn-del" @click="deleteQuestion(q.id)">✕</button>
+                  </div>
+                </div>
+                <div v-if="isExpanded(q.id)" class="q-text-wrap">
+                  <textarea class="q-text" v-model="q.text" @input="onTextChange(q)" rows="3" placeholder="영어 원문 (선택 입력)"></textarea>
+                </div>
+              </template>
+              <div class="q-row-add" @click="addQuestion(qt)">
+                <span :class="['q-type-badge','t-survey']">+</span>
+                <span>{{ QTYPES[qt].label }} 문항 추가</span>
+              </div>
+            </div>
+            <div class="section-bar roleplay" style="margin-top:14px;">🎭 롤플레이 (돌발)</div>
+            <div class="type-group" v-for="qt in [6,7,8]" :key="qt">
+              <div class="type-group-header">
+                <span :class="['q-type-badge','t-roleplay']">{{ QTYPES[qt].label }}</span>
+                <span class="q-type-desc">{{ QTYPES[qt].desc }}</span>
+                <span class="type-q-count" v-if="getQsByType(qt).length">({{ getQsByType(qt).length }}문항)</span>
+              </div>
+              <template v-for="(q, qi) in getQsByType(qt)" :key="q.id">
+                <div :class="['q-row-compact','status-'+q.status]">
+                  <div class="q-num">{{ qi+1 }}</div>
+                  <div class="q-compact-main">
+                    <span class="q-compact-filename">{{ q.filename }}</span>
+                    <span :class="['q-compact-status',q.status]">{{ statusLabel(q.status) }}</span>
+                  </div>
+                  <div class="q-actions">
+                    <button class="btn-icon btn-play-orig" @click="playOriginal(q)" :disabled="!topicOriginals[selectedTheme.name]?.[String(q.qtype)]?.length" title="원본 음원 재생">🔈</button>
+                    <button class="btn-icon btn-play"    @click="playAudio(q)"    :disabled="q.status!=='exists'" title="TTS 음원 재생">▶</button>
+                    <button class="btn-icon btn-preview" @click="previewText(q.text)" :disabled="!q.text.trim()" title="텍스트 미리보기 (브라우저 TTS)">🔉</button>
+                    <button :class="['btn-icon','btn-gen', q.status==='exists'?'replace':'']"
+                            @click="generateOne(q)" :disabled="!serverOnline||q.status==='generating'"
+                            :title="q.status==='exists'?'🔄 재생성 — 기존 음원 대체':'🔊 TTS 생성'">
+                      <span v-if="q.status==='generating'" class="spin">⟳</span>
+                      <span v-else-if="q.status==='exists'">🔄</span>
+                      <span v-else>🔊</span>
+                    </button>
+                    <button :class="['btn-expand', isExpanded(q.id)?'active':'']" @click="toggleExpand(q.id)">
+                      {{ isExpanded(q.id) ? '접기 ▲' : '원문 ▼' }}
+                    </button>
+                    <button class="btn-icon btn-del" @click="deleteQuestion(q.id)">✕</button>
+                  </div>
+                </div>
+                <div v-if="isExpanded(q.id)" class="q-text-wrap">
+                  <textarea class="q-text" v-model="q.text" @input="onTextChange(q)" rows="3" placeholder="영어 원문 (선택 입력)"></textarea>
+                </div>
+              </template>
+              <div class="q-row-add" @click="addQuestion(qt)">
+                <span :class="['q-type-badge','t-roleplay']">+</span>
+                <span>{{ QTYPES[qt].label }} 문항 추가</span>
+              </div>
+            </div>
+
+            <div class="section-bar surprise" style="margin-top:14px;">💬 비교·이슈 <span class="section-desc">T9 비교대조 / T10 사회이슈 (텍스트 작성 후 TTS 생성)</span></div>
+            <div class="type-group" v-for="qt in [9,10]" :key="qt">
+              <div class="type-group-header">
+                <span :class="['q-type-badge','t-surprise']">{{ QTYPES[qt].label }}</span>
+                <span class="q-type-desc">{{ QTYPES[qt].desc }}</span>
+                <span class="type-q-count" v-if="getQsByType(qt).length">({{ getQsByType(qt).length }}문항)</span>
+              </div>
+              <template v-for="(q, qi) in getQsByType(qt)" :key="q.id">
+                <div :class="['q-row-compact','status-'+q.status]">
+                  <div class="q-num">{{ qi+1 }}</div>
+                  <div class="q-compact-main">
+                    <span class="q-compact-filename">{{ q.filename }}</span>
+                    <span :class="['q-compact-status',q.status]">{{ statusLabel(q.status) }}</span>
+                  </div>
+                  <div class="q-actions">
+                    <button class="btn-icon btn-play-orig" @click="playOriginal(q)" :disabled="!topicOriginals[selectedTheme.name]?.[String(q.qtype)]?.length" title="원본 음원 재생">🔈</button>
+                    <button class="btn-icon btn-play"    @click="playAudio(q)"    :disabled="q.status!=='exists'" title="TTS 음원 재생">▶</button>
+                    <button class="btn-icon btn-preview" @click="previewText(q.text)" :disabled="!q.text.trim()" title="텍스트 미리보기 (브라우저 TTS)">🔉</button>
+                    <button :class="['btn-icon','btn-gen', q.status==='exists'?'replace':'']"
+                            @click="generateOne(q)" :disabled="!serverOnline||q.status==='generating'"
+                            :title="q.status==='exists'?'🔄 재생성 — 기존 음원 대체':'🔊 TTS 생성'">
+                      <span v-if="q.status==='generating'" class="spin">⟳</span>
+                      <span v-else-if="q.status==='exists'">🔄</span>
+                      <span v-else>🔊</span>
+                    </button>
+                    <button :class="['btn-expand', isExpanded(q.id)?'active':'']" @click="toggleExpand(q.id)">
+                      {{ isExpanded(q.id) ? '접기 ▲' : '원문 ▼' }}
+                    </button>
+                    <button class="btn-icon btn-del" @click="deleteQuestion(q.id)">✕</button>
+                  </div>
+                </div>
+                <div v-if="isExpanded(q.id)" class="q-text-wrap">
+                  <textarea class="q-text" v-model="q.text" @input="onTextChange(q)" rows="3" placeholder="영어 원문 (선택 입력)"></textarea>
+                </div>
+              </template>
+              <div class="q-row-add" @click="addQuestion(qt)">
+                <span :class="['q-type-badge','t-surprise']">+</span>
+                <span>{{ QTYPES[qt].label }} 문항 추가</span>
+              </div>
+            </div>
+          </template>
+
+        </div>
+      </template>
+
+    </div>
+  </div>
+
+  <!-- Add Theme Modal -->
+  <div class="modal-bg" v-if="showAddTheme" @click.self="showAddTheme=false">
+    <div class="modal-box">
+      <h3>새 주제 추가</h3>
+      <input
+        class="modal-input"
+        v-model="newThemeName"
+        placeholder="예: 공원, 요가, 해변 ..."
+        @keydown.enter="confirmAddTheme"
+        ref="themeInput"
+      >
+      <select class="type-select" v-model="newThemeType">
+        <option value="survey">서베이 주제 (T1–T5, T6–T8)</option>
+        <option value="surprise">돌발 주제 (T1–T5, T6–T8, T9–T10)</option>
+        <option value="intro">자기소개 (T0)</option>
+      </select>
+      <div class="modal-footer">
+        <button class="btn-cancel" @click="showAddTheme=false">취소</button>
+        <button class="btn-confirm" @click="confirmAddTheme" :disabled="!newThemeName.trim()">추가</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" v-if="toast">{{ toast }}</div>
+
+</div>
+
+<script>
+const { createApp, ref, computed, onMounted, nextTick } = Vue;
+const SERVER = 'http://127.0.0.1:8765';
+const LS_KEY = 'opic_admin_themes';
+const LS_CFG = 'opic_admin_config';
+
+// ── 서베이 주제 고정 목록 (사용자 정의) ──────────────────────────────
+const SURVEY_NAMES = new Set([
+  '자기소개','사는곳','공원','요가','해변','캠핑','콘서트','공연',
+  '음악','영화','집에서보내는휴가','집 휴가','집에서보내는 휴가','독신'
+]);
+function getThemeType(name) {
+  if (name === '자기소개') return 'intro';
+  return SURVEY_NAMES.has(name) ? 'survey' : 'surprise';
+}
+
+// ── 10가지 문제 유형 정의 ──────────────────────────────────────────
+const QTYPES = {
+  0:  { label: '자기소개',    desc: '시험 시작 자기소개',                           group: 'intro'    },
+  1:  { label: 'T1 묘사',     desc: '현재시제 — 장소/종류 묘사',                    group: 'survey'   },
+  2:  { label: 'T2 루틴',     desc: '현재시제 — 활동/루틴/단계 묘사',               group: 'survey'   },
+  3:  { label: 'T3 경험',     desc: '과거 — 최초 또는 최근 경험',                   group: 'survey'   },
+  4:  { label: 'T4 인상',     desc: '과거 — 인상적인 경험',                         group: 'survey'   },
+  5:  { label: 'T5 경험2',    desc: '과거 — 또 다른 경험/기억',                     group: 'survey'   },
+  6:  { label: 'T6 정보요청', desc: '롤플레이 — 상대방에게 질문 3개',               group: 'roleplay' },
+  7:  { label: 'T7 문제상황', desc: '롤플레이 — 문제상황 설명 + 대안 2~3개',        group: 'roleplay' },
+  8:  { label: 'T8 관련경험', desc: '롤플레이 후 — 유사 경험 설명',                 group: 'roleplay' },
+  9:  { label: 'T9 비교',     desc: '돌발 — 비교나 대조',                           group: 'surprise' },
+  10: { label: 'T10 이슈',    desc: '돌발 — 사회적 관심사/이슈 예시',               group: 'surprise' },
+};
+
+function uid() { return Math.random().toString(36).slice(2,10); }
+
+// ── 기본 주제/질문 데이터 (OPIc SA 5-6단계 15Q 콤보 구조 반영) ────────────
+// themeType: 'intro' | 'survey' | 'surprise'
+// survey: T1(묘사) T2(루틴) T3(경험) T4(인상) T6(정보요청) T7(문제상황) T8(관련경험)
+// surprise: T9(비교대조) T10(사회이슈)
+const DEFAULT_DATA = [
+  // ── 자기소개 (Q1 고정) ──────────────────────────────────────
+  {
+    name: '자기소개', themeType: 'intro',
+    questions: [
+      { qtype: 0, text: 'Let\'s start the interview. Please tell me about yourself.' }
+    ]
+  },
+  // ── 서베이 주제 ─────────────────────────────────────────────
+  {
+    name: '사는곳', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'Tell me about where you live. Can you describe your home in detail? What does it look like?' },
+      { qtype: 2, text: 'What do you usually do at home in your free time? Describe your typical day at home.' },
+      { qtype: 3, text: 'Have you ever moved to a new place? Tell me about a memorable moving experience you had.' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable memory you have related to your home or living situation.' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You are looking for a new place to live. Call a real estate agent and ask three questions about an apartment you are interested in.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You just found out your apartment has a serious issue, such as a leaking pipe. Call your landlord, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had a problem with your home or living situation? Tell me what happened and how you resolved it.' }
+    ]
+  },
+  {
+    name: '공원', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'Describe a park that you often visit. Where is it located and what does it look like?' },
+      { qtype: 2, text: 'What do you usually do when you go to the park? Describe your typical visit.' },
+      { qtype: 3, text: 'Tell me about a memorable or interesting experience you had at a park.' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable experience you have ever had at a park. What happened and why was it so memorable?' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You want to organize a gathering at a local park. Call the park management office and ask three questions about the facilities and rules.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You planned a picnic at the park with friends but just found out the park is closed for maintenance. Call your friend, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had a plan that was suddenly cancelled or changed? Tell me about that experience.' }
+    ]
+  },
+  {
+    name: '요가', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'Tell me about when you started doing yoga. How did you first get interested in it?' },
+      { qtype: 2, text: 'Describe your typical yoga session. What kinds of poses or exercises do you do?' },
+      { qtype: 3, text: 'Tell me about a memorable experience you had related to yoga.' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable experience you have ever had while doing yoga or related to yoga.' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You want to sign up for a yoga class. Call the yoga studio and ask three questions about the program and schedule.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You signed up for a yoga class but just found out there is a scheduling conflict. Call the studio, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had a problem related to signing up for a class or activity? Tell me what happened.' }
+    ]
+  },
+  {
+    name: '해변', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'Describe a beach that you like to visit. What does it look like? What can you find there?' },
+      { qtype: 2, text: 'What do you usually do when you go to the beach? Describe your typical beach day.' },
+      { qtype: 3, text: 'Tell me about a memorable experience you had at the beach.' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable experience you have ever had at the beach. What happened and why was it so special?' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You are planning a trip to the beach with friends. Call a hotel near the beach and ask three questions about their facilities and services.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You arrived at the beach but something unexpected happened, such as bad weather or a lost item. Call a friend, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had an unexpected problem during a trip or vacation? Tell me what happened and how you dealt with it.' }
+    ]
+  },
+  {
+    name: '캠핑', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'Tell me about camping. Where do you usually go and who do you go with?' },
+      { qtype: 2, text: 'What do you usually do when you go camping? Describe a typical camping trip.' },
+      { qtype: 3, text: 'Tell me about a memorable or unexpected experience you had while camping.' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable camping trip you have ever taken. What happened and why was it so special?' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You want to go camping at a national park. Call the campsite and ask three questions about the camping area and reservations.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You arrived at the campsite but your reserved spot is not available. Call the campsite manager, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had an unexpected problem while camping or traveling outdoors? Tell me about that experience.' }
+    ]
+  },
+  {
+    name: '콘서트', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'Describe a concert venue you have visited. What did it look like? What was the atmosphere like?' },
+      { qtype: 2, text: 'What do you usually do before and during a concert? Describe your typical concert experience.' },
+      { qtype: 3, text: 'Tell me about the most memorable concert you have attended. Why was it special?' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable concert experience you have ever had. What happened and what made it so memorable?' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You want to attend a concert with a friend. Call the concert venue and ask three questions about the event and ticket availability.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You bought tickets to a concert but you need to change your plans. Call the ticket office, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had a problem related to tickets or attending a live event? Tell me what happened.' }
+    ]
+  },
+  {
+    name: '공연', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'What kinds of performances or shows do you like to watch? Describe the type of venues you visit.' },
+      { qtype: 2, text: 'What do you usually do when you go to see a performance? Describe your typical experience.' },
+      { qtype: 3, text: 'Tell me about the most memorable performance you have ever seen. What made it so special?' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable performance you have ever seen. What happened and why did it leave such a lasting impression?' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You want to see a performance at a theater. Call the theater and ask three questions about the show and available seats.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You are at the theater but there is an issue with your reservation. Talk to the staff, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had a problem at a theater or performance venue? Tell me about that experience.' }
+    ]
+  },
+  {
+    name: '음악', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'Tell me about the kind of music you enjoy listening to. Who are your favorite artists or bands?' },
+      { qtype: 2, text: 'How and when do you usually listen to music? Describe your typical music listening habits.' },
+      { qtype: 3, text: 'Tell me about a memorable experience you had that is related to music.' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable music-related experience you have ever had. What happened and why was it so meaningful?' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You want to buy a musical instrument or sign up for music lessons. Call the music store or school and ask three questions.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You ordered something music-related online but there is an issue with your order. Call the customer service, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had a problem related to buying something or using a service? Tell me what happened.' }
+    ]
+  },
+  {
+    name: '영화', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'What kind of movies do you like to watch? Tell me about your favorite genre or a favorite film.' },
+      { qtype: 2, text: 'How do you usually watch movies? Describe a typical movie-watching experience for you.' },
+      { qtype: 3, text: 'Tell me about a movie that was especially memorable to you. Why did it stick with you?' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable movie-related experience you have ever had. What happened and why was it so impactful?' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You want to go to the movies with a friend. Call the movie theater and ask three questions about the films currently showing and the showtimes.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You went to the movie theater but there is an issue, such as the film being sold out or a problem with your seat. Talk to the staff, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had an unexpected problem at a movie theater? Tell me what happened and how you resolved it.' }
+    ]
+  },
+  {
+    name: '집에서보내는휴가', themeType: 'survey',
+    questions: [
+      { qtype: 1, text: 'Tell me about how you typically spend your vacation at home. What kinds of things do you do?' },
+      { qtype: 2, text: 'Describe your ideal vacation at home. What would you do from morning to night?' },
+      { qtype: 3, text: 'Tell me about a memorable time you spent your vacation at home. What made it special?' },
+      { qtype: 4, text: 'Tell me about the most impressive or unforgettable vacation at home you have ever had. What happened and why was it so meaningful?' },
+      { qtype: 6, text: 'I\'d like to give you a situation to act out. You want to plan a special day at home. Call a delivery or catering service and ask three questions about what they offer.' },
+      { qtype: 7, text: 'I\'m sorry, but there is a problem. You ordered food or a service for your day at home but something went wrong with the delivery. Call the service, explain the situation, and suggest two or three alternatives.' },
+      { qtype: 8, text: 'That\'s the end of the role-play. Have you ever had a plan for a relaxing day at home that didn\'t go as expected? Tell me what happened.' }
+    ]
+  },
+  // ── 돌발 주제 (T9 비교대조, T10 사회이슈) ────────────────────
+  {
+    name: '돌발_가구', themeType: 'surprise',
+    questions: [
+      { qtype: 9,  text: 'How has furniture changed over the years? Compare furniture styles or materials from the past to what is popular today.' },
+      { qtype: 10, text: 'Some people believe that owning fewer things and living with minimal furniture leads to a happier life. What do you think about minimalism as a lifestyle trend? Give specific examples to support your opinion.' }
+    ]
+  },
+  {
+    name: '돌발_건강', themeType: 'surprise',
+    questions: [
+      { qtype: 9,  text: 'How have people\'s health habits changed compared to the past? Compare how people maintained their health in the past to how they do it today.' },
+      { qtype: 10, text: 'Mental health has become a major concern in modern society. What do you think are the main causes of stress and mental health issues today? How should society address them?' }
+    ]
+  },
+  {
+    name: '돌발_교통수단', themeType: 'surprise',
+    questions: [
+      { qtype: 9,  text: 'How has transportation changed over the years? Compare how people used to travel to how they travel today.' },
+      { qtype: 10, text: 'Traffic congestion and pollution are major issues in many cities today. What do you think are the most effective solutions to these transportation-related problems?' }
+    ]
+  },
+  {
+    name: '돌발_기술', themeType: 'surprise',
+    questions: [
+      { qtype: 9,  text: 'How has technology changed daily life compared to the past? Compare how people used to do things without technology to how they use technology today.' },
+      { qtype: 10, text: 'Some people are concerned that people are becoming too dependent on smartphones and social media. What do you think? What are the potential consequences of over-reliance on technology?' }
+    ]
+  },
+  {
+    name: '돌발_은행', themeType: 'surprise',
+    questions: [
+      { qtype: 9,  text: 'How has banking changed over the years? Compare how people used to manage their money to how they do it today with digital banking and apps.' },
+      { qtype: 10, text: 'Online banking and financial apps have become very popular. However, some people are concerned about security and privacy. What do you think about this trend? What are the benefits and risks?' }
+    ]
+  }
+];
+
+function buildDefaultThemes() {
+  return DEFAULT_DATA.map(t => {
+    const qtCount = {};
+    return {
+      id: uid(),
+      name: t.name,
+      themeType: getThemeType(t.name),
+      starred: false,
+      questions: t.questions.map(q => {
+        qtCount[q.qtype] = (qtCount[q.qtype] || 0) + 1;
+        return { id: uid(), text: q.text, qtype: q.qtype, filename: `${t.name}_T${q.qtype}_${qtCount[q.qtype]}_Q.mp3`, status: 'missing' };
+      })
+    };
+  });
+}
+
+function migrateThemes(stored) {
+  const regOrder = [1, 2, 3];
+  const rpOrder  = [6, 7, 8];
+  const spOrder  = [9, 10];
+  const VALID_TYPES = new Set(['intro', 'survey', 'surprise']);
+  return stored.map(t => {
+    // themeType: SURVEY_NAMES 기준으로 재분류 (항상 최신 목록 반영)
+    const themeType = getThemeType(t.name);
+    t = { ...t, themeType, starred: t.starred ?? false };
+
+    const qtCount = {};
+    if (t.questions.length && 'qtype' in t.questions[0]) {
+      // already qtype-based: check if filenames are missing the index suffix (_T1_Q.mp3 → _T1_1_Q.mp3)
+      const questions = t.questions.map(q => {
+        qtCount[q.qtype] = (qtCount[q.qtype] || 0) + 1;
+        const idx = qtCount[q.qtype];
+        const oldName = `${t.name}_T${q.qtype}_Q.mp3`;
+        return q.filename === oldName ? { ...q, filename: `${t.name}_T${q.qtype}_${idx}_Q.mp3` } : q;
+      });
+      return { ...t, questions };
+    }
+    // section-based → qtype migration
+    let ri = 0, pi = 0, si = 0;
+    const questions = t.questions.map(q => {
+      let qtype;
+      if      (q.section === 'intro')    qtype = 0;
+      else if (q.section === 'regular')  qtype = regOrder[ri++] ?? 3;
+      else if (q.section === 'roleplay') qtype = rpOrder[pi++]  ?? 8;
+      else                               qtype = spOrder[si++]  ?? 10;
+      qtCount[qtype] = (qtCount[qtype] || 0) + 1;
+      return { id: q.id || uid(), text: q.text || '', qtype, filename: `${t.name}_T${qtype}_${qtCount[qtype]}_Q.mp3`, status: q.status || 'missing' };
+    });
+    return { ...t, questions };
+  });
+}
+
+createApp({
+  setup() {
+    // ── state ──────────────────────────────────────────────
+    const serverOnline   = ref(false);
+    const voice   = 'en-US-JennyNeural';
+    const rate    = ref('-10%');
+    const topicOriginals = ref({});
+    const apiKeyOk       = ref(false);
+    const apiKeyMasked   = ref('');
+    const showApiKeyModal = ref(false);
+    const apiKeyInput    = ref('');
+    const apiKeyInputRef = ref(null);
+
+    const themes     = ref([]);
+    const selectedId = ref(null);
+    const sidebarFilter = ref('');
+    const selectedTheme = computed(() => themes.value.find(t => t.id === selectedId.value));
+    const filteredThemes = computed(() => {
+      let list = themes.value;
+      if (sidebarFilter.value === 'survey')
+        list = list.filter(t => t.themeType === 'survey' || t.themeType === 'intro');
+      else if (sidebarFilter.value === 'surprise')
+        list = list.filter(t => t.themeType === 'surprise');
+      // 즐겨찾기 상단
+      return [...list.filter(t => t.starred), ...list.filter(t => !t.starred)];
+    });
+
+    function getQsByType(qt) {
+      return (selectedTheme.value?.questions || []).filter(q => q.qtype === qt);
+    }
+
+    const showAddTheme = ref(false);
+    const newThemeName = ref('');
+    const newThemeType = ref('survey');
+    const themeInput   = ref(null);
+
+    const isGenerating  = ref(false);
+    const comboVStatus  = ref({ t9: [], t10: [], total: 0 });
+    const toast = ref('');
+    let toastTimer = null;
+    let audioPlayer = null;
+
+    // ── 텍스트 토글 상태 ──────────────────────────────────────
+    const expandedQIds = ref(new Set());
+    function toggleExpand(qid) {
+      const s = new Set(expandedQIds.value);
+      s.has(qid) ? s.delete(qid) : s.add(qid);
+      expandedQIds.value = s;
+    }
+    function isExpanded(qid) { return expandedQIds.value.has(qid); }
+
+    // ── helpers ────────────────────────────────────────────
+    function showToast(msg, duration = 2500) {
+      toast.value = msg;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.value = '', duration);
+    }
+
+    function save() {
+      localStorage.setItem(LS_KEY, JSON.stringify(themes.value));
+      localStorage.setItem(LS_CFG, JSON.stringify({ rate: rate.value }));
+      // opic-test와 즐겨찾기 공유
+      const starred = themes.value.filter(t => t.starred).map(t => t.name);
+      localStorage.setItem('opic_starred_topics', JSON.stringify(starred));
+    }
+
+    function toggleStar(theme) {
+      theme.starred = !theme.starred;
+      save();
+      showToast(theme.starred ? `⭐ "${theme.name}" 즐겨찾기 추가` : `☆ "${theme.name}" 즐겨찾기 해제`);
+    }
+
+    function statusLabel(s) {
+      return { exists:'✅ 생성됨', missing:'⚠️ 미생성', modified:'✏️ 수정됨 (재생성 필요)', generating:'⟳ 생성 중...', error:'❌ 오류' }[s] || '';
+    }
+
+    function themeStatusClass(t) {
+      const qs = t.questions;
+      if (!qs.length) return 'none';
+      const ok = qs.filter(q => q.status === 'exists').length;
+      if (ok === qs.length) return 'all-ok';
+      if (ok === 0) return 'none';
+      return 'partial';
+    }
+
+    // ── server ─────────────────────────────────────────────
+    async function checkServer() {
+      try {
+        const r = await fetch(`${SERVER}/ping`, { signal: AbortSignal.timeout(2000) });
+        const d = await r.json();
+        serverOnline.value = d.ok;
+        if (d.ok) fetchComboVStatus();
+      } catch { serverOnline.value = false; }
+    }
+
+    async function fetchComboVStatus() {
+      try {
+        const r = await fetch(`${SERVER}/custom-status`);
+        comboVStatus.value = await r.json();
+      } catch {}
+    }
+
+    async function scanFiles() {
+      if (!serverOnline.value) return;
+      try {
+        const r = await fetch(`${SERVER}/scan`);
+        const { files } = await r.json();
+        const fileSet = new Set(files);
+        themes.value.forEach(t => {
+          t.questions.forEach(q => {
+            if (q.status !== 'modified' && q.status !== 'generating') {
+              const key = `${t.name}/${q.filename}`;
+              q.status = fileSet.has(key) ? 'exists' : 'missing';
+            }
+          });
+        });
+        save();
+      } catch {}
+    }
+
+    // questions.json + transcripts.json 에서 실제 원문 텍스트를 동기화
+    // forceAll=false: modified(수동편집) 제외하고 전부 덮어씀
+    // forceAll=true : modified 포함 전부 덮어씀 (버튼 클릭 시)
+    async function syncTexts(forceAll = false) {
+      if (!serverOnline.value) return;
+      try {
+        const r = await fetch(`${SERVER}/topic-texts`);
+        const { texts } = await r.json();
+        let updated = 0;
+        themes.value.forEach(t => {
+          const tMap = texts[t.name];
+          if (!tMap) return;
+          t.questions.forEach(q => {
+            const qtexts = tMap[String(q.qtype)];
+            if (!qtexts || !qtexts.length) return;
+            if (!forceAll && q.status === 'modified') return; // 수동편집 보호
+            if (q.text.trim() !== qtexts[0]) {
+              q.text = qtexts[0];
+              updated++;
+            }
+          });
+        });
+        if (updated > 0) {
+          save();
+          if (forceAll) showToast(`📝 ${updated}개 원문 텍스트 동기화 완료`);
+        } else if (forceAll) {
+          showToast('ℹ️ 모든 텍스트가 이미 최신 상태입니다');
+        }
+      } catch { showToast('❌ 원문 동기화 실패'); }
+    }
+
+    // API 키 모달
+    async function openApiKeyModal() {
+      apiKeyInput.value = '';
+      showApiKeyModal.value = true;
+      await nextTick();
+      apiKeyInputRef.value?.focus();
+    }
+
+    async function saveApiKey() {
+      const key = apiKeyInput.value.trim();
+      if (!key) return;
+      try {
+        const r = await fetch(`${SERVER}/apikey-save`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        });
+        const d = await r.json();
+        if (d.ok) {
+          apiKeyOk.value = true;
+          apiKeyMasked.value = 'sk-....' + key.slice(-6);
+          showApiKeyModal.value = false;
+          showToast('✅ API 키 저장 완료');
+        } else {
+          showToast('❌ ' + d.error);
+        }
+      } catch { showToast('❌ 서버 연결 실패'); }
+    }
+
+    async function checkApiKey() {
+      try {
+        const r = await fetch(`${SERVER}/apikey-status`);
+        const d = await r.json();
+        apiKeyOk.value    = d.ok;
+        apiKeyMasked.value = d.masked || '';
+      } catch {}
+    }
+
+    // custom/ 폴더를 스캔해 admin에 없는 주제를 자동으로 가져옴
+    async function autoImportThemes() {
+      if (!serverOnline.value) return;
+      try {
+        const r = await fetch(`${SERVER}/scan-themes`);
+        const { themes: discovered } = await r.json();
+        let imported = 0;
+        for (const [folderName, info] of Object.entries(discovered)) {
+          if (themes.value.some(t => t.name === folderName)) continue;
+          const qtCount = {};
+          const questions = info.questions.map(q => {
+            qtCount[q.qtype] = (qtCount[q.qtype] || 0) + 1;
+            return { id: uid(), text: '', qtype: q.qtype, filename: q.filename, status: 'exists' };
+          });
+          const themeType = getThemeType(folderName);
+          themes.value.push({ id: uid(), name: folderName, themeType, starred: false, questions });
+          imported++;
+        }
+        if (imported > 0) {
+          save();
+          showToast(`📥 ${imported}개 주제 자동 가져오기 완료`);
+        }
+      } catch {}
+    }
+
+    // ── generate ───────────────────────────────────────────
+    async function generateOne(q, theme) {
+      if (!serverOnline.value) return;
+      const t = theme || selectedTheme.value;
+      if (!t) return;
+      q.status = 'generating';
+      try {
+        const r = await fetch(`${SERVER}/tts`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: q.text,
+            folder: t.name,
+            filename: q.filename,
+            voice: voice,
+            rate: rate.value
+          })
+        });
+        const d = await r.json();
+        q.status = d.ok ? 'exists' : 'error';
+        if (d.ok) {
+          showToast(`✅ ${q.filename} 생성 완료`);
+          // questions.json custom 섹션에 자동 반영 (T9/T10 → Combo V 활성화)
+          await fetch(`${SERVER}/update-qjson`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic: t.name, themeType: t.themeType, qtype: q.qtype, filename: q.filename })
+          }).catch(() => {});
+          fetchComboVStatus();
+        }
+      } catch { q.status = 'error'; showToast('❌ 생성 실패 — 서버를 확인하세요'); }
+      save();
+    }
+
+    async function generateAll(force = false) {
+      const t = selectedTheme.value;
+      if (!t || !serverOnline.value) return;
+      isGenerating.value = true;
+      let count = 0;
+      for (const q of t.questions) {
+        if (!force && q.status === 'exists') continue;
+        if (!q.text.trim()) continue;
+        await generateOne(q, t);
+        count++;
+      }
+      isGenerating.value = false;
+      showToast(`✅ ${count}개 생성 완료`);
+    }
+
+    // ── playback ───────────────────────────────────────────
+    function playAudio(q) {
+      const t = selectedTheme.value;
+      if (!t) return;
+      if (audioPlayer) { audioPlayer.pause(); audioPlayer = null; }
+      audioPlayer = new Audio(`${SERVER}/audio?folder=${encodeURIComponent(t.name)}&filename=${encodeURIComponent(q.filename)}`);
+      audioPlayer.onerror = () => showToast('❌ 재생 실패 — 파일이 없거나 서버를 확인하세요');
+      audioPlayer.play().catch(e => showToast('❌ 재생 오류: ' + (e.message || '알 수 없는 오류')));
+    }
+
+    // 원본 OPIc 음원 재생 (questions/original/)
+    function playOriginal(q) {
+      const t = selectedTheme.value;
+      if (!t) return;
+      const paths = topicOriginals.value[t.name]?.[String(q.qtype)];
+      if (!paths || !paths.length) { showToast('원본 음원 없음'); return; }
+      const origPath = paths[0];
+      if (audioPlayer) { audioPlayer.pause(); audioPlayer = null; }
+      audioPlayer = new Audio(`${SERVER}/original?path=${encodeURIComponent(origPath)}`);
+      audioPlayer.onerror = () => showToast('❌ 원본 재생 실패');
+      audioPlayer.play().catch(e => showToast('❌ 원본 재생 오류: ' + e.message));
+    }
+
+    // Web Speech API 미리보기 (서버 불필요, 브라우저 TTS)
+    function previewText(text) {
+      if (!text?.trim() || !window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const doSpeak = () => {
+        const u = new SpeechSynthesisUtterance(text.trim());
+        u.lang = 'en-US';
+        u.rate = 0.88;
+        const vList = window.speechSynthesis.getVoices();
+        // 여성 미국 영어 목소리 우선 (Jenny, Aria, Zira, Samantha 등)
+        const enVoice =
+          vList.find(v => v.lang === 'en-US' && /jenny|aria|zira|samantha|karen|moira/i.test(v.name)) ||
+          vList.find(v => v.lang === 'en-US' && !v.localService) ||
+          vList.find(v => v.lang.startsWith('en-US')) ||
+          vList.find(v => v.lang.startsWith('en'));
+        if (enVoice) u.voice = enVoice;
+        window.speechSynthesis.speak(u);
+      };
+      // getVoices()는 비동기 로딩 — 목록이 없으면 onvoiceschanged 후 실행
+      if (window.speechSynthesis.getVoices().length > 0) {
+        doSpeak();
+      } else {
+        window.speechSynthesis.onvoiceschanged = () => { doSpeak(); window.speechSynthesis.onvoiceschanged = null; };
+      }
+    }
+
+    // ── CRUD ───────────────────────────────────────────────
+    function openAddTheme() {
+      newThemeName.value = '';
+      showAddTheme.value = true;
+      nextTick(() => themeInput.value?.focus());
+    }
+
+    function confirmAddTheme() {
+      const name = newThemeName.value.trim();
+      if (!name) return;
+      const theme = { id: uid(), name, themeType: newThemeType.value, questions: [] };
+      themes.value.push(theme);
+      selectedId.value = theme.id;
+      showAddTheme.value = false;
+      save();
+      showToast(`📂 "${name}" 주제 추가됨`);
+    }
+
+    function deleteTheme() {
+      const t = selectedTheme.value;
+      if (!t) return;
+      if (!confirm(`"${t.name}" 주제와 모든 질문 설정을 삭제하시겠습니까?\n(MP3 파일은 삭제되지 않습니다)`)) return;
+      themes.value = themes.value.filter(x => x.id !== t.id);
+      selectedId.value = themes.value[0]?.id ?? null;
+      save();
+    }
+
+    function addQuestion(qtype) {
+      const t = selectedTheme.value;
+      if (!t) return;
+      const idx = t.questions.filter(q => q.qtype === qtype).length + 1;
+      const q = { id: uid(), text: '', qtype, filename: `${t.name}_T${qtype}_${idx}_Q.mp3`, status: 'missing' };
+      t.questions.push(q);
+      save();
+      nextTick(() => { const list = document.querySelector('.question-list'); if (list) list.scrollTop = list.scrollHeight; });
+    }
+
+    async function deleteQuestion(qid) {
+      const t = selectedTheme.value;
+      if (!t) return;
+      const q = t.questions.find(x => x.id === qid);
+      if (!q) return;
+      if (q.status === 'exists' && serverOnline.value) {
+        if (confirm(`"${q.filename}" MP3 파일도 함께 삭제할까요?`)) {
+          await fetch(`${SERVER}/delete`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ folder: t.name, filename: q.filename })
+          }).catch(() => {});
+        }
+      }
+      t.questions = t.questions.filter(x => x.id !== qid);
+      save();
+    }
+
+    function onTextChange(q) {
+      if (q.status === 'exists') q.status = 'modified';
+      save();
+    }
+
+    function changeThemeType(newType) {
+      const t = selectedTheme.value;
+      if (!t) return;
+      t.themeType = newType;
+      save();
+    }
+
+    // ── lifecycle ──────────────────────────────────────────
+    onMounted(async () => {
+      // load config
+      try {
+        const cfg = JSON.parse(localStorage.getItem(LS_CFG) || '{}');
+        // voice는 Jenny로 고정
+        if (cfg.rate)  rate.value  = cfg.rate;
+      } catch {}
+
+      // load themes (없으면 기본 데이터로 초기화)
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        const stored = raw ? JSON.parse(raw) : null;
+        if (stored && stored.length > 0) {
+          themes.value = migrateThemes(stored);
+          save();
+        } else {
+          themes.value = buildDefaultThemes();
+          localStorage.setItem(LS_KEY, JSON.stringify(themes.value));
+        }
+        if (themes.value.length > 0) selectedId.value = themes.value[0].id;
+      } catch {
+        themes.value = buildDefaultThemes();
+      }
+
+      // ping server
+      await checkServer();
+      await checkApiKey();
+
+      // custom/ 폴더에 있는 주제를 admin에 자동으로 가져오기
+      await autoImportThemes();
+
+      // scan existing files
+      await scanFiles();
+
+      // 원본 경로 맵 로드
+      try {
+        const r = await fetch(`${SERVER}/topic-originals`);
+        const { originals } = await r.json();
+        topicOriginals.value = originals;
+      } catch {}
+
+      // transcripts.json 원문으로 항상 동기화 (수동 편집된 것 제외)
+      await syncTexts(false);
+
+      // poll server status every 5s
+      setInterval(async () => {
+        const was = serverOnline.value;
+        await checkServer();
+        if (!was && serverOnline.value) {
+          showToast('🟢 서버 연결됨');
+          await scanFiles();
+        }
+      }, 5000);
+    });
+
+    return {
+      serverOnline, rate,
+      themes, selectedId, selectedTheme,
+      getQsByType, QTYPES,
+      showAddTheme, newThemeName, newThemeType, themeInput,
+      isGenerating, comboVStatus, toast,
+      expandedQIds, toggleExpand, isExpanded,
+      save, statusLabel, themeStatusClass,
+      openAddTheme, confirmAddTheme, deleteTheme,
+      addQuestion, deleteQuestion, onTextChange,
+      generateOne, generateAll, playAudio, previewText,
+      sidebarFilter, filteredThemes, changeThemeType, toggleStar, syncTexts,
+      topicOriginals, playOriginal,
+      apiKeyOk, apiKeyMasked, showApiKeyModal, apiKeyInput, apiKeyInputRef,
+      openApiKeyModal, saveApiKey,
+    };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>

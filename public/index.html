@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPIc Practice - Home</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .entry-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            padding: 60px 50px;
+            max-width: 560px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo-wrap {
+            margin-bottom: 10px;
+        }
+
+        .logo-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 0.75em;
+            font-weight: 700;
+            letter-spacing: 2px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-size: 2.4em;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1em;
+            margin-bottom: 50px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+
+        .entry-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 35px 20px;
+            border-radius: 16px;
+            text-decoration: none;
+            border: 2px solid transparent;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .entry-btn-test {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+        }
+
+        .entry-btn-test:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 35px rgba(102,126,234,0.5);
+        }
+
+        .entry-btn-admin {
+            background: #f8f9fa;
+            color: #2c3e50;
+            border-color: #e0e0e0;
+        }
+
+        .entry-btn-admin:hover {
+            background: white;
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.15);
+        }
+
+        .btn-icon {
+            font-size: 2.2em;
+            line-height: 1;
+        }
+
+        .btn-label {
+            font-size: 1em;
+            font-weight: 700;
+        }
+
+        .btn-desc {
+            font-size: 0.78em;
+            opacity: 0.75;
+            line-height: 1.4;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #ecf0f1;
+            margin-bottom: 25px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            font-size: 0.82em;
+            color: #95a5a6;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #27ae60;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="entry-card">
+        <div class="logo-wrap">
+            <span class="logo-badge">OPIc PRACTICE</span>
+        </div>
+        <h1>Speaking Test</h1>
+        <p class="subtitle">브라우저에서 실행되는 OPIc 시험 시뮬레이터</p>
+
+        <div class="card-grid">
+            <a href="../pages/survey-clone.html" class="entry-btn entry-btn-test" onclick="localStorage.clear()">
+                <span class="btn-icon">🎤</span>
+                <span class="btn-label">시험 응시하기</span>
+                <span class="btn-desc">Background Survey부터<br>실전 테스트까지</span>
+            </a>
+            <a href="admin.html" class="entry-btn entry-btn-admin">
+                <span class="btn-icon">⚙️</span>
+                <span class="btn-label">관리자 패널</span>
+                <span class="btn-desc">주제 및 문제 관리<br>MP3 등록</span>
+            </a>
+        </div>
+
+        <hr class="divider">
+
+        <div class="info-row">
+            <span class="info-item">
+                <span class="info-dot"></span>
+                서버 없이 브라우저만으로 동작
+            </span>
+            <span class="info-item">
+                <span class="info-dot"></span>
+                마이크 권한 필요
+            </span>
+        </div>
+    </div>
+</body>
+</html>

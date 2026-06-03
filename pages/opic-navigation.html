@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPIc Demo - Navigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 50px;
+            font-size: 1.1em;
+        }
+        .steps {
+            display: grid;
+            gap: 20px;
+        }
+        .step-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        }
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .step-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .step-desc {
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 OPIc Demo Navigation</h1>
+        <p class="subtitle">완벽하게 클론된 OPIc 테스트 시스템</p>
+
+        <div class="steps">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-title">
+                    Background Survey
+                    <span class="badge">완료</span>
+                </div>
+                <p class="step-desc">
+                    배경 설문조사 - 직업, 거주지, 여가 활동 등을 선택합니다. (Part 4에서 12개 이상 선택 필요)
+                </p>
+                <a href="survey-clone.html" class="btn">페이지 열기 →</a>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-title">
+                    Self Assessment
+                    <span class="badge">완료</span>
+                </div>
+                <p class="step-desc">
+                    자가 평가 - 본인의 영어 말하기 수준에 맞는 난이도를 선택합니다. (Level 1-2, 3-4, 5-6)
+                </p>
+                <a href="self-assessment.html" class="btn">페이지 열기 →</a>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-title">
+                    Pre-Test Setup
+                    <span class="badge">완료</span>
+                </div>
+                <p class="step-desc">
+                    테스트 준비 - 마이크 및 장비를 테스트합니다. 녹음 기능이 정상 작동하는지 확인합니다.
+                </p>
+                <a href="setup.html" class="btn">페이지 열기 →</a>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <div class="step-title">
+                    Sample Question
+                    <span class="badge">완료</span>
+                </div>
+                <p class="step-desc">
+                    샘플 문제 - 실제 시험과 동일한 방식으로 샘플 문제를 연습합니다.
+                </p>
+                <a href="sample-question.html" class="btn">페이지 열기 →</a>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">5</div>
+                <div class="step-title">
+                    Begin Test
+                    <span class="badge">완료</span>
+                </div>
+                <p class="step-desc">
+                    시험 시작 - 최종 안내사항을 확인하고 본 시험을 시작합니다.
+                </p>
+                <a href="begin-test.html" class="btn">페이지 열기 →</a>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">6</div>
+                <div class="step-title">
+                    OPIc Test
+                    <span class="badge">완료</span>
+                </div>
+                <p class="step-desc">
+                    실제 테스트 - 문제를 듣고 답변을 녹음합니다. Play/Replay 기능, 아바타 애니메이션 포함.
+                </p>
+                <a href="opic-test.html" class="btn">페이지 열기 →</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>✨ 원본 OPIc 디자인과 기능을 완벽하게 클론했습니다</p>
+            <p>모든 JavaScript, CSS, HTML이 원본과 동일합니다</p>
+        </div>
+    </div>
+</body>
+</html>
+

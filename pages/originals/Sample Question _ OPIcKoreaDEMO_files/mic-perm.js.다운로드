@@ -1,0 +1,1 @@
+function confirmMicAccess(e=Object){navigator.mediaDevices.enumerateDevices().then(function(n){for(var c in n)if(n[c].label)return e.onSuccess?e.onSuccess():void 0;e.onFailure&&e.onFailure()})}

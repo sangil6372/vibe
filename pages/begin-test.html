@@ -1,0 +1,290 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0048)https://opickoreademo.multicampus.com/begin-test -->
+<html lang="en" translate="no"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="P91aETHtXnqzte8wOF07Wm9viDY8kJTefF5pj8dr">
+
+          <!-- LTI Token -->
+      <meta name="lti-token" content="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Imx0aV91c2VyIiwicGFzc3dvcmQiOiJsdGlfcGFzc3dvcmQiLCJleHAiOjE3Nzk3MDc2NDJ9.6ZubLo1MOkPyuYfZh_R8XBjNeyA3MBG13CY7-E-MogE">
+        
+    <title>
+      
+      Begin | 
+      OPIcKoreaDEMO
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="https://opickoreademo.multicampus.com/favicon.gif">
+    
+    <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
+      
+      <link rel="stylesheet" href="../assets/css/video-js.css">
+      <link rel="stylesheet" href="../assets/css/master.css">
+      <script src="../assets/js/jquery.min.js"></script>
+      <script type="text/javascript" src="../assets/js/mic-perm.js"></script>
+      <style>
+
+        /**
+        * Session Timeout Dialog Styles
+         */
+         #session-timeout-dialog-logout { display: none; }
+
+         /**
+         * Following styles are used on the Setup page, Sample Question page, and  Test page.
+         */
+
+         /**
+         * Used display: inline-block to get the video element and the volume-indicator wrapper side by side.
+         * *** I also added the mx-md-0 class to help with the positioning.
+         */
+        #setup-video, #opic-video {display: inline-block; }
+      </style>
+
+      
+    </head>
+    <body>
+          <div id="contentDiv">
+        <div class="container-fluid">
+          <div class="actfl-test-container mx-auto">
+
+            <!-- Content begins here -->
+            
+            <div class="add-con">
+    <div class="name-tag">
+        <div class="con-in">
+            <p class="name" style="font-size:2.6em;"></p>
+            <div class="setting-area">
+                <button type="button" class="btn-guide" id="popoverGuide">안내</button>
+                
+                <!-- Modal -->
+                <div class="modal fade" id="popoverGuideModal" tabindex="-1" role="dialog" aria-labelledby="popoverGuideModal" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div class="setting-layer">
+                                    <p class="copy">Guide</p>
+                                                                        <ul class="lists">
+                                                                                <li>· Start Test 화면입니다.</li>
+                                                                                <li>· 감독관의 시험 안내가 있기 전까지 본 화면에서 대기하십시오.</li>
+                                                                                <li>· OPIc은 인터넷 기반 시험으로 시험 중 예기치 못한 네트워크 문제가 발생할 수 있습니다. 문제 발생 시 침착하게 감독관에게 보고하여 조치에 따라 주십시오.</li>
+                                                                                <li>· 시험 중 규정을 위반하는 행위 적발 시 본 시험은 무효 처리되며, 향후 응시제한 등의 불이익이 있을 수 있으니 유의하시기 바랍니다.</li>
+                                                                            </ul>
+                                    <button type="button" class="close" data-dismiss="modal">닫기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+            <div class="row">
+  <div class="col">
+
+    <div class="block-steps mt-1">
+  <ul class="steps-5">
+                <li class="checked" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./survey-clone.html'">
+        <div class="step-content">
+          <h3>1</h3>
+          <p>Background Survey</p>
+        </div>
+      </li>
+                <li class="checked" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./self-assessment.html'">
+        <div class="step-content">
+          <h3>2</h3>
+          <p>Self Assessment</p>
+        </div>
+      </li>
+                <li class="checked" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./setup.html'">
+        <div class="step-content">
+          <h3>3</h3>
+          <p>Setup</p>
+        </div>
+      </li>
+                <li class="checked before-selected" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./sample-question.html'">
+        <div class="step-content">
+          <h3>4</h3>
+          <p>Sample Question</p>
+        </div>
+      </li>
+                <li class="selected" style="cursor: pointer;" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='./begin-test.html'">
+        <div class="step-content">
+          <h3>5</h3>
+          <p>Begin Test</p>
+        </div>
+      </li>
+      </ul>
+</div>
+
+    <div class="row">
+      <div class="col text-center">
+        <h2 class="opic-header-plain header-instructions text-center mt-6 mb-3">시험 진행 안내</h2>
+        <p>유의사항을 읽고 각 체크박스를 선택하여 주십시오.</p>
+      </div>
+    </div>
+
+    <div class="block-begin-test">
+      <div class="row row-instructions">
+        <div class="col-lg-3 col-sm-6 block-instructions-msg">
+          <img src="./assets/icon-instructions-screen-shut-down.png" alt="">
+            <input type="checkbox" id="heading23" class="rules-checkbox" name="heading23">
+            <label for="heading23" class="rules-checkbox-label"></label>
+          <h4>시험화면을 벗어나지 마십시오.</h4>
+          <p>시험 중 다른 웹사이트나 프로그램 실행 시 시험창이 자동 종료되고 로그인 화면으로 다시 이동하게 됩니다.</p>
+        </div>
+        <div class="col-lg-3 col-sm-6 block-instructions-msg">
+          <img src="./assets/icon-instructions-screen-no-refresh.png" alt="">
+          <input type="checkbox" id="heading25" class="rules-checkbox" name="heading25">
+          <label for="heading25" class="rules-checkbox-label"></label>
+          <h4>새로고침, 뒤로가기 금지</h4>
+          <p>시험 중 화면을 새로고침하거나 브라우저의 <strong>뒤로가기</strong> 버튼을 누르는 경우, 시험창이 자동 종료되고 로그인 화면으로 다시 이동하게 됩니다.</p>
+        </div>
+        <div class="col-lg-3 col-sm-6 block-instructions-msg">
+          <img src="./assets/icon-instructions-screen-speaking.png" alt="">
+          <input type="checkbox" id="heading16" class="rules-checkbox" name="heading16">
+          <label for="heading16" class="rules-checkbox-label"></label>
+          <h4>말하기</h4>
+          <p>각 질문의 내용에 부합하여 최대한 자세하게 답변하되, 너무 큰소리로 말해 다른 수험자에게 방해가 되지 않도록 주의 바랍니다. </p>
+        </div>
+        <div class="col-lg-3 col-sm-6 block-instructions-msg">
+          <img src="./assets/icon-instructions-screen-test-time.png" alt="">
+          <input type="checkbox" id="heading18" class="rules-checkbox" name="heading18">
+          <label for="heading18" class="rules-checkbox-label"></label>
+          <h4>시험 시간 엄수</h4>
+          <p>시험 제한 시간은 40분입니다. 반드시 감독관의 시작 안내가 있은 후 <b>Begin</b>을 누르고 시험을 시작하십시오.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+          <div class="alert-purple mt-4">
+            <p>기술적인 문제 발생 시, 당황하지 마시고 즉시 감독관에게 보고 바랍니다. 재접속 시 문제가 있었던 부분부터 다시 진행하며, 추가시간을 부여합니다.</p>
+          </div>
+        </div>
+        <div class="col-2"></div>
+      </div>
+
+      <div class="row">
+        <div class="col text-center">
+          <div class="form-group text-center">
+            <h3 class="message-begin mt-6 mb-3 test-not-ready" hidden="hidden" style="display: none;">문항 출제 중...</h3>
+            <div class="message-begin fa-3x test-not-ready" hidden="hidden" style="display: none;">
+              <i class="fa fa-spinner fa-pulse"></i>
+            </div>
+            <h3 class="message-begin mt-6 mb-3 test-ready" style="display: block;">준비되셨나요?</h3>
+            <form id="formNext" action="opic-test.html">
+              <input type="hidden" name="_token" value="P91aETHtXnqzte8wOF07Wm9viDY8kJTefF5pj8dr">
+              <div class="form-group">
+                <button id="btnNextConfirm" class="btn btn-primary test-ready" type="button" name="button" style="display: inline-block;"><span>Begin</span></button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div><!-- end block-instructions -->
+
+  </div>
+</div>
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p>문항 출제 중 오류가 발생했습니다. 문제가 지속되는 경우, 시스템 관리자에게 문의하십시오.</p>
+      </div>
+      <div class="modal-footer text-center">
+        <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">다시 시도하십시오</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="errorModal2" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+      <p>안내사항을 읽고 각 체크박스를 선택하십시오.</p>
+      </div>
+      <div class="modal-footer text-center">
+        <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">다시 시도하십시오</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmTakeTest" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <p><span>감독관의 시험 시작 지시를 받았습니까?</span></p>
+        <div>
+          <span id="btnConfirmYes"> YES </span>
+          <span></span>
+          <span id="btnConfirmNot"> NO </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var generatePromptsUrl = "https://opickoreademo.multicampus.com/test/generate-prompts";
+</script>
+<script src="../assets/js/jquery.html5.hide-show.js"></script>
+<script src="../assets/js/begin-test.js"></script>
+
+            <!-- Content ends here -->
+
+          </div><!-- end actfl-test-container -->
+        </div><!-- end container-fluid -->
+      </div><!-- end  contentDiv -->
+
+      <script src="../assets/js/popper.min.js"></script>
+      <script src="../assets/js/bootstrap.min.js"></script>
+      <script src="../assets/js/jquery.html5.hide-show.js"></script>
+      
+    <script src="../assets/js/common.js" charset="utf-8"></script>
+
+        <script src="../assets/js/common-demo.js" charset="utf-8"></script>
+        
+    <script type="text/javascript">
+      const LTIApiUrl = "https://opickoreademo.multicampus.com";
+      const LTIRecordingApiUrl = "https://xxx.cloudfront.com";
+      const LTIFileTransferUrl = "https://opickoreademo.multicampus.com";
+      const LTIRecordingApiDemo = "1" ? true : false;
+    </script>
+
+          <script type="text/javascript" src="../assets/js/logoutOnRefresh.js" charset="utf-8"></script>
+    
+    
+    <script src="../assets/js/bootstrap-session-timeout.js"></script>
+<script type="text/javascript">
+  $(function(){
+    $.sessionTimeout({
+        title: '',
+        message: '60초 이내로 로그아웃됩니다. OK를 눌러서 로그아웃되는 것을 피하세요.',
+        logoutButton: 'Logout',
+        keepAliveButton: 'OK',
+        keepAliveUrl: 'https://opickoreademo.multicampus.com/keep-alive',
+        keepAliveInterval: 600000,
+        logoutUrl: 'https://opickoreademo.multicampus.com/logout',
+        redirUrl: 'https://opickoreademo.multicampus.com/logout',
+        ajaxType: 'GET',
+        warnAfter: 1740000,
+        redirAfter: 1800000,
+        countdownBar: true,
+        onRedir: function() {
+          window.onbeforeunload = null;
+          window.location = "https://opickoreademo.multicampus.com/logout";
+        }
+    });
+  });
+</script>
+
+    
+  
+
+<div class="modal fade" id="session-timeout-dialog">               <div class="modal-dialog">                 <div class="modal-content">                   <div class="modal-header">                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>                     <h4 class="modal-title"></h4>                   </div>                   <div class="modal-body">                     <p>60초 이내로 로그아웃됩니다. OK를 눌러서 로그아웃되는 것을 피하세요.</p>                                          <div class="progress">                   <div class="progress-bar progress-bar-striped countdown-bar active" role="progressbar" style="min-width: 15px; width: 100%;">                     <span class="countdown-holder">1800s</span>                   </div>                 </div>                   </div>                   <div class="modal-footer">                     <button id="session-timeout-dialog-logout" type="button" class="btn btn-default">Logout</button>                     <button id="session-timeout-dialog-keepalive" type="button" class="btn btn-primary" data-dismiss="modal">OK</button>                   </div>                 </div>               </div>              </div></body></html>

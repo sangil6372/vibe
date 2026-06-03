@@ -1,0 +1,53 @@
+╔══════════════════════════════════════════════════════╗
+║           OPIc Demo - 페이지 흐름 구조               ║
+╚══════════════════════════════════════════════════════╝
+
+📍 시작 페이지: http://localhost:8000/start.html
+
+흐름:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣  start.html
+    ⬇ [시험 시작하기]
+    
+2️⃣  survey-clone.html (Background Survey)
+    - Part 1-4 설문 완료
+    - Part 4: 최소 12개 선택 필수
+    ⬇ [Next 버튼] → localStorage 저장 후 이동
+    
+3️⃣  self-assessment.html (Self Assessment)
+    - 난이도 선택: Level 1-2, 3-4, 5-6
+    ⬇ [Next 버튼] → localStorage 저장 후 이동
+    
+4️⃣  setup.html (Pre-Test Setup)
+    - 마이크 테스트
+    ⬇ [Next 버튼]
+    
+5️⃣  sample-question.html (Sample Question)
+    - 샘플 문제 연습
+    ⬇ [Next 버튼]
+    
+6️⃣  begin-test.html (Begin Test)
+    - 최종 안내
+    ⬇ [Begin 버튼]
+    
+7️⃣  opic-test.html (OPIc Test)
+    - 실제 테스트
+    - Play/Replay 기능
+    - 녹음 기능
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 수정된 파일:
+  ✅ survey-clone.html + assets/js/survey-flow.js
+  ✅ self-assessment.html + assets/js/self-assessment-flow.js
+  ✅ setup.html (form action 수정)
+  ✅ sample-question.html (form action 수정)
+  ✅ begin-test.html + assets/js/begin-test-flow.js
+  ✅ opic-test.html (최종 페이지)
+
+🔄 동작 방식:
+  - 각 페이지의 Next 버튼 클릭 시 자동으로 다음 페이지 이동
+  - 선택한 데이터는 localStorage에 저장
+  - 서버 통신 없이 클라이언트에서만 작동
+

@@ -1,0 +1,39 @@
+==============================
+ OPIc 시뮬레이터 서버 시작
+==============================
+
+[ 경로 이동 ]
+  cd "C:\Users\sangil\Desktop\opic_simulator"
+
+─────────────────────────────
+ 1. 프론트엔드 서버 (항상 필요)
+─────────────────────────────
+  python -m http.server 3000
+
+  접속 URL:
+  - 시험 화면  → http://localhost:3000/pages/opic-test.html
+  - 관리자     → http://localhost:3000/public/admin.html
+  - 시작 화면  → http://localhost:3000/public/start.html
+
+─────────────────────────────
+ 2. TTS 서버 (MP3 생성 시 필요)
+─────────────────────────────
+  python tts_server.py
+
+  포트: 8765 (자동으로 브라우저 열림)
+
+  ※ 관리자 페이지를 반드시 localhost:3000 으로 접속해야
+     시험 화면과 localStorage가 공유됩니다.
+     (8765로 admin 접속 시 localStorage 별도 저장됨)
+
+─────────────────────────────
+ 두 서버 동시 운영 방법
+─────────────────────────────
+  터미널 창 1: python -m http.server 3000
+  터미널 창 2: python tts_server.py
+
+  → 관리자는 http://localhost:3000/public/admin.html 에서 접속
+  → TTS 서버(8765)는 MP3 생성 API 전용으로만 사용
+  → CORS 허용되어 있으므로 3000 포트 admin에서 8765 API 호출 가능
+
+==============================

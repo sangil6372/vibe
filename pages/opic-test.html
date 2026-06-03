@@ -1,0 +1,346 @@
+﻿<!DOCTYPE html>
+<html lang="en" translate="no">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="csrf-token" content="P91aETHtXnqzte8wOF07Wm9viDY8kJTefF5pj8dr">
+    <title>OPIcKoreaDEMO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../assets/css/noto-sans-kr.css">
+    <link rel="stylesheet" href="../assets/css/video-js.css">
+    <link rel="stylesheet" href="../assets/css/master.css">
+    <link rel="stylesheet" href="../assets/css/learnosity-main.css">
+    
+    <style>
+        .video-js { width: 300px; height: 150px; }
+        .vjs-fluid:not(.vjs-audio-only-mode) { padding-top: 56.25% }
+        .opic-video-dimensions { width: 296px; height: 300px; }
+        .opic-video-dimensions.vjs-fluid:not(.vjs-audio-only-mode) { padding-top: 101.35135135135135%; }
+        #setup-video, #opic-video { display: inline-block; }
+        .prompt-list { list-style: none; padding: 0; max-width: 40rem; display: flex; flex-wrap: wrap; gap: .4rem .3rem; }
+        body { font-family: 'Noto Sans KR', sans-serif !important; }
+
+        /* ── 피드백 패널 ── */
+        #feedbackPanel {
+            position: fixed; inset: 0; background: rgba(0,0,0,.55);
+            z-index: 2000; display: none; overflow-y: auto; padding: 20px 16px;
+        }
+        .fb-box {
+            background: white; border-radius: 16px; max-width: 660px;
+            margin: auto; padding: 28px 28px 24px; position: relative;
+        }
+        .fb-close {
+            position: absolute; top: 14px; right: 16px;
+            background: none; border: none; font-size: 1.3em; cursor: pointer; color: #666;
+        }
+        .fb-header { font-size: .78em; color: #888; margin-bottom: 4px; }
+        .fb-topic { font-weight: 700; font-size: 1em; color: #1a1a2e; margin-bottom: 16px; }
+        .fb-section { margin-bottom: 16px; }
+        .fb-section h4 { font-size: .82em; font-weight: 700; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .4px; }
+        .fb-qtext { font-size: .9em; color: #333; font-style: italic; line-height: 1.6; background: #f8f9ff; padding: 10px 14px; border-radius: 8px; border-left: 3px solid #667eea; }
+        .fb-transcript { font-size: .88em; color: #444; line-height: 1.6; background: #f0fdf4; padding: 10px 14px; border-radius: 8px; border-left: 3px solid #22c55e; }
+        .fb-result { font-size: .9em; color: #222; line-height: 1.75; white-space: pre-wrap; }
+        .fb-error { font-size: .88em; color: #dc2626; }
+        .fb-loading { color: #888; font-size: .9em; }
+        .fb-actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn-fb-replay {
+            padding: 8px 18px; background: #dcfce7; color: #16a34a;
+            border: none; border-radius: 8px; cursor: pointer; font-size: .85em; font-weight: 600;
+        }
+        .btn-fb-replay:hover { background: #bbf7d0; }
+
+        /* ── 하단 버튼 영역 ── */
+        #btnFeedback {
+            padding: 9px 18px; background: #ede9fe; color: #7c3aed;
+            border: none; border-radius: 8px; cursor: pointer; font-size: .85em; font-weight: 600;
+            margin-right: 8px;
+        }
+        #btnFeedback:hover:not(:disabled) { background: #ddd6fe; }
+        #btnFeedback:disabled { background: #f0f0f0; color: #bbb; cursor: default; }
+        #btnFinalSubmit {
+            display: none; padding: 9px 22px; background: #667eea; color: white;
+            border: none; border-radius: 8px; cursor: pointer; font-size: .85em; font-weight: 700;
+        }
+        #btnFinalSubmit:hover:not(:disabled) { background: #5a6fd6; }
+        #btnFinalSubmit:disabled { background: #c4c4c4; cursor: default; }
+
+        /* 연습 모드 패널 */
+        #practicePanel {
+            display: none;
+            margin-top: 12px;
+            padding: 12px 14px;
+            background: #f1f3f5;
+            border-radius: 8px;
+            border-left: 4px solid #6c757d;
+        }
+        .pr-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+        .pr-badge {
+            display: inline-block; padding: 2px 10px; border-radius: 20px;
+            font-size: .75em; font-weight: 700; letter-spacing: .3px;
+        }
+        .pr-badge-elapsed { background: #212529; color: #fff; font-size: .85em; padding: 3px 12px; }
+        .pr-badge-combo   { background: #6c757d; color: #fff; }
+        .pr-badge-type    { background: #0d6efd; color: #fff; }
+        .pr-badge-kind    { background: #198754; color: #fff; }
+        #qTopicName  { font-weight: 700; font-size: .95em; color: #212529; margin-bottom: 2px; }
+        #qTypeDesc   { font-size: .82em; color: #6c757d; margin-bottom: 6px; }
+        #qTextDisplay { font-size: .92em; color: #343a40; font-style: italic; white-space: pre-wrap; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div id="contentDiv">
+        <div class="container-fluid">
+            <div class="actfl-test-container mx-auto">
+                <div class="add-con">
+                    <div class="name-tag">
+                        <div class="con-in">
+                            <p class="name" style="font-size:2.6em;"></p>
+                            <div class="setting-area">
+                                <button type="button" class="btn-guide" id="toggleTimer" style="margin-right:8px;">📖 연습 ON</button>
+                                <button type="button" class="btn-guide" id="popoverGuide">안내</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="block-test">
+                    <h2 id="questionHeader" class="header-primary mb-1">Question 1 of 12</h2>
+                    <div id="testArea" class="row mt-2">
+                        <div class="col-lg-5 col-md-6">
+                            <div class="row no-gutters">
+                                <div class="col-6 col-md-11 text-center">
+                                    <div class="block-video">
+                                        <video id="opic-video" class="video-js vjs-opic-skin mx-auto mx-md-0 opic-video-dimensions" preload="auto" poster="../assets/images/ava_image.png"></video>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-1">
+                                    <div class="block-mic-gauge disable set-to-video-height">
+                                        <div class="mic-gauge-well"><div class="mic-gauge"><div class="mic-gauge-marker"></div></div></div>
+                                        <div class="mic-icon"></div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-11 text-center">
+                                    <div class="block-video-control d-flex mx-auto">
+                                        <button id="replayButton" class="btn m-0 btn-video-replay" type="button" hidden=""></button>
+                                        <button id="playButton" class="btn m-0 btn-video-play" type="button" style="display: inline-block;"></button>
+                                        <div class="block-playback flex-fill"><div id="playback" class="track-well"><div class="track"></div></div></div>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-11 text-center mt-2">
+                                    <div class="block-video-control d-flex mx-auto">
+                                        <span class="alert-recording mx-auto set-to-video-width prompt-status-1" style="display: inline;">Click ‘PLAY’ button to Listen</span>
+                                        <span class="alert-recording mx-auto set-to-video-width prompt-status-2" style="display: none;">Playing</span>
+                                        <span class="alert-recording mx-auto set-to-video-width prompt-status-3" style="display: none;">Recording</span>
+                                        <span class="alert-recording mx-auto set-to-video-width prompt-status-4" style="display: none;">Next 버튼을 눌러 계속하세요</span>
+                                        <span class="alert-recording mx-auto set-to-video-width prompt-status-5" style="display: none;">다음 문항 준비 중...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-6">
+                            <h3 class="mt-5">문항 진행:</h3>
+                            <ul class="prompt-list mb-2">
+                                <li class="active">1</li>
+                                <li>2</li>
+                                <li>3</li>
+                                <li>4</li>
+                                <li>5</li>
+                                <li>6</li>
+                                <li>7</li>
+                                <li>8</li>
+                                <li>9</li>
+                                <li>10</li>
+                                <li>11</li>
+                                <li>12</li>
+                            </ul>
+
+                            <!-- 연습 모드 패널: 경과 타이머 + 문제 메타정보 -->
+                            <div id="practicePanel">
+                                <div class="pr-badges">
+                                    <span class="pr-badge pr-badge-elapsed">⏱ <span id="elapsedTime">0:00</span></span>
+                                    <span class="pr-badge pr-badge-combo"  id="qComboLabel"></span>
+                                    <span class="pr-badge pr-badge-type"   id="qTypeLabel"></span>
+                                    <span class="pr-badge pr-badge-kind"   id="qKindLabel"></span>
+                                </div>
+                                <div id="qTopicName"></div>
+                                <div id="qTypeDesc"></div>
+                                <div id="qTextDisplay"></div>
+                            </div>
+
+                            <div id="responseTimer" class="block-response-timer mb-2" style="display:none">
+                                <h3>Response Time:</h3>
+                                <div class="response-time-well"><div id="response-time-progress-bar" class="response-time"></div></div>
+                                <div id="response-time-remaining-time" class="remaining-time">1:00</div>
+                            </div>
+
+                            <div id="moveOnHeader" class="alert alert-success mt-2" style="display:none">
+                                <strong>Time to move on to the next question.</strong>
+                            </div>
+                            <div id="volumeLowContent" class="alert alert-warning mt-2" style="display:none">
+                                <strong>녹음 음량이 작습니다.</strong>
+                                <ul class="mb-0 mt-1">
+                                    <li>조금 더 크게 말씀해보세요.</li>
+                                    <li>마이크 위치를 입에 더 가깝게 조정해보세요.</li>
+                                    <li>마이크 음량을 조정해보세요.</li>
+                                </ul>
+                            </div>
+                            <div id="volumeHighContent" class="alert alert-warning mt-2" style="display:none">
+                                <strong>잡음이 심합니다.</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col text-right" style="display:flex; align-items:center; justify-content:flex-end; gap:8px; flex-wrap:wrap;">
+                        <button id="btnFeedback" disabled>💬 내 답변 듣기 + AI 피드백</button>
+                        <button id="btnFinalSubmit">💾 최종 제출</button>
+                        <button id="btnNext" class="btn btn-primary" type="button" disabled=""><span>Next</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 피드백 패널 -->
+    <div id="feedbackPanel">
+        <div class="fb-box">
+            <button id="btnCloseFeedback" class="fb-close" title="닫기">✕</button>
+            <div class="fb-header">문항 피드백</div>
+            <div id="fbTopicName" class="fb-topic"></div>
+
+            <div class="fb-actions">
+                <button class="btn-fb-replay" id="btnReplayAnswer">🎧 내 답변 다시 듣기</button>
+            </div>
+
+            <div class="fb-section">
+                <h4>📌 질문</h4>
+                <div id="fbQText" class="fb-qtext"></div>
+            </div>
+
+            <div class="fb-section" id="fbTranscriptArea">
+                <h4>🗣 내 답변 (음성 인식)</h4>
+                <div id="fbTranscript" class="fb-transcript"></div>
+            </div>
+
+            <div class="fb-section">
+                <h4>🤖 AI 피드백</h4>
+                <div id="fbAiText"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/js/video.min.js"></script>
+    <script src="../assets/js/videojs-playlist.min.js"></script>
+    <script src="../assets/js/popper.min.js"></script>
+    <script src="../assets/js/bootstrap.min.js"></script>
+    <script src="../assets/js/jquery.html5.hide-show.js"></script>
+    <script src="../assets/js/mic-perm.js"></script>
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/common-demo.js"></script>
+    <script src="../assets/js/detect-rtc.js"></script>
+    <script src="../assets/js/ResizeSensor.js"></script>
+    <script src="../assets/js/audioRecordTimer.js"></script>
+    <script src="../assets/js/LTIMediaRecorder.js"></script>
+    <script src="../assets/js/opic-media-patch.js"></script>
+    <script src="../assets/js/opic-volume-fix.js"></script>
+    <script src="../src/session-builder.js"></script>
+
+    <script type="text/javascript">
+        window.LTIApiUrl = "/";
+        window.LTIFileTransferUrl = "/";
+        window.LTIRecordingApiDemo = true;
+        window.LTIRecordingApiUrl = "/";
+
+        Promise.all([
+            fetch('../src/data/questions.json').then(function(r) { return r.json(); }),
+            fetch('../src/data/transcripts.json').then(function(r) { return r.json(); }).catch(function() { return {}; })
+        ]).then(function(results) {
+            var data = results[0];
+            data.transcripts = results[1];
+
+            // 즐겨찾기 필터 — admin에서 ⭐ 표시된 주제만 출제
+            var starredTopics = JSON.parse(localStorage.getItem('opic_starred_topics') || '[]');
+            if (starredTopics.length > 0) {
+                var starSet = new Set(starredTopics);
+                data.selected     = (data.selected     || []).filter(function(t) { return starSet.has(t.name); });
+                data.surprise     = (data.surprise     || []).filter(function(t) { return starSet.has(t.name); });
+                data.roleplayOnly = (data.roleplayOnly || []).filter(function(t) { return starSet.has(t.name); });
+                if (data.custom) data.custom = data.custom.filter(function(t) { return starSet.has(t.name); });
+            }
+
+            var prompts = OPIcSessionBuilder.buildSession(data);
+
+                window.ltiOpicAppSettings = {
+                    sampleQuestion: false,
+                    nextPage: '../public/index.html',
+                    testLevel: '#',
+                    responseTimer: 120.0,
+                    questionVideo: prompts[0].Mediafile,
+                    introVideo: null,
+                    noddingVideo: null,
+                    standByPortrait: '../assets/images/ava_image.png',
+                    replayTimeout: 5000,
+                    videoReplays: 1,
+                    prompts: prompts,
+                    currentQuestionIndex: 1,
+                    finalQuestionIndex: prompts.length,
+                    responseId: prompts[0].learnosityId,
+                    questionHeaderText: 'Question (currentnumber) of (totalnumber)',
+                    deviceInfo: { os: 'Windows', browser: 'Chrome' },
+                    recordingApi: '1',
+                    nextTimer: 2000,
+                    savePrompt: 1,
+                    ltiSignedRequest: {
+                        FolderId: 'demo-folder',
+                        id: 'demo-request',
+                        questions: prompts
+                    }
+                };
+
+                // 문항 진행 리스트 UI 갱신
+                var list = document.querySelector('.prompt-list');
+                if (list) {
+                    var html = '';
+                    for (var i = 1; i <= prompts.length; i++) {
+                        html += '<li' + (i === 1 ? ' class="active"' : '') + '>' + i + '</li>';
+                    }
+                    list.innerHTML = html;
+                }
+
+                ltiOpic.demo(true);
+
+                // ltiOpicAppSettings 준비 완료 후 test-question.js 동적 로드
+                var s = document.createElement('script');
+                s.src = '../assets/js/test-question.js';
+                document.body.appendChild(s);
+            }).catch(function(err) {
+                console.error('[OPIc] 세션 빌드 실패:', err);
+            });
+    </script>
+
+    <!-- Hidden placeholders for Learnosity widgets (최대 15문제) -->
+    <div style="display: none;">
+        <div class="question-demo-1"></div>
+        <div class="question-demo-2"></div>
+        <div class="question-demo-3"></div>
+        <div class="question-demo-4"></div>
+        <div class="question-demo-5"></div>
+        <div class="question-demo-6"></div>
+        <div class="question-demo-7"></div>
+        <div class="question-demo-8"></div>
+        <div class="question-demo-9"></div>
+        <div class="question-demo-10"></div>
+        <div class="question-demo-11"></div>
+        <div class="question-demo-12"></div>
+        <div class="question-demo-13"></div>
+        <div class="question-demo-14"></div>
+        <div class="question-demo-15"></div>
+    </div>
+</body>
+</html>
+

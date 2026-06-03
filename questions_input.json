@@ -1,0 +1,142 @@
+{
+  "_comment": "questions 배열에 질문 텍스트만 추가/수정하면 됩니다. generate_mp3.py 실행 시 자동으로 MP3 생성.",
+  "_voice": "en-US-JennyNeural (변경하려면 generate_mp3.py의 VOICE 변수 수정)",
+
+  "topics": [
+    {
+      "id": "사는곳",
+      "folder": "custom/사는곳",
+      "questions": [
+        "Tell me about where you live. Can you describe your home in detail? What does it look like?",
+        "What do you usually do at home in your free time? Describe your typical day at home.",
+        "Have you ever moved to a new place? Tell me about a memorable moving experience you had."
+      ]
+    },
+    {
+      "id": "공원",
+      "folder": "custom/공원",
+      "questions": [
+        "Describe a park that you often visit. Where is it located and what does it look like?",
+        "What do you usually do when you go to the park? Describe your typical visit.",
+        "Tell me about a memorable or interesting experience you had at a park."
+      ]
+    },
+    {
+      "id": "요가",
+      "folder": "custom/요가",
+      "questions": [
+        "Tell me about when you started doing yoga. How did you first get interested in it?",
+        "Describe your typical yoga session. What kinds of poses or exercises do you do?",
+        "Tell me about a memorable experience you had related to yoga."
+      ]
+    },
+    {
+      "id": "해변",
+      "folder": "custom/해변",
+      "questions": [
+        "Describe a beach that you like to visit. What does it look like? What can you find there?",
+        "What do you usually do when you go to the beach? Describe your typical beach day.",
+        "Tell me about a memorable experience you had at the beach."
+      ]
+    },
+    {
+      "id": "캠핑",
+      "folder": "custom/캠핑",
+      "questions": [
+        "Tell me about camping. Where do you usually go and who do you go with?",
+        "What do you usually do when you go camping? Describe a typical camping trip.",
+        "Tell me about a memorable or unexpected experience you had while camping."
+      ]
+    },
+    {
+      "id": "콘서트",
+      "folder": "custom/콘서트",
+      "questions": [
+        "Describe a concert venue you have visited. What did it look like? What was the atmosphere like?",
+        "What do you usually do before and during a concert? Describe your typical concert experience.",
+        "Tell me about the most memorable concert you have attended. Why was it special?"
+      ]
+    },
+    {
+      "id": "공연",
+      "folder": "custom/공연",
+      "questions": [
+        "What kinds of performances or shows do you like to watch? Describe the type of venues you visit.",
+        "What do you usually do when you go to see a performance? Describe your typical experience.",
+        "Tell me about the most memorable performance you have ever seen. What made it so special?"
+      ]
+    },
+    {
+      "id": "음악",
+      "folder": "custom/음악",
+      "questions": [
+        "Tell me about the kind of music you enjoy listening to. Who are your favorite artists or bands?",
+        "How and when do you usually listen to music? Describe your typical music listening habits.",
+        "Tell me about a memorable experience you had that is related to music."
+      ]
+    },
+    {
+      "id": "영화",
+      "folder": "custom/영화",
+      "questions": [
+        "What kind of movies do you like to watch? Tell me about your favorite genre or a favorite film.",
+        "How do you usually watch movies? Describe a typical movie-watching experience for you.",
+        "Tell me about a movie that was especially memorable to you. Why did it stick with you?"
+      ]
+    },
+    {
+      "id": "집에서보내는휴가",
+      "folder": "custom/집에서보내는휴가",
+      "questions": [
+        "Tell me about how you typically spend your vacation at home. What kinds of things do you do?",
+        "Describe your ideal vacation at home. What would you do from morning to night?",
+        "Tell me about a memorable time you spent your vacation at home. What made it special?"
+      ]
+    },
+    {
+      "id": "돌발_가구",
+      "folder": "custom/돌발/가구",
+      "questions": [
+        "Tell me about the furniture in your home. What kind of furniture do you have and where did you get it?",
+        "What is your favorite piece of furniture? Describe it in detail and explain why you like it.",
+        "Have you ever had a problem with a piece of furniture? Tell me about that experience."
+      ]
+    },
+    {
+      "id": "돌발_건강",
+      "folder": "custom/돌발/건강",
+      "questions": [
+        "Tell me about how you stay healthy. What do you do to take care of your health?",
+        "What do you usually do when you get sick? Describe how you take care of yourself.",
+        "Tell me about a time when you had a health problem. What happened and how did you deal with it?"
+      ]
+    },
+    {
+      "id": "돌발_교통수단",
+      "folder": "custom/돌발/교통수단",
+      "questions": [
+        "Tell me about the transportation you use most often. How do you usually get around?",
+        "Describe your typical commute or daily travel. What do you see and do along the way?",
+        "Tell me about a memorable or unusual experience you had while using public transportation."
+      ]
+    },
+    {
+      "id": "돌발_기술",
+      "folder": "custom/돌발/기술",
+      "questions": [
+        "Tell me about the technology you use every day. What devices or apps do you rely on the most?",
+        "How has technology changed your daily life? Give me some specific examples.",
+        "Tell me about a time when technology caused a problem for you. What happened?"
+      ]
+    },
+    {
+      "id": "돌발_은행",
+      "folder": "custom/돌발/은행",
+      "questions": [
+        "Tell me about how you usually do your banking. Do you go to a branch or use online banking?",
+        "Describe your local bank or a bank you frequently visit. What does it look like inside?",
+        "Tell me about a problem you have experienced at a bank. What happened and how was it resolved?"
+      ]
+    }
+  ]
+}

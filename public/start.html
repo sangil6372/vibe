@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPIc Demo - 시작</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 60px 50px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        .info-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+        .info-box h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .info-box li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #555;
+            line-height: 1.6;
+        }
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .btn-start {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 60px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.3em;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        .btn-nav {
+            display: inline-block;
+            color: #7f8c8d;
+            padding: 15px 30px;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        .btn-nav:hover {
+            color: #667eea;
+        }
+        .step-flow {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-size: 0.95em;
+            color: #555;
+        }
+        .step-flow strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🎯</div>
+        <h1>OPIc Demo Test</h1>
+        <p class="subtitle">완벽하게 클론된 OPIc 테스트 시스템</p>
+
+        <div class="info-box">
+            <h3>📋 테스트 진행 순서</h3>
+            <ul>
+                <li>Background Survey - 배경 설문조사 (Part 4에서 12개 이상 선택)</li>
+                <li>Self Assessment - 난이도 선택 (Level 1-2, 3-4, 5-6)</li>
+                <li>Pre-Test Setup - 마이크 테스트</li>
+                <li>Sample Question - 샘플 문제 연습</li>
+                <li>Begin Test - 시험 시작 안내</li>
+                <li>OPIc Test - 실제 테스트</li>
+            </ul>
+        </div>
+
+        <button onclick="startTest()" class="btn-start">
+            시험 시작하기 →
+        </button>
+
+        <a href="../pages/opic-navigation.html" class="btn-nav">
+            또는 개별 페이지 선택
+        </a>
+
+        <div class="step-flow">
+            <strong>💡 Tip:</strong> 각 페이지의 "Next" 버튼을 클릭하면 자동으로 다음 단계로 이동합니다!
+        </div>
+    </div>
+
+    <script>
+        function startTest() {
+            // 기존 데이터 초기화
+            localStorage.clear();
+            // Survey 페이지로 이동
+            window.location.href = '../pages/survey-clone.html';
+        }
+    </script>
+</body>
+</html>
