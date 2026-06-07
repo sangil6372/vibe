@@ -5,121 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OPIc 시험 결과</title>
 <link rel="stylesheet" href="../assets/css/noto-sans-kr.css">
+<link rel="stylesheet" href="../assets/css/design-system.css">
+<link rel="stylesheet" href="../assets/css/result.css">
+<script src="../assets/js/config.js"></script>
 <script src="../assets/js/vue.global.js" onerror="this.onerror=null;this.src='../assets/js/vue.global.js'"></script>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR',sans-serif;background:#f0f2f5;min-height:100vh}
-
-/* ── Header ── */
-.header{
-  background:linear-gradient(135deg,#667eea,#764ba2);
-  color:white;padding:0 32px;height:60px;
-  display:flex;align-items:center;justify-content:space-between;
-  box-shadow:0 2px 8px rgba(0,0,0,.2);
-}
-.header h1{font-size:1.1em;font-weight:700}
-.btn-retry{
-  padding:8px 20px;background:rgba(255,255,255,.2);color:white;
-  border:1.5px solid rgba(255,255,255,.4);border-radius:8px;
-  cursor:pointer;font-size:.85em;font-weight:600;text-decoration:none;
-}
-.btn-retry:hover{background:rgba(255,255,255,.3)}
-
-/* ── Layout ── */
-.container{max-width:860px;margin:0 auto;padding:32px 16px 60px}
-
-/* ── Grade Card ── */
-.grade-card{
-  background:white;border-radius:20px;padding:40px 32px;
-  text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08);
-  margin-bottom:24px;
-}
-.grade-badge{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:120px;height:120px;border-radius:50%;
-  font-size:2.8em;font-weight:900;letter-spacing:-.5px;
-  margin-bottom:16px;
-}
-.grade-NH  {background:#fee2e2;color:#dc2626}
-.grade-IL  {background:#fef3c7;color:#d97706}
-.grade-IM1 {background:#fef3c7;color:#b45309}
-.grade-IM2 {background:#fef9c3;color:#854d0e}
-.grade-IM3 {background:#dcfce7;color:#16a34a}
-.grade-IH  {background:#dbeafe;color:#1d4ed8}
-.grade-AL  {background:#ede9fe;color:#6d28d9}
-.grade-AM  {background:#f3e8ff;color:#7c3aed}
-.grade-AH  {background:#fce7f3;color:#be185d}
-.grade-label{font-size:1em;color:#666;margin-bottom:8px}
-.grade-rationale{font-size:.9em;color:#444;line-height:1.7;max-width:600px;margin:0 auto}
-
-/* ── Section ── */
-.section{background:white;border-radius:16px;padding:28px 28px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.section-title{font-size:1em;font-weight:700;color:#1a1a2e;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-
-/* ── Strengths / Improvements ── */
-.list-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:600px){.list-grid{grid-template-columns:1fr}}
-.list-box{background:#f8f9ff;border-radius:12px;padding:16px}
-.list-box h4{font-size:.82em;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px}
-.list-box.green h4{color:#16a34a}
-.list-box.orange h4{color:#d97706}
-.list-item{font-size:.88em;color:#333;line-height:1.6;padding:6px 0;border-bottom:1px solid #eee}
-.list-item:last-child{border-bottom:none}
-
-/* ── Next Level ── */
-.next-box{background:linear-gradient(135deg,#ede9fe,#dbeafe);border-radius:12px;padding:18px 20px;font-size:.9em;color:#333;line-height:1.7}
-
-/* ── Questions ── */
-.q-accordion{display:flex;flex-direction:column;gap:10px}
-.q-item{background:white;border-radius:12px;border:1.5px solid #e8eaed;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.q-header{
-  display:flex;align-items:center;gap:12px;padding:14px 18px;
-  cursor:pointer;user-select:none;transition:background .15s;
-}
-.q-header:hover{background:#f8f9ff}
-.q-num{
-  width:32px;height:32px;border-radius:50%;
-  background:#667eea;color:white;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.8em;font-weight:700;flex-shrink:0;
-}
-.q-title{flex:1;font-size:.9em;font-weight:600;color:#1a1a2e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.q-grade-mini{
-  font-size:.72em;font-weight:700;padding:2px 10px;border-radius:20px;flex-shrink:0;
-}
-.q-chevron{font-size:.8em;color:#aaa;transition:transform .2s;flex-shrink:0}
-.q-chevron.open{transform:rotate(180deg)}
-.q-body{padding:0 18px 18px;display:none}
-.q-body.open{display:block}
-.q-section-label{font-size:.75em;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.4px;margin:12px 0 6px}
-.q-text{font-size:.88em;color:#333;line-height:1.7;background:#f8f9ff;padding:10px 14px;border-radius:8px;border-left:3px solid #667eea}
-.q-transcript{font-size:.88em;color:#333;line-height:1.7;background:#f0fdf4;padding:10px 14px;border-radius:8px;border-left:3px solid #22c55e}
-.q-feedback{font-size:.86em;color:#222;line-height:1.75;background:#fafafa;padding:12px 14px;border-radius:8px;border-left:3px solid #a855f7;white-space:pre-wrap}
-.q-no-transcript{font-size:.85em;color:#aaa;font-style:italic}
-.btn-gen-feedback{
-  margin-top:10px;padding:7px 16px;background:#ede9fe;color:#7c3aed;
-  border:none;border-radius:8px;cursor:pointer;font-size:.82em;font-weight:600;
-}
-.btn-gen-feedback:hover{background:#ddd6fe}
-.btn-gen-feedback:disabled{background:#f0f0f0;color:#bbb;cursor:default}
-
-/* ── Loading ── */
-.loading-overlay{
-  position:fixed;inset:0;background:rgba(255,255,255,.9);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:100;gap:16px;
-}
-.spinner{
-  width:48px;height:48px;border:4px solid #e0e0e0;border-top-color:#667eea;
-  border-radius:50%;animation:spin 1s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-text{color:#666;font-size:.95em}
-
-/* ── Empty ── */
-.empty-state{text-align:center;padding:60px 20px;color:#bbb}
-.empty-state .icon{font-size:3em;margin-bottom:12px}
-</style>
 </head>
 <body>
 <div id="app">
@@ -223,7 +112,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#f0f2f5;min-height:100vh}
 
 <script>
 const { createApp, ref, computed, onMounted } = Vue;
-const SERVER = 'http://127.0.0.1:8765';
+const SERVER = OPIcConfig.SERVER_URL;
 
 const GRADE_ORDER = ['NH','IL','IM1','IM2','IM3','IH','AL','AM','AH'];
 

@@ -815,7 +815,7 @@ $(function() {
             : Promise.resolve();
 
         prep.then(function() {
-            return fetch('http://127.0.0.1:8765/save-feedback-item', { method: 'POST', body: form });
+            return fetch(OPIcConfig.API.saveFeedbackItem, { method: 'POST', body: form });
         }).then(function(r) { return r.json(); }).then(function(d) {
             if (d.ok) {
                 _savedFbId = d.id;
@@ -841,14 +841,14 @@ $(function() {
         $btn.prop('disabled', true).text('⏳ 생성 중...');
         var modelText = $('#fbAiModel').text().trim();
 
-        fetch('http://127.0.0.1:8765/model-tts', {
+        fetch(OPIcConfig.API.modelTts, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: _savedFbId, text: modelText })
         }).then(function(r) { return r.json(); }).then(function(d) {
             if (d.ok) {
                 $btn.text('✅ 음성 저장됨');
-                var audioUrl = 'http://127.0.0.1:8765/feedback-audio?id=' + _savedFbId + '&file=model.mp3';
+                var audioUrl = OPIcConfig.API.feedbackAudio + '?id=' + _savedFbId + '&file=model.mp3';
                 // 미니 플레이어 삽입
                 $('#fbModelPlayer').html(
                     '<div class="fb-audio-player" style="margin-top:10px">' +
@@ -914,7 +914,7 @@ $(function() {
     }
 
     function _fetchFeedback(qText, userText) {
-        fetch('http://127.0.0.1:8765/feedback', {
+        fetch(OPIcConfig.API.feedback, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ questionText: qText, transcript: userText })
@@ -983,7 +983,7 @@ $(function() {
 
         return Promise.all(fetches).then(function() {
             form.append('meta', JSON.stringify(meta));
-            return fetch('http://127.0.0.1:8765/save-recordings', { method: 'POST', body: form });
+            return fetch(OPIcConfig.API.saveRecordings, { method: 'POST', body: form });
         }).then(function(r) { return r.json(); }).then(function(d) {
             if (!d.ok) throw new Error(d.error || '저장 실패');
             // 결과 페이지용 세션 데이터 localStorage 저장

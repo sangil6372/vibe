@@ -12,146 +12,8 @@
     <link rel="stylesheet" href="../assets/css/video-js.css">
     <link rel="stylesheet" href="../assets/css/master.css">
     <link rel="stylesheet" href="../assets/css/learnosity-main.css">
-    
-    <style>
-        /* ── OPIc 기본 유지 ── */
-        .video-js { width: 300px; height: 150px; }
-        .vjs-fluid:not(.vjs-audio-only-mode) { padding-top: 56.25% }
-        .opic-video-dimensions { width: 296px; height: 300px; }
-        .opic-video-dimensions.vjs-fluid:not(.vjs-audio-only-mode) { padding-top: 101.35135135135135%; }
-        #setup-video, #opic-video { display: inline-block; }
-        .prompt-list { list-style: none; padding: 0; max-width: 40rem; display: flex; flex-wrap: wrap; gap: .4rem .3rem; }
-        body { font-family: 'Noto Sans KR', sans-serif !important; }
-
-        /* ── 피드백 패널 ── */
-        #feedbackPanel {
-            position: fixed; inset: 0; background: rgba(0,0,0,.5);
-            z-index: 2000; display: none; overflow-y: auto; padding: 20px 16px;
-        }
-        .fb-box {
-            background: #fff; width: 94vw; max-width: 1280px;
-            margin: auto; padding: 28px 28px 24px; position: relative;
-            box-shadow: 0 2px 2px 0 rgba(0,0,0,.4);
-        }
-        .fb-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
-        .fb-col-right { position: sticky; top: 20px; }
-        .fb-model-wrap {
-            background: #fff8f5; border-left: 4px solid #f63;
-            padding: 18px 20px; min-height: 200px;
-        }
-        .fb-model-hdr { font-size: .9em; font-weight: 700; color: #f63; margin-bottom: 14px; }
-        .fb-model-body { font-size: .88em; color: #444; line-height: 1.85; }
-        @media (max-width: 860px) {
-            .fb-columns { grid-template-columns: 1fr; }
-            .fb-col-right { position: static; }
-        }
-        .fb-close {
-            position: absolute; top: 14px; right: 16px;
-            background: none; border: none; cursor: pointer;
-            color: #999; font-size: 1.1em; box-shadow: none !important;
-        }
-        .fb-header { font-size: .72em; color: #999; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .4px; }
-        .fb-topic { font-weight: 700; font-size: .95em; color: #444; margin-bottom: 16px; }
-        .fb-section { margin-bottom: 16px; }
-        .fb-section h4 { font-size: .78em; font-weight: 700; color: #999; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
-        .fb-qtext { font-size: .88em; color: #444; line-height: 1.6; background: #f2f2f2; padding: 10px 14px; border-left: 3px solid #36f; }
-        .fb-transcript { font-size: .88em; color: #444; line-height: 1.6; background: #f2f2f2; padding: 10px 14px; border-left: 3px solid #51bb39; }
-        .fb-error { font-size: .88em; color: #e74c3c; }
-        .fb-loading { color: #999; font-size: .88em; }
-        .fb-actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-
-        /* ── 오디오 플레이어 ── */
-        .fb-audio-player {
-            display: flex; align-items: center; gap: 10px;
-            background: #f2f2f2; border: 1px solid #ccc;
-            padding: 8px 12px; margin-bottom: 16px;
-        }
-        .fb-ap-btn {
-            background: #f63; color: #fff; border: none;
-            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
-            width: 32px; height: 32px; cursor: pointer; font-size: .85em;
-            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-        }
-        .fb-ap-btn:hover { background: #e55; }
-        .fb-ap-bar { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
-        .fb-ap-track { flex: 1; height: 5px; background: #ccc; cursor: pointer; position: relative; }
-        .fb-ap-fill { height: 100%; background: #36f; width: 0%; pointer-events: none; }
-        .fb-ap-thumb {
-            position: absolute; top: 50%; left: 0%;
-            transform: translate(-50%, -50%);
-            width: 13px; height: 13px; border-radius: 50%;
-            background: #36f; border: 2px solid #fff;
-            box-shadow: 0 1px 2px rgba(0,0,0,.3); pointer-events: none;
-        }
-        .fb-ap-time { font-size: .76em; color: #666; white-space: nowrap; flex-shrink: 0; }
-
-        /* ── AI 피드백 섹션 ── */
-        .fb-ai-section { padding: 12px 14px; margin-bottom: 8px; font-size: .88em; color: #444; line-height: 1.65; }
-        .fb-ai-section.diagnosis { background: #fff8f5; border-left: 3px solid #f63; }
-        .fb-ai-section.analysis  { background: #f0f4ff; border-left: 3px solid #36f; }
-        .fb-ai-section.tips      { background: #f5fdf2; border-left: 3px solid #51bb39; }
-        .fb-ai-section.generic   { background: #f2f2f2; border-left: 3px solid #ccc; }
-        .fb-ai-section-title { font-size: .78em; font-weight: 700; color: #444; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .3px; }
-        .fb-ai-section ul { margin: 4px 0 4px 16px; padding: 0; }
-        .fb-ai-section li { margin-bottom: 4px; line-height: 1.6; }
-        .fb-ai-section strong { color: #333; }
-
-        /* ── 네브바: navbar.css / navbar.js 에서 주입 ── */
-        .add-con { padding: 0 !important; margin: 0 !important; }
-        .name-tag { padding: 0 !important; margin: 0 !important; border: none !important; background: none !important; }
-        .con-in { display: none !important; }
-
-        /* ── 피드백 저장/TTS 버튼 ── */
-        .fb-save-bar { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-        .fb-save-btn {
-            padding: 7px 18px; background: #36f; color: #fff;
-            border: 0; cursor: pointer; font-size: .82em; font-weight: 700;
-            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
-        }
-        .fb-save-btn:hover:not(:disabled) { background: #2244ee; }
-        .fb-save-btn:disabled { background: #ccc; cursor: default; box-shadow: none; }
-        .fb-save-status { font-size: .82em; color: #51bb39; font-weight: 600; }
-        .fb-model-actions { margin-top: 14px; }
-        .fb-model-tts-btn {
-            padding: 7px 16px; background: #eee; color: #444;
-            border: 1px solid #ccc; cursor: pointer;
-            font-size: .82em; font-weight: 600; margin-bottom: 10px;
-            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
-        }
-        .fb-model-tts-btn:hover:not(:disabled) { background: #ddd; }
-        .fb-model-tts-btn:disabled { background: #f2f2f2; color: #bbb; cursor: default; box-shadow: none; }
-
-        /* ── 하단 버튼 ── */
-        #btnFeedback {
-            padding: 8px 18px; background: #eee; color: #444;
-            border: 0; cursor: pointer; font-size: .85em; font-weight: 700;
-            margin-right: 8px; box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
-        }
-        #btnFeedback:hover:not(:disabled) { background: #ddd; }
-        #btnFeedback:disabled { background: #f2f2f2; color: #bbb; cursor: default; box-shadow: none; }
-        #btnFinalSubmit {
-            display: none; padding: 8px 22px; background: #f63; color: #fff;
-            border: 0; cursor: pointer; font-size: .85em; font-weight: 700;
-            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
-        }
-        #btnFinalSubmit:hover:not(:disabled) { background: #e55; }
-        #btnFinalSubmit:disabled { background: #ccc; cursor: default; box-shadow: none; }
-
-        /* ── 연습 모드 패널 ── */
-        #practicePanel {
-            display: none; margin-top: 12px; padding: 12px 14px;
-            background: #f2f2f2; border-left: 4px solid #36f;
-        }
-        .pr-badges { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
-        .pr-badge { display: inline-block; padding: 2px 10px; font-size: .75em; font-weight: 700; letter-spacing: .3px; }
-        .pr-badge-elapsed { background: #444; color: #fff; font-size: .85em; padding: 3px 12px; }
-        .pr-badge-combo   { background: #888; color: #fff; }
-        .pr-badge-type    { background: #36f; color: #fff; }
-        .pr-badge-kind    { background: #51bb39; color: #fff; }
-        #qTopicName  { font-weight: 700; font-size: .95em; color: #444; margin-bottom: 2px; }
-        #qTypeDesc   { font-size: .82em; color: #888; margin-bottom: 6px; }
-        #qTextDisplay { font-size: .9em; color: #444; font-style: italic; white-space: pre-wrap; line-height: 1.6; }
-    </style>
+    <link rel="stylesheet" href="../assets/css/design-system.css">
+    <link rel="stylesheet" href="../assets/css/opic-test.css">
 </head>
 <body>
     <div id="contentDiv">
@@ -333,6 +195,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../assets/js/config.js"></script>
     <script src="../assets/js/jquery.min.js"></script>
     <script src="../assets/js/video.min.js"></script>
     <script src="../assets/js/videojs-playlist.min.js"></script>

@@ -1,0 +1,188 @@
+/* ── my-records.html 전용 스타일 ── */
+
+body {
+  background: var(--color-bg);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) 60px;
+}
+
+/* 빈 화면 / 오류 */
+.empty {
+  text-align: center;
+  padding: 80px var(--space-5);
+  color: var(--color-text-muted);
+}
+.server-warn {
+  background: var(--color-primary-light);
+  border-left: 4px solid var(--color-primary);
+  padding: 12px var(--space-4);
+  font-size: .88em;
+  color: var(--color-text);
+  margin-bottom: var(--space-5);
+}
+
+/* 카드 */
+.card {
+  background: var(--color-surface);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-md);
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+.card-date  { font-size: .75em; color: var(--color-text-secondary); }
+.card-topic {
+  font-size: .78em;
+  font-weight: 700;
+  padding: 2px 10px;
+  background: var(--color-primary);
+  color: #fff;
+}
+.card-combo { font-size: .75em; color: var(--color-text-secondary); }
+.card-body  { padding: var(--space-4) 18px; }
+
+/* 섹션 */
+.sec { margin-bottom: 14px; }
+.sec-label {
+  font-size: .72em;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 5px;
+}
+.sec-qtext {
+  font-size: .87em;
+  color: var(--color-text);
+  font-style: italic;
+  line-height: 1.6;
+  background: var(--color-bg);
+  padding: 10px 12px;
+  border-left: 3px solid var(--color-secondary);
+}
+.sec-transcript {
+  font-size: .87em;
+  color: var(--color-text);
+  line-height: 1.6;
+  background: var(--color-bg);
+  padding: 10px 12px;
+  border-left: 3px solid var(--color-success);
+}
+.sec-model {
+  font-size: .87em;
+  color: var(--color-text);
+  line-height: 1.75;
+  background: var(--color-primary-light);
+  padding: 12px 14px;
+  border-left: 3px solid var(--color-primary);
+}
+.no-content {
+  font-size: .82em;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* 미니 오디오 플레이어 */
+.mini-player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg);
+  border: 1px solid #CCC;
+  padding: 7px 10px;
+  margin-top: 8px;
+}
+.mp-btn {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: .78em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mp-btn:hover { background: var(--color-primary-dark); }
+.mp-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mp-track {
+  flex: 1;
+  height: 5px;
+  background: #CCC;
+  cursor: pointer;
+  position: relative;
+}
+.mp-fill {
+  height: 100%;
+  background: var(--color-secondary);
+  width: 0%;
+}
+.mp-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,.3);
+  pointer-events: none;
+}
+.mp-time {
+  font-size: .72em;
+  color: #666;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 피드백 아코디언 */
+.fb-toggle {
+  display: flex;
+  align-items: center;
+  padding: 9px 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  font-size: .82em;
+  font-weight: 600;
+  color: var(--color-text);
+  user-select: none;
+  margin-top: 4px;
+}
+.fb-toggle:hover { background: #E8E8E8; }
+.fb-chevron {
+  font-size: .7em;
+  transition: transform var(--transition);
+  margin-left: auto;
+}
+.fb-chevron.open { transform: rotate(180deg); }
+.fb-content { display: none; margin-top: 8px; }
+.fb-content.open { display: block; }
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .container { padding: var(--space-4) var(--space-3) 60px; }
+  .card-body  { padding: var(--space-3) var(--space-3); }
+  .mp-btn { min-width: 44px; min-height: 44px; width: 36px; height: 36px; }
+}

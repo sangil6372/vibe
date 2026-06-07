@@ -1,0 +1,124 @@
+/* ── index.html 전용 스타일 ── */
+
+body {
+  background: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10) var(--space-5);
+}
+
+/* 카드 */
+.card {
+  background: var(--color-surface);
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-md);
+}
+.card-header {
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-5) 28px 18px;
+}
+.card-header h1 {
+  font-size: 1.3em;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+.card-header p {
+  font-size: .82em;
+  color: var(--color-text-secondary);
+}
+.card-body {
+  padding: var(--space-6) 28px;
+}
+.card-footer {
+  border-top: 1px solid var(--color-border);
+  padding: 14px 28px;
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+/* 메뉴 리스트 */
+.menu-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: var(--space-6);
+}
+.menu-item a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  color: var(--color-text);
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.1);
+  transition: border-color var(--transition);
+}
+.menu-item a:hover { border-color: var(--color-primary); }
+.menu-item a:hover .menu-arrow { color: var(--color-primary); }
+
+.menu-item.primary a {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+}
+.menu-item.primary a:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+.menu-item.primary .menu-arrow { color: rgba(255,255,255,.7); }
+
+.menu-title {
+  font-size: .9em;
+  font-weight: 700;
+}
+.menu-desc {
+  font-size: .76em;
+  margin-top: 2px;
+  opacity: .7;
+}
+.menu-arrow {
+  font-size: .8em;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  margin-left: var(--space-3);
+}
+
+/* 푸터 정보 */
+.info-item {
+  font-size: .76em;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.info-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  flex-shrink: 0;
+}
+
+/* 반응형 */
+@media (max-width: 480px) {
+  .main { padding: var(--space-5) var(--space-4); }
+  .card-header { padding: var(--space-4) var(--space-4) var(--space-3); }
+  .card-body   { padding: var(--space-4) var(--space-4); }
+  .card-footer { padding: var(--space-3) var(--space-4); gap: var(--space-3); }
+}

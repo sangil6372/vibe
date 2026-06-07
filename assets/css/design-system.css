@@ -1,0 +1,346 @@
+/* ============================================================
+   OPIc Design System
+   CSS 토큰 + 공통 컴포넌트
+   모든 그룹 B 페이지(index, opic-test, result, my-records, admin)에 로드
+   ============================================================ */
+
+/* ── 1. CSS 토큰 ── */
+:root {
+  /* 브랜드 색상 */
+  --color-primary:        #FF6633;
+  --color-primary-dark:   #E55500;
+  --color-primary-light:  #FFF8F5;
+  --color-primary-border: #FFD0C0;
+
+  --color-secondary:        #3366FF;
+  --color-secondary-dark:   #2244EE;
+  --color-secondary-light:  #F0F4FF;
+  --color-secondary-border: #C5D5FF;
+
+  --color-success:        #51BB39;
+  --color-success-dark:   #3D9A29;
+  --color-success-light:  #F5FDF2;
+  --color-success-border: #BFEDAF;
+
+  --color-danger:        #E74C3C;
+  --color-danger-dark:   #C0392B;
+  --color-danger-light:  #FEF2F2;
+
+  --color-warning:       #F59E0B;
+  --color-warning-light: #FFFBEB;
+
+  /* 중성 색상 */
+  --color-text:           #444444;
+  --color-text-secondary: #888888;
+  --color-text-muted:     #BBBBBB;
+  --color-text-heading:   #1A1A2E;
+
+  --color-bg:           #F2F2F2;
+  --color-bg-alt:       #F0F2F5;
+  --color-surface:      #FFFFFF;
+  --color-border:       #DEE2E6;
+  --color-border-light: #F0F0F0;
+
+  /* 타이포그래피 */
+  --font-family: 'Noto Sans KR', sans-serif;
+
+  /* 간격 (4px 그리드) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+
+  /* 모서리 반경 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* 그림자 */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06);
+  --shadow-md: 0 2px 2px 0 rgba(0,0,0,.12);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,.08);
+  --shadow-xl: 0 2px 8px rgba(0,0,0,.20);
+
+  /* 레이아웃 */
+  --navbar-height: 50px;
+
+  /* z-index 스택 */
+  --z-navbar:  100;
+  --z-modal:   2000;
+  --z-overlay: 2999;
+  --z-drawer:  3000;
+  --z-toast:   4000;
+
+  /* 전환 */
+  --transition: 0.15s ease;
+}
+
+/* Breakpoints (미디어 쿼리에서 var() 사용 불가 — 직접 값 사용):
+   sm: 480px  | md: 768px  | lg: 1024px */
+
+
+/* ── 2. 기본 리셋 ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+}
+
+
+/* ── 3. 버튼 컴포넌트 ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 18px;
+  font-family: var(--font-family);
+  font-size: .85em;
+  font-weight: 700;
+  cursor: pointer;
+  border: 0;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+  transition: background var(--transition), opacity var(--transition);
+  white-space: nowrap;
+  text-decoration: none;
+}
+.btn:disabled {
+  background: #ccc !important;
+  color: #888 !important;
+  cursor: default;
+  box-shadow: none;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) { background: var(--color-primary-dark); }
+
+.btn-secondary {
+  background: #EEE;
+  color: var(--color-text);
+}
+.btn-secondary:hover:not(:disabled) { background: #DDD; }
+
+.btn-blue {
+  background: var(--color-secondary);
+  color: #fff;
+}
+.btn-blue:hover:not(:disabled) { background: var(--color-secondary-dark); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  box-shadow: none;
+}
+.btn-outline:hover:not(:disabled) { background: var(--color-bg); }
+
+
+/* ── 4. 카드 컴포넌트 ── */
+.ds-card {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+}
+.ds-card-header {
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-5) 28px var(--space-4);
+}
+.ds-card-body {
+  padding: var(--space-6) 28px;
+}
+.ds-card-footer {
+  border-top: 1px solid var(--color-border);
+  padding: 14px 28px;
+}
+
+
+/* ── 5. Left-border 박스 패널 ── */
+/* 가장 빈번하게 반복되는 패턴 — opic-test, my-records, result 공통 사용 */
+.box-primary {
+  background: var(--color-primary-light);
+  border-left: 3px solid var(--color-primary);
+  padding: 10px 14px;
+}
+.box-secondary {
+  background: var(--color-secondary-light);
+  border-left: 3px solid var(--color-secondary);
+  padding: 10px 14px;
+}
+.box-success {
+  background: var(--color-success-light);
+  border-left: 3px solid var(--color-success);
+  padding: 10px 14px;
+}
+.box-neutral {
+  background: var(--color-bg);
+  border-left: 3px solid #CCC;
+  padding: 10px 14px;
+}
+
+
+/* ── 6. AI 피드백 섹션 (opic-test + my-records 공통) ── */
+.fb-ai-section {
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-size: .88em;
+  color: var(--color-text);
+  line-height: 1.65;
+}
+.fb-ai-section.diagnosis { background: var(--color-primary-light);   border-left: 3px solid var(--color-primary); }
+.fb-ai-section.analysis  { background: var(--color-secondary-light); border-left: 3px solid var(--color-secondary); }
+.fb-ai-section.tips      { background: var(--color-success-light);   border-left: 3px solid var(--color-success); }
+.fb-ai-section.generic   { background: var(--color-bg);              border-left: 3px solid #CCC; }
+.fb-ai-section-title {
+  font-size: .78em;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+.fb-ai-section ul { margin: 4px 0 4px 16px; padding: 0; }
+.fb-ai-section li { margin-bottom: 4px; line-height: 1.6; }
+.fb-ai-section strong { color: #333; }
+
+
+/* ── 7. 뱃지 ── */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: .75em;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+.badge-primary   { background: var(--color-primary);   color: #fff; }
+.badge-secondary { background: var(--color-secondary); color: #fff; }
+.badge-success   { background: var(--color-success);   color: #fff; }
+.badge-neutral   { background: #888;                   color: #fff; }
+.badge-dark      { background: #444;                   color: #fff; }
+
+
+/* ── 8. 오디오 플레이어 공통 구조 ── */
+/* .audio-player: 컨테이너, .ap-btn: 재생버튼, .ap-track: 시크바 */
+.audio-player {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-bg);
+  border: 1px solid #CCC;
+  padding: 8px 12px;
+}
+.ap-btn {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: .85em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ap-btn:hover { background: var(--color-primary-dark); }
+.ap-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.ap-track {
+  flex: 1;
+  height: 5px;
+  background: #CCC;
+  cursor: pointer;
+  position: relative;
+}
+.ap-fill {
+  height: 100%;
+  background: var(--color-secondary);
+  width: 0%;
+  pointer-events: none;
+}
+.ap-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,.3);
+  pointer-events: none;
+}
+.ap-time {
+  font-size: .76em;
+  color: #666;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+
+/* ── 9. 스피너 / 로딩 오버레이 ── */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  gap: var(--space-4);
+}
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #E0E0E0;
+  border-top-color: var(--color-secondary);
+  border-radius: 50%;
+  animation: ds-spin 1s linear infinite;
+}
+@keyframes ds-spin { to { transform: rotate(360deg); } }
+.loading-text { color: #666; font-size: .95em; }
+
+
+/* ── 10. 알림 배너 ── */
+.alert-banner {
+  padding: 12px 16px;
+  font-size: .88em;
+  color: var(--color-text);
+  margin-bottom: var(--space-5);
+}
+.alert-banner.warn {
+  background: var(--color-primary-light);
+  border-left: 4px solid var(--color-primary);
+}
+.alert-banner.info {
+  background: var(--color-secondary-light);
+  border-left: 4px solid var(--color-secondary);
+}
+
+
+/* ── 11. 반응형 기반 ── */
+@media (max-width: 768px) {
+  .ds-card-body    { padding: var(--space-4) var(--space-4); }
+  .ds-card-header  { padding: var(--space-4) var(--space-4) var(--space-3); }
+  .ds-card-footer  { padding: var(--space-3) var(--space-4); }
+
+  .audio-player { padding: 6px 8px; gap: 8px; }
+  .ap-btn { width: 28px; height: 28px; min-width: 44px; min-height: 44px; }
+}

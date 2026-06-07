@@ -56,7 +56,7 @@
   }
 
   function buildSession(data) {
-    var base        = data.base || '../questions/original/';
+    var base        = data.base || (typeof OPIcConfig !== 'undefined' ? OPIcConfig.QUESTIONS_BASE : '../questions/original/');
     var transcripts = data.transcripts || {};
     var items       = [];
 
@@ -115,7 +115,7 @@
     if (q13fi)  addItem(q13fi, { combo: 'IV', qtype: q13type, topic: rpTopic.name, topicKind: rpKind });
 
     // Combo V (Q14-T9, Q15-T10): custom 섹션 우선, 없으면 original 체크
-    var customBase   = data.customBase || '../questions/';
+    var customBase   = data.customBase || (typeof OPIcConfig !== 'undefined' ? OPIcConfig.QUESTIONS_CUSTOM : '../questions/');
     var customTopics = data.custom || [];
 
     // custom 섹션용 pickFileFull (customBase 사용)

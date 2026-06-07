@@ -5,135 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OPIc Practice</title>
     <link rel="stylesheet" href="../assets/css/noto-sans-kr.css">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background: #f2f2f2;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 헤더: navbar.js에서 주입 */
-
-        /* Main */
-        .main {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-
-        .card {
-            background: #fff;
-            width: 100%;
-            max-width: 520px;
-            box-shadow: 0 2px 2px 0 rgba(0,0,0,.12);
-        }
-
-        .card-header {
-            background: #f2f2f2;
-            border-bottom: 1px solid #dee2e6;
-            padding: 20px 28px 18px;
-        }
-        .card-header h1 {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #444;
-            margin-bottom: 4px;
-        }
-        .card-header p {
-            font-size: .82em;
-            color: #888;
-        }
-
-        .card-body {
-            padding: 24px 28px;
-        }
-
-        /* 메뉴 리스트 */
-        .menu-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-
-        .menu-item a {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 18px;
-            background: #fff;
-            border: 1px solid #dee2e6;
-            text-decoration: none;
-            color: #444;
-            box-shadow: 0 2px 1px 0 rgba(0,0,0,.1);
-            transition: border-color .12s;
-        }
-        .menu-item a:hover {
-            border-color: #f63;
-        }
-        .menu-item a:hover .menu-arrow {
-            color: #f63;
-        }
-
-        .menu-item.primary a {
-            background: #f63;
-            border-color: #f63;
-            color: #fff;
-            box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
-        }
-        .menu-item.primary a:hover {
-            background: #e55;
-            border-color: #e55;
-        }
-        .menu-item.primary .menu-arrow {
-            color: rgba(255,255,255,.7);
-        }
-
-        .menu-title {
-            font-size: .9em;
-            font-weight: 700;
-        }
-        .menu-desc {
-            font-size: .76em;
-            margin-top: 2px;
-            opacity: .7;
-        }
-        .menu-arrow {
-            font-size: .8em;
-            color: #bbb;
-            flex-shrink: 0;
-            margin-left: 12px;
-        }
-
-        /* Footer info */
-        .card-footer {
-            border-top: 1px solid #dee2e6;
-            padding: 14px 28px;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .info-item {
-            font-size: .76em;
-            color: #999;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .info-dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: #51bb39;
-            flex-shrink: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/design-system.css">
+    <link rel="stylesheet" href="../assets/css/index.css">
 </head>
 <body>
 
@@ -193,6 +66,7 @@
         </div>
     </main>
 
+    <script src="/assets/js/config.js"></script>
     <script src="/assets/js/navbar.js"></script>
 </body>
 </html>

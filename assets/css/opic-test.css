@@ -1,0 +1,267 @@
+/* ── opic-test.html 전용 스타일 ── */
+/* Bootstrap(master.css) + learnosity-main.css 이후에 로드됨 */
+
+body { font-family: var(--font-family) !important; }
+
+/* Video.js 크기 보정 */
+.video-js { width: 300px; height: 150px; }
+.vjs-fluid:not(.vjs-audio-only-mode) { padding-top: 56.25%; }
+.opic-video-dimensions { width: 296px; height: 300px; }
+.opic-video-dimensions.vjs-fluid:not(.vjs-audio-only-mode) { padding-top: 101.35135135135135%; }
+#setup-video, #opic-video { display: inline-block; }
+.prompt-list {
+  list-style: none;
+  padding: 0;
+  max-width: 40rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .3rem;
+}
+
+/* Learnosity 레거시 숨김 */
+.add-con { padding: 0 !important; margin: 0 !important; }
+.name-tag { padding: 0 !important; margin: 0 !important; border: none !important; background: none !important; }
+.con-in { display: none !important; }
+
+/* ── 피드백 패널 ── */
+#feedbackPanel {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: var(--z-modal);
+  display: none;
+  overflow-y: auto;
+  padding: var(--space-5) var(--space-4);
+}
+.fb-box {
+  background: var(--color-surface);
+  width: 94vw;
+  max-width: 1280px;
+  margin: auto;
+  padding: 28px 28px 24px;
+  position: relative;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.4);
+}
+.fb-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+.fb-col-right { position: sticky; top: 20px; }
+.fb-model-wrap {
+  background: var(--color-primary-light);
+  border-left: 4px solid var(--color-primary);
+  padding: 18px var(--space-5);
+  min-height: 200px;
+}
+.fb-model-hdr {
+  font-size: .9em;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 14px;
+}
+.fb-model-body {
+  font-size: .88em;
+  color: var(--color-text);
+  line-height: 1.85;
+}
+
+.fb-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  font-size: 1.1em;
+  box-shadow: none !important;
+}
+.fb-header {
+  font-size: .72em;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.fb-topic {
+  font-weight: 700;
+  font-size: .95em;
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+.fb-section { margin-bottom: var(--space-4); }
+.fb-section h4 {
+  font-size: .78em;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.fb-qtext {
+  font-size: .88em;
+  color: var(--color-text);
+  line-height: 1.6;
+  background: var(--color-bg);
+  padding: 10px 14px;
+  border-left: 3px solid var(--color-secondary);
+}
+.fb-transcript {
+  font-size: .88em;
+  color: var(--color-text);
+  line-height: 1.6;
+  background: var(--color-bg);
+  padding: 10px 14px;
+  border-left: 3px solid var(--color-success);
+}
+.fb-error { font-size: .88em; color: var(--color-danger); }
+.fb-loading { color: var(--color-text-muted); font-size: .88em; }
+.fb-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+
+/* 오디오 플레이어 (피드백 패널 전용 — design-system의 .audio-player + .ap-* 활용) */
+.fb-audio-player {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-bg);
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  margin-bottom: var(--space-4);
+}
+.fb-ap-btn {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: .85em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fb-ap-btn:hover { background: var(--color-primary-dark); }
+.fb-ap-bar { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.fb-ap-track { flex: 1; height: 5px; background: #ccc; cursor: pointer; position: relative; }
+.fb-ap-fill { height: 100%; background: var(--color-secondary); width: 0%; pointer-events: none; }
+.fb-ap-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--color-secondary);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,.3);
+  pointer-events: none;
+}
+.fb-ap-time { font-size: .76em; color: #666; white-space: nowrap; flex-shrink: 0; }
+
+/* 피드백 저장/TTS 버튼 */
+.fb-save-bar { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.fb-save-btn {
+  padding: 7px 18px;
+  background: var(--color-secondary);
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  font-size: .82em;
+  font-weight: 700;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+}
+.fb-save-btn:hover:not(:disabled) { background: var(--color-secondary-dark); }
+.fb-save-btn:disabled { background: #ccc; cursor: default; box-shadow: none; }
+.fb-save-status { font-size: .82em; color: var(--color-success); font-weight: 600; }
+.fb-model-actions { margin-top: 14px; }
+.fb-model-tts-btn {
+  padding: 7px 16px;
+  background: #eee;
+  color: var(--color-text);
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: .82em;
+  font-weight: 600;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+}
+.fb-model-tts-btn:hover:not(:disabled) { background: #ddd; }
+.fb-model-tts-btn:disabled { background: var(--color-bg); color: #bbb; cursor: default; box-shadow: none; }
+
+/* 하단 버튼 */
+#btnFeedback {
+  padding: 8px 18px;
+  background: #eee;
+  color: var(--color-text);
+  border: 0;
+  cursor: pointer;
+  font-size: .85em;
+  font-weight: 700;
+  margin-right: 8px;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+  min-height: 44px;
+}
+#btnFeedback:hover:not(:disabled) { background: #ddd; }
+#btnFeedback:disabled { background: var(--color-bg); color: #bbb; cursor: default; box-shadow: none; }
+
+#btnFinalSubmit {
+  display: none;
+  padding: 8px 22px;
+  background: var(--color-primary);
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  font-size: .85em;
+  font-weight: 700;
+  box-shadow: 0 2px 1px 0 rgba(0,0,0,.2);
+  min-height: 44px;
+}
+#btnFinalSubmit:hover:not(:disabled) { background: var(--color-primary-dark); }
+#btnFinalSubmit:disabled { background: #ccc; cursor: default; box-shadow: none; }
+
+/* 연습 모드 패널 */
+#practicePanel {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: var(--color-bg);
+  border-left: 4px solid var(--color-secondary);
+}
+.pr-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.pr-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: .75em;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+.pr-badge-elapsed { background: var(--color-text); color: #fff; font-size: .85em; padding: 3px 12px; }
+.pr-badge-combo   { background: var(--color-text-secondary); color: #fff; }
+.pr-badge-type    { background: var(--color-secondary); color: #fff; }
+.pr-badge-kind    { background: var(--color-success); color: #fff; }
+#qTopicName  { font-weight: 700; font-size: .95em; color: var(--color-text); margin-bottom: 2px; }
+#qTypeDesc   { font-size: .82em; color: var(--color-text-secondary); margin-bottom: 6px; }
+#qTextDisplay { font-size: .9em; color: var(--color-text); font-style: italic; white-space: pre-wrap; line-height: 1.6; }
+
+/* 반응형 — 피드백 패널 */
+@media (max-width: 768px) {
+  .fb-columns { grid-template-columns: 1fr; }
+  .fb-col-right { position: static; }
+  #btnFeedback, #btnFinalSubmit { min-height: 44px; }
+}
