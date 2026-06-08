@@ -530,11 +530,10 @@ $(function() {
     // ═══════════════════════════════════════════════════════════
     //  녹음 저장 + 즉시 피드백
     // ═══════════════════════════════════════════════════════════
-    var _recs               = [];
-    var _sr                 = null;
-    var _srText             = '';
-    var _recIdx             = -1;  // 녹음 시작 시점에 캡처한 인덱스
-    var _pendingFeedbackIdx = -1;  // GPT-4o audio STT 완료 대기 중인 문항 인덱스
+    var _recs    = [];
+    var _sr      = null;
+    var _srText  = '';
+    var _recIdx  = -1;  // 녹음 시작 시점에 캡처한 인덱스
 
     // ── Speech Recognition ──────────────────────────────────
     function _startSR() {
@@ -582,55 +581,15 @@ $(function() {
                 _srText = '';
                 var prompt = (ltiOpicAppSettings.prompts || [])[capturedIdx];
                 _recs[capturedIdx] = {
-                    url:   url,
-                    text:  savedText,
-                    qText: prompt && prompt.meta && prompt.meta.text || '',
-                    meta:  prompt && prompt.meta || {},
+                    url:      url,
+                    text:     savedText,  // Web Speech API 임시 텍스트 (evaluate-feedback 전)
+                    qText:    prompt && prompt.meta && prompt.meta.text || '',
+                    meta:     prompt && prompt.meta || {},
+                    evaluated: false,     // /evaluate-feedback 아직 호출 안 됨
                     pronunciation_issues: [],
-                    sttPending: true
+                    feedback: ''
                 };
                 _updateFeedbackBtn();
-
-                // ── GPT-4o Audio: 백그라운드 STT + 발음 평가 ──────────
-                (function(idx) {
-                    var rec = _recs[idx];
-                    if (!rec || !rec.url) return;
-                    fetch(rec.url)
-                        .then(function(r) { return r.blob(); })
-                        .then(function(blob) {
-                            var form = new FormData();
-                            form.append('audio', blob, 'answer.webm');
-                            if (rec.qText) form.append('questionText', rec.qText);
-                            return fetch(OPIcConfig.API.sttEvaluate, { method: 'POST', body: form });
-                        })
-                        .then(function(r) { return r.json(); })
-                        .then(function(d) {
-                            if (!_recs[idx]) return;
-                            _recs[idx].sttPending = false;
-                            if (d.ok) {
-                                if (d.transcript) _recs[idx].text = d.transcript;
-                                if (d.pronunciation_issues) _recs[idx].pronunciation_issues = d.pronunciation_issues;
-                            }
-                            // 피드백 패널이 이 문항 기다리는 중이면 이제 fetch 실행
-                            if (_pendingFeedbackIdx === idx) {
-                                _pendingFeedbackIdx = -1;
-                                var rec = _recs[idx];
-                                $('#fbTranscript').text(rec.text || '');
-                                $('#fbTranscriptArea').toggle(!!rec.text);
-                                _fetchFeedback(rec.qText, rec.text);
-                            }
-                        })
-                        .catch(function() {
-                            if (!_recs[idx]) return;
-                            _recs[idx].sttPending = false;
-                            // STT 실패해도 피드백은 Web Speech API 텍스트로 진행
-                            if (_pendingFeedbackIdx === idx) {
-                                _pendingFeedbackIdx = -1;
-                                var rec = _recs[idx];
-                                _fetchFeedback(rec.qText, rec.text);
-                            }
-                        });
-                })(capturedIdx);
 
                 // 피드백 버튼으로 녹음을 종료한 경우 패널 자동 오픈
                 if (window._openFeedbackAfterStop) {
@@ -955,65 +914,106 @@ $(function() {
         $('#feedbackPanel').fadeIn(200);
         _initFbPlayer(rec.url || null);
 
-        // GPT-4o audio STT가 아직 완료되지 않았으면 결과를 기다린 후 fetch
-        if (rec.sttPending) {
-            var recIdx = _recs.indexOf(rec);
-            _pendingFeedbackIdx = recIdx;
-            $('#fbAiMain').html('<div class="fb-loading">🎙️ 음성 분석 중... 잠시 후 피드백이 생성됩니다</div>');
-            $('#fbAiModel').html('');
+        if (rec.evaluated) {
+            // 이미 평가 완료 → 캐시 재사용
+            $('#fbTranscript').text(rec.text || '');
+            $('#fbTranscriptArea').toggle(!!rec.text);
+            _currentFeedback = rec.feedback;
+            _renderFeedback(rec.feedback);
+            $('#fbSaveBar').show();
+            $('#fbModelActions').show();
         } else {
-            _fetchFeedback(rec.qText, rec.text);
+            _callEvaluateFeedback(rec);
         }
     }
 
-    function _fetchFeedback(qText, userText) {
-        fetch(OPIcConfig.API.feedback, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ questionText: qText, transcript: userText })
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-            if (d.ok) {
-                if (d.refinedTranscript) {
-                    $('#fbTranscript').text(d.refinedTranscript);
-                    $('#fbTranscriptArea').show();
+    function _callEvaluateFeedback(rec) {
+        if (!rec || !rec.url) return;
+        fetch(rec.url)
+            .then(function(r) { return r.blob(); })
+            .then(function(blob) {
+                var form = new FormData();
+                form.append('audio', blob, 'answer.webm');
+                if (rec.qText) form.append('questionText', rec.qText);
+                return fetch(OPIcConfig.API.evaluateFeedback, { method: 'POST', body: form });
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                rec.evaluated = true;
+                if (!d.ok) {
+                    var errHtml = '<div class="fb-error">❌ ' + (d.error || '평가 실패') + '</div>';
+                    if (_currentRec === rec) { $('#fbAiMain').html(errHtml); $('#fbAiModel').html(''); }
+                    return;
                 }
-                if (d.refinedTranscript && _currentRec) _currentRec.text = d.refinedTranscript;
-                _currentFeedback = d.feedback;
-                _renderFeedback(d.feedback);
-                $('#fbSaveBar').show();
-                $('#fbModelActions').show();
-                // 결과 페이지를 위해 피드백 저장
-                var curIdx = (ltiOpicAppSettings.currentQuestionIndex || 1) - 1;
-                if (_recs[curIdx]) {
-                    _recs[curIdx].feedback = d.feedback;
-                    if (d.refinedTranscript) _recs[curIdx].text = d.refinedTranscript;
+                if (d.transcript) rec.text = d.transcript;
+                if (d.pronunciation_issues) rec.pronunciation_issues = d.pronunciation_issues;
+                if (d.feedback) rec.feedback = d.feedback;
+                // 패널이 이 문항을 보고 있을 때만 UI 업데이트
+                if (_currentRec === rec) {
+                    $('#fbTranscript').text(rec.text || '');
+                    $('#fbTranscriptArea').toggle(!!rec.text);
+                    _currentFeedback = rec.feedback;
+                    _renderFeedback(rec.feedback);
+                    $('#fbSaveBar').show();
+                    $('#fbModelActions').show();
                 }
-            } else {
-                var errHtml = '<div class="fb-error">❌ ' + (d.error || '피드백 생성 실패') + '</div>';
-                $('#fbAiMain').html(errHtml);
-                $('#fbAiModel').html('');
-            }
-        })
-        .catch(function() {
-            var errHtml = '<div class="fb-error">❌ TTS 서버 연결 실패 — 서버가 실행 중인지 확인하세요</div>';
-            $('#fbAiMain').html(errHtml);
-            $('#fbAiModel').html('');
-        });
+            })
+            .catch(function() {
+                rec.evaluated = true;  // 실패해도 재시도 방지
+                if (_currentRec === rec) {
+                    $('#fbAiMain').html('<div class="fb-error">❌ TTS 서버 연결 실패 — 서버가 실행 중인지 확인하세요</div>');
+                    $('#fbAiModel').html('');
+                }
+            });
     }
 
     // ── 최종 제출 ─────────────────────────────────────────────
     $('#btnFinalSubmit').on('click', function() {
         var $btn = $(this);
-        $btn.prop('disabled', true).html('💾 저장 중...');
-        _saveAllRecs().then(function(d) {
-            $btn.html('✅ 저장 완료!');
-            setTimeout(function() { window.location.href = ltiOpicAppSettings.nextPage; }, 1200);
-        }).catch(function(err) {
-            $btn.prop('disabled', false).html('💾 최종 제출');
-            alert('저장 실패: ' + (err.message || err));
-        });
+        $btn.prop('disabled', true).html('🎙️ 음성 분석 중...');
+
+        // 미평가 문항 순차 처리 후 저장
+        var pending = _recs.filter(function(r) { return r && r.url && !r.evaluated; });
+        var total   = pending.length;
+        var done    = 0;
+
+        function evaluateNext() {
+            if (done >= total) {
+                $btn.html('💾 저장 중...');
+                _saveAllRecs().then(function() {
+                    $btn.html('✅ 저장 완료!');
+                    setTimeout(function() { window.location.href = ltiOpicAppSettings.nextPage; }, 1200);
+                }).catch(function(err) {
+                    $btn.prop('disabled', false).html('💾 최종 제출');
+                    alert('저장 실패: ' + (err.message || err));
+                });
+                return;
+            }
+            var rec = pending[done];
+            done++;
+            if (total > 1) $btn.html('🎙️ 음성 분석 중... (' + done + '/' + total + ')');
+            fetch(rec.url)
+                .then(function(r) { return r.blob(); })
+                .then(function(blob) {
+                    var form = new FormData();
+                    form.append('audio', blob, 'answer.webm');
+                    if (rec.qText) form.append('questionText', rec.qText);
+                    return fetch(OPIcConfig.API.evaluateFeedback, { method: 'POST', body: form });
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(d) {
+                    rec.evaluated = true;
+                    if (d.ok) {
+                        if (d.transcript)         rec.text = d.transcript;
+                        if (d.pronunciation_issues) rec.pronunciation_issues = d.pronunciation_issues;
+                        if (d.feedback)           rec.feedback = d.feedback;
+                    }
+                    evaluateNext();
+                })
+                .catch(function() { rec.evaluated = true; evaluateNext(); });
+        }
+
+        evaluateNext();
     });
 
     function _saveAllRecs() {

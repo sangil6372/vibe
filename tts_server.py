@@ -615,6 +615,73 @@ async def stt_evaluate(req):
         return web.json_response({'ok': False, 'error': str(e)})
 
 
+# POST /evaluate-feedback  → audio → transcript + pronunciation_issues + OPIc 피드백 (1회 호출)
+async def evaluate_feedback(req):
+    api_key = _get_apikey()
+    if not api_key:
+        return web.json_response({'ok': False, 'error': 'API 키 없음'})
+
+    reader = await req.multipart()
+    audio_bytes = None
+    question_text = ''
+    async for field in reader:
+        if field.name == 'audio':
+            audio_bytes = await field.read()
+        elif field.name == 'questionText':
+            question_text = (await field.text())[:300]
+
+    if not audio_bytes:
+        return web.json_response({'ok': False, 'error': '오디오 데이터 없음'})
+
+    audio_b64 = base64.b64encode(audio_bytes).decode('utf-8')
+
+    prompt_text = (
+        "You are an ACTFL OPIc certified speech evaluator. Listen to this English speech recording and return ONLY valid JSON:\n"
+        '{"transcript":"<exact transcription>","pronunciation_issues":["<issue>",...],"feedback":"<Korean OPIc feedback>"}\n\n'
+        "pronunciation_issues — include only clearly detected:\n"
+        "rate_of_speech, fluidity, connectedness, articulation, stress, intonation, dead_ending, false_starts, repetition\n\n"
+        "For 'feedback', write in Korean following this EXACT markdown structure:\n"
+        "## 📊 현재 수준 진단\n"
+        "예상 등급(IM2/IH/AL) 명시, 구체적 표현 인용, 판단 근거 2~3문장.\n\n"
+        "## 🔍 세부 분석\n"
+        "**어휘 (Vocabulary)** — 수준 평가, 대체 표현 제시.\n"
+        "**문법 / 시제 (Grammar & Tense)** — 오류 원문 인용 후 수정.\n"
+        "**내용 구성 (Content & Structure)** — 논리성, 세부사항, 스토리텔링.\n"
+        "**연결어 (Connectors & Flow)** — 사용 연결어 평가, 추가 제안.\n\n"
+        "## ⬆️ 다음 등급을 위한 핵심 포인트 (3가지)\n"
+        "즉시 적용 가능한 실천 방법으로.\n\n"
+        "## 💎 AL 수준 모범 답변 (완전 재작성)\n"
+        "150단어 이상. 관계절·부사절·고급 어휘 5개 이상·감각 묘사 포함. 구어체."
+    )
+    if question_text:
+        prompt_text += f"\n\nQuestion: {question_text}"
+
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key)
+        resp = client.chat.completions.create(
+            model='gpt-4o-audio-preview',
+            max_tokens=2500,
+            messages=[{'role': 'user', 'content': [
+                {'type': 'input_audio', 'input_audio': {'data': audio_b64, 'format': 'webm'}},
+                {'type': 'text', 'text': prompt_text}
+            ]}]
+        )
+        raw = resp.choices[0].message.content.strip()
+        m = re.search(r'\{.*\}', raw, re.DOTALL)
+        result = json.loads(m.group(0) if m else raw)
+        return web.json_response({
+            'ok':                 True,
+            'transcript':         result.get('transcript', ''),
+            'pronunciation_issues': result.get('pronunciation_issues', []),
+            'feedback':           result.get('feedback', '')
+        })
+    except ImportError:
+        return web.json_response({'ok': False, 'error': 'openai 패키지 미설치'})
+    except Exception as e:
+        return web.json_response({'ok': False, 'error': str(e)})
+
+
 # POST /save-recordings  → 녹음 파일 영구 저장
 async def save_recordings(req):
     from datetime import datetime as dt
@@ -763,7 +830,8 @@ app.router.add_get('/topic-originals', topic_originals)
 app.router.add_get('/original',      original_audio)
 app.router.add_post('/feedback',         feedback)
 app.router.add_post('/overall-feedback', overall_feedback)
-app.router.add_post('/stt-evaluate',     stt_evaluate)
+app.router.add_post('/stt-evaluate',      stt_evaluate)
+app.router.add_post('/evaluate-feedback', evaluate_feedback)
 app.router.add_post('/save-recordings',    save_recordings)
 app.router.add_post('/save-feedback-item', save_feedback_item)
 app.router.add_post('/model-tts',          model_tts)

@@ -18,6 +18,7 @@
       feedbackItems:    SERVER + '/feedback-items',
       feedbackAudio:    SERVER + '/feedback-audio',
       sttEvaluate:      SERVER + '/stt-evaluate',
+      evaluateFeedback: SERVER + '/evaluate-feedback',
       tts:              SERVER + '/tts',
       audio:            SERVER + '/audio',
       original:         SERVER + '/original',
