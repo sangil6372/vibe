@@ -4,6 +4,14 @@
 
 ---
 
+## 스크린샷
+
+| 시작 화면 | Background Survey | 시험 진행 (Q1 / 15) |
+|:---------:|:-----------------:|:-------------------:|
+| ![시작 화면](assets/images/screenshots/index.png) | ![Background Survey](assets/images/screenshots/survey.png) | ![시험 진행](assets/images/screenshots/opic-test.png) |
+
+---
+
 ## 주요 기능
 
 - **실전 시험 환경** — 실제 OPIc 화면과 동일한 UI로 시험 진행
