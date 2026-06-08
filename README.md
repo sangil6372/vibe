@@ -6,9 +6,13 @@
 
 ## 스크린샷
 
-| 시작 화면 | Background Survey | 시험 진행 (Q1 / 15) |
-|:---------:|:-----------------:|:-------------------:|
-| ![시작 화면](assets/images/screenshots/index.png) | ![Background Survey](assets/images/screenshots/survey.png) | ![시험 진행](assets/images/screenshots/opic-test.png) |
+| 시작 화면 | Background Survey |
+|:---------:|:-----------------:|
+| ![시작 화면](assets/images/screenshots/index.png) | ![Background Survey](assets/images/screenshots/survey.png) |
+
+**시험 진행 화면 — Question 1 of 15**
+
+![시험 진행](assets/images/screenshots/opic-test.png)
 
 ---
 
