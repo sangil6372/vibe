@@ -929,6 +929,8 @@ $(function() {
 
     function _callEvaluateFeedback(rec) {
         if (!rec || !rec.url) return;
+        if (rec.evaluating) return;  // 이미 진행 중 — 결과 오면 UI 자동 업데이트
+        rec.evaluating = true;
         fetch(rec.url)
             .then(function(r) { return r.blob(); })
             .then(function(blob) {
@@ -939,15 +941,16 @@ $(function() {
             })
             .then(function(r) { return r.json(); })
             .then(function(d) {
-                rec.evaluated = true;
+                rec.evaluating = false;
+                rec.evaluated  = true;
                 if (!d.ok) {
                     var errHtml = '<div class="fb-error">❌ ' + (d.error || '평가 실패') + '</div>';
                     if (_currentRec === rec) { $('#fbAiMain').html(errHtml); $('#fbAiModel').html(''); }
                     return;
                 }
-                if (d.transcript) rec.text = d.transcript;
+                if (d.transcript)           rec.text = d.transcript;
                 if (d.pronunciation_issues) rec.pronunciation_issues = d.pronunciation_issues;
-                if (d.feedback) rec.feedback = d.feedback;
+                if (d.feedback)             rec.feedback = d.feedback;
                 // 패널이 이 문항을 보고 있을 때만 UI 업데이트
                 if (_currentRec === rec) {
                     $('#fbTranscript').text(rec.text || '');
@@ -959,7 +962,8 @@ $(function() {
                 }
             })
             .catch(function() {
-                rec.evaluated = true;  // 실패해도 재시도 방지
+                rec.evaluating = false;
+                rec.evaluated  = true;  // 실패해도 재시도 방지
                 if (_currentRec === rec) {
                     $('#fbAiMain').html('<div class="fb-error">❌ TTS 서버 연결 실패 — 서버가 실행 중인지 확인하세요</div>');
                     $('#fbAiModel').html('');
@@ -973,20 +977,31 @@ $(function() {
         $btn.prop('disabled', true).html('🎙️ 음성 분석 중...');
 
         // 미평가 문항 순차 처리 후 저장
-        var pending = _recs.filter(function(r) { return r && r.url && !r.evaluated; });
+        // evaluating 중인 문항은 제외(이미 요청 나감) — 저장 전 완료 대기
+        var pending = _recs.filter(function(r) { return r && r.url && !r.evaluated && !r.evaluating; });
         var total   = pending.length;
         var done    = 0;
 
+        function saveWhenReady() {
+            var inFlight = _recs.filter(function(r) { return r && r.evaluating; });
+            if (inFlight.length > 0) {
+                $btn.html('🎙️ 분석 완료 대기 중...');
+                setTimeout(saveWhenReady, 300);
+                return;
+            }
+            $btn.html('💾 저장 중...');
+            _saveAllRecs().then(function() {
+                $btn.html('✅ 저장 완료!');
+                setTimeout(function() { window.location.href = ltiOpicAppSettings.nextPage; }, 1200);
+            }).catch(function(err) {
+                $btn.prop('disabled', false).html('💾 최종 제출');
+                alert('저장 실패: ' + (err.message || err));
+            });
+        }
+
         function evaluateNext() {
             if (done >= total) {
-                $btn.html('💾 저장 중...');
-                _saveAllRecs().then(function() {
-                    $btn.html('✅ 저장 완료!');
-                    setTimeout(function() { window.location.href = ltiOpicAppSettings.nextPage; }, 1200);
-                }).catch(function(err) {
-                    $btn.prop('disabled', false).html('💾 최종 제출');
-                    alert('저장 실패: ' + (err.message || err));
-                });
+                saveWhenReady();
                 return;
             }
             var rec = pending[done];
