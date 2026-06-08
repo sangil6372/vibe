@@ -14,9 +14,13 @@
 
 ![시험 진행](assets/images/screenshots/opic-test.png)
 
-| AI 채점 결과 (IM2) | 문항별 피드백 |
-|:-----------------:|:------------:|
+| AI 채점 결과 (IM2) | 문항별 AI 피드백 |
+|:-----------------:|:---------------:|
 | ![결과 화면](assets/images/screenshots/result-top.png) | ![피드백 상세](assets/images/screenshots/result-feedback.png) |
+
+**OPIc Diagnostic Comments Form — Advanced / Intermediate Functions**
+
+![Diagnostic Form](assets/images/screenshots/result-diagnostic.png)
 
 ---
 
