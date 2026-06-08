@@ -83,10 +83,8 @@ OVERALL = {
     },
     "adv5": {
       "performance": "Developing Ability",
-      "fluency_checks": ["rate_of_speech", "fluidity"],
       "grammar_checks": ["agreement"],
-      "pragmatic_checks": ["lacks_strategies"],
-      "pronunciation_checks": ["stress", "intonation"]
+      "pragmatic_checks": ["lacks_strategies"]
     },
     "int1": {"performance": "Meets Criteria Fully", "needs": []},
     "int2": {"performance": "Meets Criteria Fully", "needs": []},
@@ -94,7 +92,6 @@ OVERALL = {
     "int4": {
       "performance": "Meets Criteria Fully",
       "fluency_checks": [],
-      "pronunciation_checks": [],
       "grammar_checks": [],
       "syntax_checks": []
     }

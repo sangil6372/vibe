@@ -99,47 +99,6 @@ body {
   border-bottom: 2px solid var(--color-border-light);
 }
 
-/* ── 강점/개선점 ── */
-.list-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-}
-.list-box {
-  background: var(--color-bg);
-  padding: var(--space-4);
-  border-left: 3px solid var(--color-border);
-}
-.list-box h4 {
-  font-size: .78em;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .4px;
-  margin-bottom: 10px;
-}
-.list-box.green { border-left-color: var(--color-success); }
-.list-box.green h4 { color: var(--color-success-dark); }
-.list-box.orange { border-left-color: var(--color-primary); }
-.list-box.orange h4 { color: var(--color-primary-dark); }
-.list-item {
-  font-size: .88em;
-  color: var(--color-text);
-  line-height: 1.6;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--color-border-light);
-}
-.list-item:last-child { border-bottom: none; }
-
-/* ── 다음 등급 ── */
-.next-box {
-  background: var(--color-secondary-light);
-  border-left: 4px solid var(--color-secondary);
-  padding: 16px var(--space-5);
-  font-size: .9em;
-  color: var(--color-text);
-  line-height: 1.7;
-}
-
 /* ── 문항 아코디언 ── */
 .q-accordion { display: flex; flex-direction: column; gap: 8px; }
 .q-item {
@@ -342,9 +301,20 @@ body {
 }
 .dgl:first-child { margin-top: 0; }
 
-/* category label (Fluency:, Grammar: etc.) — orange accent */
+/* category label (Grammar:, Fluency: etc.) — orange accent */
 .dgl.dcat {
   color: var(--color-primary-dark);
+}
+
+/* "not evaluated" note */
+.dgl.diag-na-note {
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-weight: 400;
+  margin-top: 6px;
+}
+.dgl.diag-na-note span {
+  font-size: .9em;
 }
 
 /* checkbox item — row layout (inline wrap) */

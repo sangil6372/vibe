@@ -158,12 +158,6 @@
               <td class="diag-func">Can be readily understood by speakers not accustomed to non-native speakers of the target language.</td>
               <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('adv5'))]">{{ dPerf('adv5') }}</span></td>
               <td class="diag-detail">
-                <div class="dgl dcat">Speaker needs to improve: Fluency:</div>
-                <div class="drc">
-                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','rate_of_speech')}]">Rate of speech</span>
-                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','fluidity')}]">Fluidity (halting)</span>
-                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','connectedness')}]">Connectedness</span>
-                </div>
                 <div class="dgl dcat">Grammar:</div>
                 <div class="drc">
                   <span :class="['dc',{checked:dHas('adv5','grammar_checks','word_structure')}]">Word Structure</span>
@@ -176,13 +170,7 @@
                 <div class="drc">
                   <span :class="['dc',{checked:dHas('adv5','pragmatic_checks','lacks_strategies')}]">Lacks strategies to compensate for weaknesses</span>
                 </div>
-                <div class="dgl dcat">Pronunciation:</div>
-                <div class="drc">
-                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','articulation')}]">Articulation</span>
-                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','pitch')}]">Pitch</span>
-                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','stress')}]">Stress</span>
-                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','intonation')}]">Intonation</span>
-                </div>
+                <div class="dgl diag-na-note">Fluency / Pronunciation: <span>requires audio analysis — not evaluated</span></div>
               </td>
             </tr>
           </tbody>
@@ -243,22 +231,12 @@
               <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('int4'))]">{{ dPerf('int4') }}</span></td>
               <td class="diag-detail">
                 <div class="dgl dcat">Speaker needs to improve: Fluency:</div>
-                <div class="drc">
-                  <span :class="['dc',{checked:dHas('int4','fluency_checks','rate_of_speech')}]">Rate of speech</span>
-                  <span :class="['dc',{checked:dHas('int4','fluency_checks','reduce_pauses')}]">Fluidity (reduce pauses)</span>
-                </div>
                 <div class="dcc">
                   <span :class="['dc',{checked:dHas('int4','fluency_checks','dead_ending')}]">Reduce "dead ending" (incomplete statements)</span>
                   <span :class="['dc',{checked:dHas('int4','fluency_checks','false_starts')}]">Reduce false-starts</span>
                   <span :class="['dc',{checked:dHas('int4','fluency_checks','repetition')}]">Reduce repetition</span>
                 </div>
-                <div class="dgl">Improve pronunciation:</div>
-                <div class="drc">
-                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','articulation')}]">Articulation</span>
-                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','pitch')}]">Pitch</span>
-                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','stress')}]">Stress features</span>
-                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','intonation')}]">Intonation</span>
-                </div>
+                <div class="dgl diag-na-note">Rate of speech / Pronunciation: <span>requires audio analysis — not evaluated</span></div>
                 <div class="dgl">Grammar:</div>
                 <div class="dcc">
                   <span :class="['dc',{checked:dHas('int4','grammar_checks','control_simple_grammar')}]">Needs control of simple sentence level grammar</span>
@@ -272,33 +250,6 @@
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <!-- ── 총평 ── -->
-      <div class="section">
-        <div class="section-title">📊 종합 평가</div>
-        <p style="font-size:.92em;color:#333;line-height:1.75">{{ overall.overallSummary }}</p>
-      </div>
-
-      <!-- ── 강점 / 개선점 ── -->
-      <div class="section">
-        <div class="section-title">📌 세부 분석</div>
-        <div class="list-grid">
-          <div class="list-box green">
-            <h4>✅ 강점</h4>
-            <div class="list-item" v-for="(s, i) in overall.strengths" :key="i">{{ s }}</div>
-          </div>
-          <div class="list-box orange">
-            <h4>⚠️ 개선점</h4>
-            <div class="list-item" v-for="(s, i) in overall.improvements" :key="i">{{ s }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── 다음 등급 ── -->
-      <div class="section">
-        <div class="section-title">⬆️ 다음 등급을 향해</div>
-        <div class="next-box">{{ overall.nextLevelAdvice }}</div>
       </div>
 
       <!-- ── 문항별 결과 ── -->
