@@ -69,20 +69,44 @@
     {
       "id": "음악",
       "folder": "custom/음악",
-      "questions": [
-        "Tell me about the kind of music you enjoy listening to. Who are your favorite artists or bands?",
-        "How and when do you usually listen to music? Describe your typical music listening habits.",
-        "Tell me about a memorable experience you had that is related to music."
-      ]
+      "questions": [],
+      "t9": "Think about how your music listening habits have changed over the years. How is the way you listen to music now different from how you used to listen to it in the past?",
+      "t10": "Streaming services have completely changed the music industry. Some people say this has made things worse for musicians. What do you think are the biggest problems that the music industry faces today?"
     },
     {
       "id": "영화",
       "folder": "custom/영화",
-      "questions": [
-        "What kind of movies do you like to watch? Tell me about your favorite genre or a favorite film.",
-        "How do you usually watch movies? Describe a typical movie-watching experience for you.",
-        "Tell me about a movie that was especially memorable to you. Why did it stick with you?"
-      ]
+      "questions": [],
+      "t9": "How has your movie-watching experience changed compared to the past? Think about where and how you watch movies now versus how you used to.",
+      "t10": "Many people now prefer watching movies at home through streaming services rather than going to the cinema. What do you think are some problems this trend has caused for the film industry or for society in general?"
+    },
+    {
+      "id": "독서",
+      "folder": "custom/독서",
+      "questions": [],
+      "t9": "How have your reading habits changed over the years? Do you read differently now compared to when you were younger, and what kinds of things do you read these days?",
+      "t10": "Many studies show that people are reading less and less, especially among young people. What do you think are the most serious problems caused by this decline in reading habits?"
+    },
+    {
+      "id": "쇼핑",
+      "folder": "custom/쇼핑",
+      "questions": [],
+      "t9": "How has the way you shop changed over the past decade? Think about how online shopping has affected your habits compared to how you used to shop before.",
+      "t10": "Online shopping has become very popular, but it has also created serious problems for local businesses and communities. What do you think are the most significant issues that the rise of online shopping has caused?"
+    },
+    {
+      "id": "기술",
+      "folder": "custom/기술",
+      "questions": [],
+      "t9": "Think about how technology has changed your daily life over the past ten years. How is your life now different from what it was like before smartphones and the internet became so widespread?",
+      "t10": "Technology has become an essential part of modern life, but it also brings many serious challenges. What do you think are the most significant problems that technology creates in today's society?"
+    },
+    {
+      "id": "건강",
+      "folder": "custom/건강",
+      "questions": [],
+      "t9": "How have your health habits and lifestyle changed compared to when you were younger? Are you more or less health-conscious now, and what has changed in the way you take care of yourself?",
+      "t10": "Healthcare and staying healthy are major concerns in modern society. What do you think are the most serious health-related problems that people face today, and why have these issues become so widespread?"
     },
     {
       "id": "집에서보내는휴가",

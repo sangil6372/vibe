@@ -64,6 +64,24 @@ async def generate_topic(topic: dict, force: bool = False):
         print(f"   ✅ 저장: {filename}")
         generated += 1
 
+    for type_key in ("t9", "t10"):
+        text = topic.get(type_key)
+        if not text:
+            continue
+        tnum = type_key[1:]
+        filename = f"{topic_id}_T{tnum}_1_Q.mp3"
+        output_path = os.path.join(folder_path, filename)
+
+        if os.path.exists(output_path) and not force:
+            print(f"   ⏭  T{tnum} 건너뜀 (이미 존재)")
+            skipped += 1
+            continue
+
+        print(f"   🔊 T{tnum} 생성 중... {text[:60]}{'...' if len(text) > 60 else ''}")
+        await generate_one(text, output_path)
+        print(f"   ✅ 저장: {filename}")
+        generated += 1
+
     return generated, skipped
 
 

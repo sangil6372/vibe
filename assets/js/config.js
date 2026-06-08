@@ -5,7 +5,7 @@
 
   global.OPIcConfig = {
     SERVER_URL:       SERVER,
-    QUESTIONS_BASE:   '../questions/original/',
+    QUESTIONS_BASE:   '../questions/custom/',
     QUESTIONS_CUSTOM: '../questions/',
 
     API: {
