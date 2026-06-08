@@ -530,10 +530,11 @@ $(function() {
     // ═══════════════════════════════════════════════════════════
     //  녹음 저장 + 즉시 피드백
     // ═══════════════════════════════════════════════════════════
-    var _recs    = [];
-    var _sr      = null;
-    var _srText  = '';
-    var _recIdx  = -1;  // 녹음 시작 시점에 캡처한 인덱스
+    var _recs               = [];
+    var _sr                 = null;
+    var _srText             = '';
+    var _recIdx             = -1;  // 녹음 시작 시점에 캡처한 인덱스
+    var _pendingFeedbackIdx = -1;  // GPT-4o audio STT 완료 대기 중인 문항 인덱스
 
     // ── Speech Recognition ──────────────────────────────────
     function _startSR() {
@@ -607,21 +608,27 @@ $(function() {
                             if (!_recs[idx]) return;
                             _recs[idx].sttPending = false;
                             if (d.ok) {
-                                if (d.transcript) {
-                                    _recs[idx].text = d.transcript;
-                                    // 피드백 패널이 열려있으면 트랜스크립트 업데이트
-                                    if (_currentRec === _recs[idx]) {
-                                        $('#fbTranscript').text(d.transcript);
-                                        $('#fbTranscriptArea').show();
-                                    }
-                                }
-                                if (d.pronunciation_issues) {
-                                    _recs[idx].pronunciation_issues = d.pronunciation_issues;
-                                }
+                                if (d.transcript) _recs[idx].text = d.transcript;
+                                if (d.pronunciation_issues) _recs[idx].pronunciation_issues = d.pronunciation_issues;
+                            }
+                            // 피드백 패널이 이 문항 기다리는 중이면 이제 fetch 실행
+                            if (_pendingFeedbackIdx === idx) {
+                                _pendingFeedbackIdx = -1;
+                                var rec = _recs[idx];
+                                $('#fbTranscript').text(rec.text || '');
+                                $('#fbTranscriptArea').toggle(!!rec.text);
+                                _fetchFeedback(rec.qText, rec.text);
                             }
                         })
                         .catch(function() {
-                            if (_recs[idx]) _recs[idx].sttPending = false;
+                            if (!_recs[idx]) return;
+                            _recs[idx].sttPending = false;
+                            // STT 실패해도 피드백은 Web Speech API 텍스트로 진행
+                            if (_pendingFeedbackIdx === idx) {
+                                _pendingFeedbackIdx = -1;
+                                var rec = _recs[idx];
+                                _fetchFeedback(rec.qText, rec.text);
+                            }
                         });
                 })(capturedIdx);
 
@@ -947,7 +954,16 @@ $(function() {
         $('#fbAiModel').html('<div class="fb-loading">⏳ 생성 중...</div>');
         $('#feedbackPanel').fadeIn(200);
         _initFbPlayer(rec.url || null);
-        _fetchFeedback(rec.qText, rec.text);
+
+        // GPT-4o audio STT가 아직 완료되지 않았으면 결과를 기다린 후 fetch
+        if (rec.sttPending) {
+            var recIdx = _recs.indexOf(rec);
+            _pendingFeedbackIdx = recIdx;
+            $('#fbAiMain').html('<div class="fb-loading">🎙️ 음성 분석 중... 잠시 후 피드백이 생성됩니다</div>');
+            $('#fbAiModel').html('');
+        } else {
+            _fetchFeedback(rec.qText, rec.text);
+        }
     }
 
     function _fetchFeedback(qText, userText) {

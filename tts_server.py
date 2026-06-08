@@ -4,7 +4,7 @@ OPIc TTS Server (localhost:8765)
 실행: python tts_server.py
 → 서버 시작 후 브라우저에서 http://127.0.0.1:8765 자동 열림
 """
-import os, json, webbrowser, threading
+import os, json, re, base64, webbrowser, threading
 from aiohttp import web
 import edge_tts
 
@@ -566,7 +566,6 @@ async def stt_evaluate(req):
     if not audio_bytes:
         return web.json_response({'ok': False, 'error': '오디오 데이터 없음'})
 
-    import base64
     audio_b64 = base64.b64encode(audio_bytes).decode('utf-8')
 
     prompt_text = (
@@ -602,10 +601,9 @@ async def stt_evaluate(req):
             }]
         )
         raw = resp.choices[0].message.content.strip()
-        # strip markdown code fences if present
-        raw = re.sub(r'^```[^\n]*\n?', '', raw)
-        raw = re.sub(r'\n?```$', '', raw.strip())
-        result = json.loads(raw)
+        # JSON 블록 추출 (코드 펜스 혹은 설명 텍스트 제거)
+        m = re.search(r'\{.*\}', raw, re.DOTALL)
+        result = json.loads(m.group(0) if m else raw)
         return web.json_response({
             'ok': True,
             'transcript': result.get('transcript', ''),
