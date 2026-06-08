@@ -77,7 +77,10 @@
           <div class="q-item" v-for="q in session.questions" :key="q.idx">
             <div class="q-header" @click="toggleQ(q.idx)">
               <div class="q-num">{{ q.idx + 1 }}</div>
-              <div class="q-title">{{ q.questionText || '(질문 없음)' }}</div>
+              <div class="q-meta">
+                <div class="q-title">{{ q.questionText || '(질문 없음)' }}</div>
+                <div class="q-oneliner" v-if="perQOneLiner(q.idx)">{{ perQOneLiner(q.idx) }}</div>
+              </div>
               <span :class="['q-grade-mini', 'grade-' + (perQGrade(q.idx) || 'IM2')]"
                     v-if="perQGrade(q.idx)">{{ perQGrade(q.idx) }}</span>
               <span class="q-chevron" :class="{ open: openQs.has(q.idx) }">▼</span>
@@ -107,6 +110,17 @@
       </div>
 
     </template>
+
+    <!-- ── 전체 피드백 실패 시 재시도 ── -->
+    <template v-if="session && !overall && !loading">
+      <div class="section" style="text-align:center;padding:32px">
+        <p style="color:#888;margin-bottom:16px">전체 피드백을 불러오지 못했습니다.</p>
+        <button class="btn-gen-feedback" style="font-size:.9em;padding:10px 24px" @click="loadOverall">
+          🔄 전체 피드백 다시 요청
+        </button>
+      </div>
+    </template>
+
   </div>
 </div>
 
@@ -137,11 +151,18 @@ createApp({
       return found ? found.grade : '';
     }
 
+    function perQOneLiner(idx) {
+      if (!overall.value || !overall.value.perQuestion) return '';
+      const found = overall.value.perQuestion.find(q => q.idx === idx);
+      return found ? (found.oneLiner || '') : '';
+    }
+
     function formatFeedback(text) {
       return text
         .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
         .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-        .replace(/^## (.+)$/gm,'<strong style="font-size:.95em;color:#1a1a2e">$1</strong>')
+        .replace(/^#{1,3} (.+)$/gm,'<span class="fb-section">$1</span>')
+        .replace(/^[-•] (.+)$/gm,'<span class="fb-bullet">• $1</span>')
         .replace(/\n/g,'<br>');
     }
 
@@ -164,6 +185,24 @@ createApp({
       generatingIdx.value = -1;
     }
 
+    async function loadOverall() {
+      if (!session.value) return;
+      loading.value = true;
+      loadingText.value = 'GPT-4o가 전체 답변을 분석 중입니다...';
+      try {
+        const r = await fetch(SERVER + '/overall-feedback', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ questions: session.value.questions })
+        });
+        const d = await r.json();
+        if (d.ok) {
+          overall.value = d.result;
+        }
+      } catch(e) {}
+      loading.value = false;
+    }
+
     onMounted(async () => {
       // localStorage에서 세션 로드
       try {
@@ -177,45 +216,14 @@ createApp({
       }
 
       // 첫 번째 문항 자동 열기
-      if (session.value.questions.length > 0) {
-        openQs.value = new Set([session.value.questions[0].idx]);
-      }
+      openQs.value = new Set([session.value.questions[0].idx]);
 
-      // 전체 피드백 API 호출
-      loadingText.value = 'GPT-4o가 전체 답변을 분석 중입니다...';
-      try {
-        const r = await fetch(SERVER + '/overall-feedback', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ questions: session.value.questions })
-        });
-        const d = await r.json();
-        if (d.ok) {
-          overall.value = d.result;
-        } else {
-          // API 오류 시 기본값
-          overall.value = {
-            grade: '?',
-            gradeRationale: d.error || '분석 실패',
-            overallSummary: '전체 피드백을 불러오지 못했습니다. TTS 서버와 API 키를 확인해주세요.',
-            strengths: [], improvements: [], nextLevelAdvice: '', perQuestion: []
-          };
-        }
-      } catch(e) {
-        overall.value = {
-          grade: '?',
-          gradeRationale: 'TTS 서버에 연결할 수 없습니다.',
-          overallSummary: 'python tts_server.py 가 실행 중인지 확인해주세요.',
-          strengths: [], improvements: [], nextLevelAdvice: '', perQuestion: []
-        };
-      }
-
-      loading.value = false;
+      await loadOverall();
     });
 
     return {
       loading, loadingText, session, overall,
-      openQs, toggleQ, perQGrade,
+      openQs, toggleQ, perQGrade, perQOneLiner, loadOverall,
       formatFeedback, genFeedback, generatingIdx
     };
   }
