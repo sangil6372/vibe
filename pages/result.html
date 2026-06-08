@@ -158,6 +158,12 @@
               <td class="diag-func">Can be readily understood by speakers not accustomed to non-native speakers of the target language.</td>
               <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('adv5'))]">{{ dPerf('adv5') }}</span></td>
               <td class="diag-detail">
+                <div class="dgl dcat">Speaker needs to improve: Fluency:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','rate_of_speech')}]">Rate of speech</span>
+                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','fluidity')}]">Fluidity (halting)</span>
+                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','connectedness')}]">Connectedness</span>
+                </div>
                 <div class="dgl dcat">Grammar:</div>
                 <div class="drc">
                   <span :class="['dc',{checked:dHas('adv5','grammar_checks','word_structure')}]">Word Structure</span>
@@ -170,7 +176,13 @@
                 <div class="drc">
                   <span :class="['dc',{checked:dHas('adv5','pragmatic_checks','lacks_strategies')}]">Lacks strategies to compensate for weaknesses</span>
                 </div>
-                <div class="dgl diag-na-note">Fluency / Pronunciation: <span>requires audio analysis — not evaluated</span></div>
+                <div class="dgl dcat">Pronunciation:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','articulation')}]">Articulation</span>
+                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','pitch')}]">Pitch</span>
+                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','stress')}]">Stress</span>
+                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','intonation')}]">Intonation</span>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -231,12 +243,22 @@
               <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('int4'))]">{{ dPerf('int4') }}</span></td>
               <td class="diag-detail">
                 <div class="dgl dcat">Speaker needs to improve: Fluency:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('int4','fluency_checks','rate_of_speech')}]">Rate of speech</span>
+                  <span :class="['dc',{checked:dHas('int4','fluency_checks','reduce_pauses')}]">Fluidity (reduce pauses)</span>
+                </div>
                 <div class="dcc">
                   <span :class="['dc',{checked:dHas('int4','fluency_checks','dead_ending')}]">Reduce "dead ending" (incomplete statements)</span>
                   <span :class="['dc',{checked:dHas('int4','fluency_checks','false_starts')}]">Reduce false-starts</span>
                   <span :class="['dc',{checked:dHas('int4','fluency_checks','repetition')}]">Reduce repetition</span>
                 </div>
-                <div class="dgl diag-na-note">Rate of speech / Pronunciation: <span>requires audio analysis — not evaluated</span></div>
+                <div class="dgl">Improve pronunciation:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','articulation')}]">Articulation</span>
+                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','pitch')}]">Pitch</span>
+                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','stress')}]">Stress features</span>
+                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','intonation')}]">Intonation</span>
+                </div>
                 <div class="dgl">Grammar:</div>
                 <div class="dcc">
                   <span :class="['dc',{checked:dHas('int4','grammar_checks','control_simple_grammar')}]">Needs control of simple sentence level grammar</span>

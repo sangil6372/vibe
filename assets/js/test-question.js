@@ -584,9 +584,46 @@ $(function() {
                     url:   url,
                     text:  savedText,
                     qText: prompt && prompt.meta && prompt.meta.text || '',
-                    meta:  prompt && prompt.meta || {}
+                    meta:  prompt && prompt.meta || {},
+                    pronunciation_issues: [],
+                    sttPending: true
                 };
                 _updateFeedbackBtn();
+
+                // ── GPT-4o Audio: 백그라운드 STT + 발음 평가 ──────────
+                (function(idx) {
+                    var rec = _recs[idx];
+                    if (!rec || !rec.url) return;
+                    fetch(rec.url)
+                        .then(function(r) { return r.blob(); })
+                        .then(function(blob) {
+                            var form = new FormData();
+                            form.append('audio', blob, 'answer.webm');
+                            if (rec.qText) form.append('questionText', rec.qText);
+                            return fetch(OPIcConfig.API.sttEvaluate, { method: 'POST', body: form });
+                        })
+                        .then(function(r) { return r.json(); })
+                        .then(function(d) {
+                            if (!_recs[idx]) return;
+                            _recs[idx].sttPending = false;
+                            if (d.ok) {
+                                if (d.transcript) {
+                                    _recs[idx].text = d.transcript;
+                                    // 피드백 패널이 열려있으면 트랜스크립트 업데이트
+                                    if (_currentRec === _recs[idx]) {
+                                        $('#fbTranscript').text(d.transcript);
+                                        $('#fbTranscriptArea').show();
+                                    }
+                                }
+                                if (d.pronunciation_issues) {
+                                    _recs[idx].pronunciation_issues = d.pronunciation_issues;
+                                }
+                            }
+                        })
+                        .catch(function() {
+                            if (_recs[idx]) _recs[idx].sttPending = false;
+                        });
+                })(capturedIdx);
 
                 // 피드백 버튼으로 녹음을 종료한 경우 패널 자동 오픈
                 if (window._openFeedbackAfterStop) {
@@ -993,11 +1030,12 @@ $(function() {
                 questions: _recs.map(function(rec, idx) {
                     if (!rec) return null;
                     return {
-                        idx:          idx,
-                        questionText: rec.qText  || '',
-                        transcript:   rec.text   || '',
-                        feedback:     rec.feedback || '',
-                        meta:         rec.meta   || {}
+                        idx:                  idx,
+                        questionText:         rec.qText  || '',
+                        transcript:           rec.text   || '',
+                        feedback:             rec.feedback || '',
+                        meta:                 rec.meta   || {},
+                        pronunciation_issues: rec.pronunciation_issues || []
                     };
                 }).filter(Boolean)
             };

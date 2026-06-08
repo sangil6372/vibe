@@ -17,6 +17,7 @@
       modelTts:         SERVER + '/model-tts',
       feedbackItems:    SERVER + '/feedback-items',
       feedbackAudio:    SERVER + '/feedback-audio',
+      sttEvaluate:      SERVER + '/stt-evaluate',
       tts:              SERVER + '/tts',
       audio:            SERVER + '/audio',
       original:         SERVER + '/original',

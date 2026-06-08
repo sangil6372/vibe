@@ -399,11 +399,12 @@ async def overall_feedback(req):
     if not questions:
         return web.json_response({'ok': False, 'error': '음성 인식된 답변이 없습니다.'})
 
-    q_text = '\n\n'.join(
-        f"[Q{q['idx']+1} | {q.get('meta',{}).get('combo','?')} | {q.get('meta',{}).get('topicKind','?')}]\n"
-        f"질문: {q['questionText']}\n답변: {q['transcript']}"
-        for q in questions
-    )
+    def _q_line(q):
+        base = (f"[Q{q['idx']+1} | {q.get('meta',{}).get('combo','?')} | {q.get('meta',{}).get('topicKind','?')}]\n"
+                f"질문: {q['questionText']}\n답변: {q['transcript']}")
+        pron = ', '.join(q.get('pronunciation_issues', []))
+        return base + (f"\n음성 분석: {pron}" if pron else "")
+    q_text = '\n\n'.join(_q_line(q) for q in questions)
 
     system_prompt = """당신은 ACTFL OPIc 공인 평가관입니다. 수험자의 전체 시험 답변을 분석하여 최종 등급을 결정하고 OPIc 공식 Diagnostic Comments Form을 작성합니다.
 
@@ -482,16 +483,22 @@ Superior 수준에 근접. 추상적 주제 처리 가능. 가설·추측·논�
 - adv2.cohesive: not_used, used_inaccurately, repetitive
 - adv3.vocab_checks: lacks_breadth, other_languages, false_cognates
 - adv4.improve_checks: communicative_devices
+- adv5.fluency_checks: rate_of_speech, fluidity, connectedness (음성 분석 결과에서 판단)
 - adv5.grammar_checks: word_structure, syntax, cases, prepositions, agreement (수일치 오류→agreement 반드시 포함)
 - adv5.pragmatic_checks: lacks_strategies
-  ※ adv5의 fluency/pronunciation 항목은 STT 텍스트 기반 평가 불가 — 포함하지 말 것
+- adv5.pronunciation_checks: articulation, pitch, stress, intonation (음성 분석 결과에서 판단)
 - int1.needs: increase_vocab, improve_listening, produce_sentence_level
 - int2.needs: words_phrases, some_sentences, mostly_sentences
 - int3.needs: formulate_questions, produce_enough_questions
-- int4.fluency_checks: dead_ending, false_starts, repetition (텍스트에서 탐지 가능한 항목만)
-  ※ rate_of_speech, reduce_pauses, pronunciation 항목은 STT 텍스트 기반 평가 불가 — 포함하지 말 것
+- int4.fluency_checks: rate_of_speech, reduce_pauses, dead_ending, false_starts, repetition (음성 분석 결과 + 텍스트 혼합 판단)
+- int4.pronunciation_checks: articulation, pitch, stress, intonation (음성 분석 결과에서 판단)
 - int4.grammar_checks: control_simple_grammar, create_complete_sentences
-- int4.syntax_checks: improve_word_order"""
+- int4.syntax_checks: improve_word_order
+
+### 음성 분석 결과 활용
+각 문항에 '음성 분석:' 항목이 있으면 GPT-4o 오디오 모델이 실제 녹음에서 감지한 발음/유창성 이슈입니다.
+여러 문항의 이슈를 집계해 adv5/int4의 fluency_checks/pronunciation_checks를 결정하세요.
+예: 3문항 이상에서 'stress' 감지 → adv5.pronunciation_checks에 'stress' 포함"""
 
     user_prompt = f"""아래는 수험자의 OPIc 전체 답변입니다:
 
@@ -514,11 +521,11 @@ Superior 수준에 근접. 추상적 주제 처리 가능. 가설·추측·논�
     "adv2": {{"performance": "Developing Ability", "discourse_level": "strings_sentences", "word_order": [], "cohesive": []}},
     "adv3": {{"performance": "Meets Criteria Minimally", "vocab_checks": []}},
     "adv4": {{"performance": "Meets Criteria Minimally", "complication": "struggles_succeeds", "improve_checks": []}},
-    "adv5": {{"performance": "Developing Ability", "grammar_checks": [], "pragmatic_checks": []}},
+    "adv5": {{"performance": "Developing Ability", "fluency_checks": [], "grammar_checks": [], "pragmatic_checks": [], "pronunciation_checks": []}},
     "int1": {{"performance": "Meets Criteria Fully", "needs": []}},
     "int2": {{"performance": "Meets Criteria Fully", "needs": []}},
     "int3": {{"performance": "Meets Criteria Fully", "needs": []}},
-    "int4": {{"performance": "Meets Criteria Fully", "fluency_checks": [], "grammar_checks": [], "syntax_checks": []}}
+    "int4": {{"performance": "Meets Criteria Fully", "fluency_checks": [], "pronunciation_checks": [], "grammar_checks": [], "syntax_checks": []}}
   }}
 }}"""
 
@@ -540,6 +547,75 @@ Superior 수준에 근접. 추상적 주제 처리 가능. 가설·추측·논�
         return web.json_response({'ok': False, 'error': 'openai 패키지 미설치'})
     except Exception as e:
         return web.json_response({'ok': False, 'error': str(e)})
+
+# POST /stt-evaluate  → GPT-4o Audio: 음성 전사 + 발음/유창성 평가
+async def stt_evaluate(req):
+    api_key = _get_apikey()
+    if not api_key:
+        return web.json_response({'ok': False, 'error': 'API 키 없음'})
+
+    reader = await req.multipart()
+    audio_bytes = None
+    question_text = ''
+    async for field in reader:
+        if field.name == 'audio':
+            audio_bytes = await field.read()
+        elif field.name == 'questionText':
+            question_text = (await field.text())[:300]
+
+    if not audio_bytes:
+        return web.json_response({'ok': False, 'error': '오디오 데이터 없음'})
+
+    import base64
+    audio_b64 = base64.b64encode(audio_bytes).decode('utf-8')
+
+    prompt_text = (
+        "You are an ACTFL OPIc speech evaluator. Listen carefully to the English speech recording.\n"
+        "Return ONLY valid JSON, no extra text:\n"
+        '{"transcript": "<exact transcription>", "pronunciation_issues": ["<issue>", ...]}\n\n'
+        "pronunciation_issues must be a subset of (include only issues you clearly detect):\n"
+        "- rate_of_speech: unusually fast or slow delivery\n"
+        "- fluidity: halting, frequent mid-sentence pauses\n"
+        "- connectedness: speech sounds disconnected or fragmented\n"
+        "- articulation: words pronounced unclearly\n"
+        "- stress: incorrect word stress patterns\n"
+        "- intonation: flat or unnatural pitch variation\n"
+        "- dead_ending: sentences trail off or end incompletely\n"
+        "- false_starts: frequent restarts mid-sentence\n"
+        "- repetition: excessive repetition of words or phrases"
+    )
+    if question_text:
+        prompt_text += f"\n\nQuestion context: {question_text}"
+
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key)
+        resp = client.chat.completions.create(
+            model='gpt-4o-audio-preview',
+            max_tokens=600,
+            messages=[{
+                'role': 'user',
+                'content': [
+                    {'type': 'input_audio', 'input_audio': {'data': audio_b64, 'format': 'webm'}},
+                    {'type': 'text', 'text': prompt_text}
+                ]
+            }]
+        )
+        raw = resp.choices[0].message.content.strip()
+        # strip markdown code fences if present
+        raw = re.sub(r'^```[^\n]*\n?', '', raw)
+        raw = re.sub(r'\n?```$', '', raw.strip())
+        result = json.loads(raw)
+        return web.json_response({
+            'ok': True,
+            'transcript': result.get('transcript', ''),
+            'pronunciation_issues': result.get('pronunciation_issues', [])
+        })
+    except ImportError:
+        return web.json_response({'ok': False, 'error': 'openai 패키지 미설치'})
+    except Exception as e:
+        return web.json_response({'ok': False, 'error': str(e)})
+
 
 # POST /save-recordings  → 녹음 파일 영구 저장
 async def save_recordings(req):
@@ -689,6 +765,7 @@ app.router.add_get('/topic-originals', topic_originals)
 app.router.add_get('/original',      original_audio)
 app.router.add_post('/feedback',         feedback)
 app.router.add_post('/overall-feedback', overall_feedback)
+app.router.add_post('/stt-evaluate',     stt_evaluate)
 app.router.add_post('/save-recordings',    save_recordings)
 app.router.add_post('/save-feedback-item', save_feedback_item)
 app.router.add_post('/model-tts',          model_tts)
