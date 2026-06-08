@@ -31,7 +31,7 @@
     <div class="empty-state" v-if="!session">
       <div class="icon">📭</div>
       <p>시험 결과 데이터가 없습니다.</p>
-      <a href="opic-test.html" style="color:#667eea;margin-top:12px;display:inline-block">시험 시작하기 →</a>
+      <a href="opic-test.html" style="color:var(--color-secondary);margin-top:12px;display:inline-block">시험 시작하기 →</a>
     </div>
 
     <template v-if="session && overall">
@@ -41,6 +41,237 @@
         <div class="grade-label">최종 예상 등급</div>
         <div :class="['grade-badge', 'grade-' + overall.grade]">{{ overall.grade }}</div>
         <div class="grade-rationale">{{ overall.gradeRationale }}</div>
+      </div>
+
+      <!-- ── OPIc Diagnostic Comments Form ── -->
+      <div class="section diag-wrap" v-if="overall.diagnostic">
+        <div class="section-title">📋 OPIc Diagnostic Comments</div>
+
+        <div class="diag-info-grid">
+          <div class="diag-info-row"><span class="dil">Language</span><span class="div2">ENGLISH</span></div>
+          <div class="diag-info-row"><span class="dil">Test Results</span><span :class="['div2','grade-'+overall.grade]" style="font-weight:700">{{ overall.grade }}</span></div>
+        </div>
+
+        <div class="diag-section-head">• DIAGNOSTIC FORM</div>
+
+        <!-- ADVANCED FUNCTIONS -->
+        <table class="diag-table">
+          <colgroup><col style="width:22%"><col style="width:14%"><col></colgroup>
+          <thead>
+            <tr>
+              <th>ADVANCED FUNCTIONS</th>
+              <th>PERFORMANCE</th>
+              <th>If does not fully meet criteria for Advanced Level, what features does speaker need to improve?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ADV1 -->
+            <tr>
+              <td class="diag-func">Can narrate and describe in all time frames.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('adv1'))]">{{ dPerf('adv1') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl">Speaker needs to improve:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv1','time_checks','present_desc')}]">Description in present time</span>
+                  <span :class="['dc',{checked:dHas('adv1','time_checks','past_desc')}]">Description in past time</span>
+                  <span :class="['dc',{checked:dHas('adv1','time_checks','future_desc')}]">Description in future time</span>
+                </div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv1','time_checks','present_narr')}]">Narration in present time</span>
+                  <span :class="['dc',{checked:dHas('adv1','time_checks','past_narr')}]">Narration in past time</span>
+                  <span :class="['dc',{checked:dHas('adv1','time_checks','future_narr')}]">Narration in future time</span>
+                </div>
+                <div class="dgl">Speaker's narrations show problems in:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv1','narr_problems','logical_seq')}]">Logical sequencing</span>
+                  <span :class="['dc',{checked:dHas('adv1','narr_problems','verb_forms')}]">Verb forms</span>
+                  <span :class="['dc',{checked:dHas('adv1','narr_problems','person_markers')}]">Person markers</span>
+                </div>
+                <div class="dgl">Speaker's descriptions lack:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv1','desc_lacks','clarity')}]">Clarity</span>
+                  <span :class="['dc',{checked:dHas('adv1','desc_lacks','detail')}]">Detail</span>
+                </div>
+              </td>
+            </tr>
+            <!-- ADV2 -->
+            <tr>
+              <td class="diag-func">Can consistently produce connected discourse of paragraph length.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('adv2'))]">{{ dPerf('adv2') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl">Speaker produces mainly:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dGet('adv2','discourse_level')==='words_phrases'}]">Words and phrases</span>
+                  <span :class="['dc',{checked:dGet('adv2','discourse_level')==='sentences'}]">Sentences</span>
+                  <span :class="['dc',{checked:dGet('adv2','discourse_level')==='strings_sentences'}]">Strings of sentences</span>
+                </div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dGet('adv2','discourse_level')==='connected_sentences'}]">Connected sentences</span>
+                  <span :class="['dc',{checked:dGet('adv2','discourse_level')==='skeletal_paragraphs'}]">Skeletal paragraphs</span>
+                </div>
+                <div class="dgl">Speaker exhibits problems with the word order of:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv2','word_order','phrases')}]">Phrases</span>
+                  <span :class="['dc',{checked:dHas('adv2','word_order','sentences')}]">Sentences</span>
+                  <span :class="['dc',{checked:dHas('adv2','word_order','paragraphs')}]">Paragraphs</span>
+                </div>
+                <div class="dgl">Speaker's use of cohesive devices:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv2','cohesive','not_used')}]">Not used</span>
+                  <span :class="['dc',{checked:dHas('adv2','cohesive','used_inaccurately')}]">Used inaccurately</span>
+                  <span :class="['dc',{checked:dHas('adv2','cohesive','repetitive')}]">Repetitive</span>
+                </div>
+              </td>
+            </tr>
+            <!-- ADV3 -->
+            <tr>
+              <td class="diag-func">Can speak about a variety of topics, including current events.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('adv3'))]">{{ dPerf('adv3') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl">Speaker needs to expand and improve vocabulary:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv3','vocab_checks','lacks_breadth')}]">Lacks breadth of vocabulary</span>
+                  <span :class="['dc',{checked:dHas('adv3','vocab_checks','other_languages')}]">Uses words from other languages</span>
+                  <span :class="['dc',{checked:dHas('adv3','vocab_checks','false_cognates')}]">Uses false cognates</span>
+                </div>
+              </td>
+            </tr>
+            <!-- ADV4 -->
+            <tr>
+              <td class="diag-func">Can deal effectively with an unanticipated complication.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('adv4'))]">{{ dPerf('adv4') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl">When confronted with unanticipated complication, the speaker:</div>
+                <div class="dcc">
+                  <span :class="['dc',{checked:dGet('adv4','complication')==='struggles_succeeds'}]">Struggles, but succeeds in addressing the situation</span>
+                  <span :class="['dc',{checked:dGet('adv4','complication')==='attempts_fails'}]">Attempts to address, but is unable to successfully resolve the situation</span>
+                  <span :class="['dc',{checked:dGet('adv4','complication')==='no_ability'}]">Demonstrates no linguistic ability to address the situation</span>
+                </div>
+                <div class="dgl">Speaker should improve:</div>
+                <div class="dcc">
+                  <span :class="['dc',{checked:dHas('adv4','improve_checks','communicative_devices')}]">Knowledge and use of communicative devices</span>
+                </div>
+              </td>
+            </tr>
+            <!-- ADV5 -->
+            <tr>
+              <td class="diag-func">Can be readily understood by speakers not accustomed to non-native speakers of the target language.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('adv5'))]">{{ dPerf('adv5') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl dcat">Speaker needs to improve: Fluency:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','rate_of_speech')}]">Rate of speech</span>
+                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','fluidity')}]">Fluidity (halting)</span>
+                  <span :class="['dc',{checked:dHas('adv5','fluency_checks','connectedness')}]">Connectedness</span>
+                </div>
+                <div class="dgl dcat">Grammar:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv5','grammar_checks','word_structure')}]">Word Structure</span>
+                  <span :class="['dc',{checked:dHas('adv5','grammar_checks','syntax')}]">Syntax</span>
+                  <span :class="['dc',{checked:dHas('adv5','grammar_checks','cases')}]">Cases</span>
+                  <span :class="['dc',{checked:dHas('adv5','grammar_checks','prepositions')}]">Prepositions</span>
+                  <span :class="['dc',{checked:dHas('adv5','grammar_checks','agreement')}]">Agreement</span>
+                </div>
+                <div class="dgl dcat">Pragmatic Competence:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv5','pragmatic_checks','lacks_strategies')}]">Lacks strategies to compensate for weaknesses</span>
+                </div>
+                <div class="dgl dcat">Pronunciation:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','articulation')}]">Articulation</span>
+                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','pitch')}]">Pitch</span>
+                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','stress')}]">Stress</span>
+                  <span :class="['dc',{checked:dHas('adv5','pronunciation_checks','intonation')}]">Intonation</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- INTERMEDIATE FUNCTIONS -->
+        <table class="diag-table" style="margin-top:12px">
+          <colgroup><col style="width:22%"><col style="width:14%"><col></colgroup>
+          <thead>
+            <tr>
+              <th>INTERMEDIATE FUNCTIONS</th>
+              <th>PERFORMANCE</th>
+              <th>If does not fully meet criteria for Intermediate Level, what features does speaker need to improve?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- INT1 -->
+            <tr>
+              <td class="diag-func">Can create with the language, combining and recombining learned material to provide personal information.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('int1'))]">{{ dPerf('int1') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl">Speaker needs to:</div>
+                <div class="dcc">
+                  <span :class="['dc',{checked:dHas('int1','needs','increase_vocab')}]">Increase vocabulary to be able to provide personal information</span>
+                  <span :class="['dc',{checked:dHas('int1','needs','improve_listening')}]">Improve listening comprehension in order to respond to requests for information</span>
+                  <span :class="['dc',{checked:dHas('int1','needs','produce_sentence_level')}]">Produce sentence level discourse and not just lists and phrases</span>
+                </div>
+              </td>
+            </tr>
+            <!-- INT2 -->
+            <tr>
+              <td class="diag-func">Can speak in sentences on a variety of familiar topics and routines.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('int2'))]">{{ dPerf('int2') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl">Speaker needs to:</div>
+                <div class="dcc">
+                  <span :class="['dc',{checked:dHas('int2','needs','words_phrases')}]">Words, lists of words and memorized phrases</span>
+                  <span :class="['dc',{checked:dHas('int2','needs','some_sentences')}]">Some sentences, memorized phrases and words</span>
+                  <span :class="['dc',{checked:dHas('int2','needs','mostly_sentences')}]">Mostly sentences, but sometimes just memorized phrases and lists of words</span>
+                </div>
+              </td>
+            </tr>
+            <!-- INT3 -->
+            <tr>
+              <td class="diag-func">Can handle a simple transaction by asking and answering questions.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('int3'))]">{{ dPerf('int3') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl">Speaker needs to:</div>
+                <div class="dcc">
+                  <span :class="['dc',{checked:dHas('int3','needs','formulate_questions')}]">Formulate questions correctly</span>
+                  <span :class="['dc',{checked:dHas('int3','needs','produce_enough_questions')}]">Produce enough questions and responses to complete the transaction</span>
+                </div>
+              </td>
+            </tr>
+            <!-- INT4 -->
+            <tr>
+              <td class="diag-func">Is generally understood by those accustomed to dealing with non-native speakers.</td>
+              <td class="diag-perf"><span :class="['perf-badge',perfClass(dPerf('int4'))]">{{ dPerf('int4') }}</span></td>
+              <td class="diag-detail">
+                <div class="dgl dcat">Speaker needs to improve: Fluency:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('int4','fluency_checks','rate_of_speech')}]">Rate of speech</span>
+                  <span :class="['dc',{checked:dHas('int4','fluency_checks','reduce_pauses')}]">Fluidity (reduce pauses)</span>
+                </div>
+                <div class="dcc">
+                  <span :class="['dc',{checked:dHas('int4','fluency_checks','dead_ending')}]">Reduce "dead ending" (incomplete statements)</span>
+                  <span :class="['dc',{checked:dHas('int4','fluency_checks','false_starts')}]">Reduce false-starts</span>
+                  <span :class="['dc',{checked:dHas('int4','fluency_checks','repetition')}]">Reduce repetition</span>
+                </div>
+                <div class="dgl">Improve pronunciation:</div>
+                <div class="drc">
+                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','articulation')}]">Articulation</span>
+                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','pitch')}]">Pitch</span>
+                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','stress')}]">Stress features</span>
+                  <span :class="['dc',{checked:dHas('int4','pronunciation_checks','intonation')}]">Intonation</span>
+                </div>
+                <div class="dgl">Grammar:</div>
+                <div class="dcc">
+                  <span :class="['dc',{checked:dHas('int4','grammar_checks','control_simple_grammar')}]">Needs control of simple sentence level grammar</span>
+                  <span :class="['dc',{checked:dHas('int4','grammar_checks','create_complete_sentences')}]">Needs to create complete sentences</span>
+                </div>
+                <div class="dgl">Syntax:</div>
+                <div class="dcc">
+                  <span :class="['dc',{checked:dHas('int4','syntax_checks','improve_word_order')}]">Needs to improve sentence level word order</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <!-- ── 총평 ── -->
@@ -157,6 +388,26 @@ createApp({
       return found ? (found.oneLiner || '') : '';
     }
 
+    function dHas(section, field, key) {
+      const d = overall.value?.diagnostic;
+      if (!d || !d[section]) return false;
+      const arr = d[section][field];
+      return Array.isArray(arr) && arr.includes(key);
+    }
+    function dGet(section, field) {
+      const d = overall.value?.diagnostic;
+      return d?.[section]?.[field] ?? '';
+    }
+    function dPerf(section) { return dGet(section, 'performance'); }
+    function perfClass(perf) {
+      if (!perf) return '';
+      if (perf.includes('Fully'))         return 'perf-fully';
+      if (perf.includes('Minimally'))     return 'perf-minimally';
+      if (perf.includes('Developing'))    return 'perf-developing';
+      if (perf.includes('Does Not'))      return 'perf-not-meet';
+      return '';
+    }
+
     function formatFeedback(raw) {
       const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       const parts = esc.split(/(?=^## )/m);
@@ -250,7 +501,8 @@ createApp({
     return {
       loading, loadingText, session, overall,
       openQs, toggleQ, perQGrade, perQOneLiner, loadOverall,
-      formatFeedback, genFeedback, generatingIdx
+      formatFeedback, genFeedback, generatingIdx,
+      dHas, dGet, dPerf, perfClass
     };
   }
 }).mount('#app');

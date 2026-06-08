@@ -265,6 +265,127 @@ body {
 }
 .empty-state .icon { font-size: 3em; margin-bottom: 12px; }
 
+/* ── OPIc Diagnostic Form ── */
+.diag-info-grid {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  font-size: .85em;
+}
+.diag-info-row { display: flex; align-items: center; gap: 10px; }
+.dil { color: var(--color-text-secondary); font-size: .9em; }
+.div2 { font-weight: 600; color: var(--color-text-heading); }
+
+.diag-section-head {
+  font-size: .9em;
+  font-weight: 700;
+  color: var(--color-text-heading);
+  margin: 4px 0 10px;
+}
+
+.diag-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .8em;
+  line-height: 1.45;
+}
+.diag-table th {
+  background: var(--color-bg);
+  border: 1px solid #c8c8c8;
+  padding: 7px 10px;
+  font-size: .78em;
+  font-weight: 700;
+  color: var(--color-text-heading);
+  text-align: left;
+  vertical-align: middle;
+}
+.diag-table td {
+  border: 1px solid #c8c8c8;
+  padding: 10px 10px;
+  vertical-align: top;
+}
+
+.diag-func {
+  font-size: .8em;
+  color: var(--color-text);
+  line-height: 1.55;
+}
+
+.diag-perf {
+  text-align: center;
+  vertical-align: middle !important;
+}
+.perf-badge {
+  display: inline-block;
+  font-size: .76em;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  padding: 4px 6px;
+}
+.perf-fully      { color: var(--color-success-dark); background: var(--color-success-light); }
+.perf-minimally  { color: var(--color-secondary-dark); background: var(--color-secondary-light); }
+.perf-developing { color: #92400e; background: #fef3c7; }
+.perf-not-meet   { color: #dc2626; background: #fee2e2; }
+
+.diag-detail { color: var(--color-text); }
+
+/* group label within detail cell */
+.dgl {
+  font-size: .76em;
+  font-weight: 600;
+  color: var(--color-text-heading);
+  margin: 7px 0 3px;
+}
+.dgl:first-child { margin-top: 0; }
+
+/* category label (Fluency:, Grammar: etc.) — orange accent */
+.dgl.dcat {
+  color: var(--color-primary-dark);
+}
+
+/* checkbox item — row layout (inline wrap) */
+.drc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin-bottom: 2px;
+}
+
+/* checkbox item — column layout (one per line) */
+.dcc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 2px;
+}
+
+/* individual checkbox */
+.dc {
+  font-size: .78em;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.5;
+}
+.dc::before {
+  content: '□';
+  font-size: 1em;
+  flex-shrink: 0;
+}
+.dc.checked {
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+.dc.checked::before {
+  content: '☑';
+  color: var(--color-primary);
+}
+
 /* ── 반응형 ── */
 @media (max-width: 768px) {
   .header { padding: 0 var(--space-4); }
@@ -274,4 +395,8 @@ body {
   .section { padding: var(--space-4) var(--space-4); }
   .list-grid { grid-template-columns: 1fr; }
   .fb-columns { grid-template-columns: 1fr; }
+  .diag-table { font-size: .72em; }
+  .diag-table colgroup col:first-child { width: 28% !important; }
+  .diag-table colgroup col:nth-child(2) { width: 18% !important; }
+  .diag-info-grid { flex-direction: column; gap: 6px; }
 }
