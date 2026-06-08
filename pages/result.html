@@ -157,13 +157,39 @@ createApp({
       return found ? (found.oneLiner || '') : '';
     }
 
-    function formatFeedback(text) {
-      return text
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-        .replace(/^#{1,3} (.+)$/gm,'<span class="fb-section">$1</span>')
-        .replace(/^[-•] (.+)$/gm,'<span class="fb-bullet">• $1</span>')
-        .replace(/\n/g,'<br>');
+    function formatFeedback(raw) {
+      const esc = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const parts = esc.split(/(?=^## )/m);
+      let html = '';
+      parts.forEach(part => {
+        part = part.replace(/^## /, '');
+        if (!part.trim()) return;
+        const nl = part.indexOf('\n');
+        const title = nl > -1 ? part.slice(0, nl).trim() : part.trim();
+        const body  = nl > -1 ? part.slice(nl + 1) : '';
+        let cls = 'generic';
+        if (title.indexOf('📊') > -1)      cls = 'diagnosis';
+        else if (title.indexOf('🔍') > -1) cls = 'analysis';
+        else if (title.indexOf('⬆') > -1)  cls = 'tips';
+        else if (title.indexOf('💎') > -1)  cls = 'diagnosis'; // 모범 답변 — primary 계열
+        const lines = body.split('\n');
+        let content = '', inList = false;
+        lines.forEach(line => {
+          const isList = /^[-•]\s/.test(line);
+          if (isList && !inList)  { content += '<ul>'; inList = true; }
+          if (!isList && inList) { content += '</ul>'; inList = false; }
+          if (isList) {
+            content += '<li>' + line.replace(/^[-•]\s/, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') + '</li>';
+          } else if (!line.trim()) {
+            content += '';
+          } else {
+            content += line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') + '<br>';
+          }
+        });
+        if (inList) content += '</ul>';
+        html += `<div class="fb-ai-section ${cls}"><div class="fb-ai-section-title">${title}</div><div>${content}</div></div>`;
+      });
+      return html;
     }
 
     async function genFeedback(q) {
